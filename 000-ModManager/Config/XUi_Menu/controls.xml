@@ -1,0 +1,23 @@
+<modmanager_controls>
+	<append xpath="/controls">
+		<mods_list_entry width="254" height="30">
+			<rect height="${height}" style="press, doubleclick, hover, scroll" disabled_font_color="[disabledLabelColor]" enabled_font_color="[labelColor]" sound="[recipe_click]" controller="ListEntry`1[[CustomModManager.UI.XUiC_ModsList+ListEntry, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]">
+				<sprite depth="3" name="backgroundMain" sprite="menu_empty2px" height="${1+height}" pos="2,0" width="${width-4}" color="[black]" type="sliced" fillcenter="false"/>
+				<sprite depth="2" name="background" color="[darkGrey]" pos="2,0" width="${width-4}" type="sliced"/>
+				<label depth="4" name="Name" pos="8,-2" width="${width-100}" height="32" text="{modName}" font_size="26" justify="left" pivot="topleft" />
+				<label depth="4" name="Version" pos="${width-10},-2" style="press, doubleclick, hover, scroll" color="{modVersionColor}" width="80" height="32" text="{modVersion}" tooltip="{modVersionTooltip}" font_size="26" justify="right" pivot="topright" sound="[recipe_click]"/>
+				<label depth="4" name="Enabled" pos="8,${-height+2}" style="press, doubleclick, hover, scroll" color="{modEnabledColor}" width="${width-200}" height="32" text="{modEnabled}" font_size="26" justify="left" pivot="bottomleft" sound="[recipe_click]" />
+				<label depth="4" name="Author" pos="${width-10},${-height+2}" color="255,255,255,128" width="180" height="32" text="{modAuthor}" font_size="26" justify="right" pivot="bottomright" />
+			</rect>
+		</mods_list_entry>
+		
+		<!--<modoption pos="0,0" is_textinput="false" display_names="" value_localization_prefix="" password_field="false" value_min="@DEF" value_max="@DEF" value_wrap="@DEF" value_increment="@DEF" values="@DEF" reverse_list="@DEF" localization_prefix="" format_string="">-->
+		<modoption>
+			<rect width="262" height="32" controller="CustomModManager.UI.XUiC_ModSettingSelector, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+				<label name="ControlLabel" depth="4" pos="0,0" width="262" height="30" style="hover" tooltip_key="{title}Desc" text_key="{title}" font_size="28" color="[white]" justify="right" pivot="topleft" />
+				<combobox name="ControlCombo" type="ComboBoxList`1[[CustomModManager.UI.XUiC_ModSettingSelector+ModOptionValue, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]" value_min="{value_min}" value_max="{value_max}" value_wrap="{value_wrap}" value_increment="{value_increment}" values="{values}" reverse_list="{reverse_list}" localization_prefix="{localization_prefix}" format_string="{format_string}" pos="269,0" width="300" height="32" />
+				<textfield name="ControlText" depth="5" pos="0,0" width="232" height="32" pivot="topLeft" />
+			</rect>
+		</modoption>
+	</append>
+</modmanager_controls>

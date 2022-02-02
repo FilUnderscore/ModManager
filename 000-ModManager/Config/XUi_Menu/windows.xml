@@ -1,0 +1,88 @@
+<modmanager_windows>
+	<insertBefore xpath="/windows/window[@name='mainMenu']/grid/mainmenubutton[@name='btnOptions']">
+		<mainmenubutton name="btnMods" pivot="center" width="400" height="50" caption_key="xuiMods"/>
+	</insertBefore>
+	
+	<remove xpath="/windows/window[@name='mainMenu']/grid/rect"/>
+	
+	<append xpath="/windows">
+		<window name="modsList" anchor="CenterCenter" pos="-600,375" width="1185" height="780" controller="CustomModManager.UI.XUiC_Mods, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" cursor_area="true">
+			<panel name="header" pos="0,0" height="43" width="980" depth="1" backgroundspritename="ui_game_panel_header" bordercolor="[black]" borderthickness="3">
+				<label style="header.name" name="windowheader" pos="6,-6" width="550" text_key="xuiMods"/>
+			</panel>
+			
+			<simplebutton name="openModsFolder" pos="985,-6" width="200" height="37" font_size="26" text="Open Mods Folder" text_key="xuiOpenModsFolder" caption_key="xuiOpenModsFolder" upper_case="true"/>
+			
+			<rect pos="0,-50" height="134" width="590">
+				<rect name="mods" pos="0,0" height="650" width="590" controller="CustomModManager.UI.XUiC_ModsList, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+					<sprite depth="8" name="border" sprite="menu_empty3px" color="[black]" type="sliced" fillcenter="false" />
+					<sprite depth="0" name="backgroundMain" sprite="menu_empty3px" color="[mediumGrey]" type="sliced" fillcenter="true" />
+
+					<rect depth="4" name="searchControls" height="44" pos="0,-0">
+						<sprite depth="8" name="backgroundMain" sprite="menu_empty" color="[black]" type="sliced" fillcenter="false" />
+
+						<sprite depth="4" name="searchIcon" style="icon30px" pos="5,-22" sprite="ui_game_symbol_search" pivot="Left"/>
+						<textfield name="searchInput" depth="5" pos="40,-22" width="250" height="30" pivot="Left" search_field="true" />
+						
+						<panel pos="478,0" width="98" height="43" disableautobackground="true">
+							<pager name="pager" pos="1,-6" />
+						</panel>
+					</rect>
+					
+					<grid name="list" depth="2" rows="9" cols="1" pos="0,-44" height="490" cell_width="610" cell_height="61" repeat_content="true" arrangement="vertical" >
+						<mods_list_entry width="590" height="61" />
+					</grid>
+				</rect>
+			</rect>
+			
+			<rect name="modTabs" controller="TabSelector" pos="595,-50" width="590" height="650">
+				<sprite depth="10" name="border" sprite="menu_empty3px" color="[black]" type="sliced" fillcenter="false" globalopacity="true" globalopacitymod="0.9" />
+					
+				<rect name="tabsHeader" height="39" depth="0">
+					<grid name="tabButtons" pos="3,-2" depth="2" rows="1" cols="4" cell_width="144" cell_height="36" repeat_content="true" arrangement="horizontal">
+						<rect>
+							<simplebutton name="tabButton" depth="2" pos="-1,0" width="143" height="36" font_size="34" caption_key="xuiBack" bordercolor="[transparent]" defaultcolor="[darkGrey]" selectedsprite="menu_empty" selectedcolor="[mediumGrey]" foregroundlayer="false"/>
+							<sprite depth="8" sprite="menu_empty2px" pos="142,0" width="2" height="35" color="[black]"/>
+						</rect>
+					</grid>
+				</rect>
+				
+				<rect name="tabsContents" depth="2" pos="0,-37" height="611">
+					<sprite depth="0" pos="2,0" width="586" name="backgroundMain" sprite="menu_empty3px" color="[mediumGrey]" type="sliced" fillcenter="true"/>
+					
+					<rect name="modInfo" tab_key="xuiModInformation" controller="CustomModManager.UI.XUiC_ModsListModInfo, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+						<label name="Name" depth="4" pos="6,-6" width="414" height="32" font_size="32" text="{modName}"/>
+						<label name="Author" depth="4" pos="6,-43" width="200" height="32" font_size="26" color="255,255,255,128" text="{modAuthor}"/>
+						<label name="Version" depth="4" pos="505,-6" width="80" height="32" font_size="26" justify="right" text="{modVersion}"/>
+						<label name="Description" depth="4" pos="6,-80" width="584" height="300" font_size="26" text="{modDescription}"/>
+						
+						<togglebutton name="enableDisableButton" depth="4" pos="6,-570" width="120" height="36" font_size="32" caption_key="xuiModEnabled"/>
+						
+						<simplebutton name="folderButton" depth="4" pos="385,-520" width="200" height="36" font_size="32" caption_key="xuiModFolder"/>
+						<simplebutton name="websiteButton" depth="4" pos="385,-570" width="200" height="36" font_size="32" caption_key="xuiModWebsite"/>
+					</rect>
+					
+					<rect name="modSettings" tab_key="xuiModSettings" controller="CustomModManager.UI.XUiC_ModsListModSettings, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+						<label name="NoModSettingsDetected" depth="4" pos="6,-274" width="584" height="32" font_size="26" justify="center" text_key="xuiNoModSettingsDetected"/>
+						
+						<panel name="pagerPanel" depth="4" pos="478,0" width="98" height="43" disableautobackground="true">
+							<pager name="pager" pos="1,-6" />
+						</panel>
+						
+						<panel name="settingsPanel" depth="4" disableautobackground="true">
+							<grid name="settings" pos="6,-40" rows="6" cols="2" cell_width="262" cell_height="45" repeat_content="true" arrangement="vertical">
+								<modoption depth="4" width="262" height="45"/>
+							</grid>
+							
+							<simplebutton name="resetSettingsButton" depth="4" pos="385,-570" width="200" height="36" font_size="32" caption_key="xuiModReset"/>
+						</panel>
+					</rect>
+				</rect>
+			</rect>
+			
+			<rect pos="0,-720">
+				<simplebutton name="btnBack" depth="3" pos="0,0" width="200" height="36" font_size="32" caption_key="xuiBack" upper_case="true"/>
+			</rect>
+		</window>
+	</append>
+</modmanager_windows>

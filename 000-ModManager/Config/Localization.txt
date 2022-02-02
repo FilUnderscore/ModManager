@@ -1,0 +1,13 @@
+Key,File,Type,UsedInMainMenu,NoTranslate,english
+xuiMods,UI,XUI,x,,Mods
+xuiModDisabled,UI,XUI,x,,Disabled
+xuiModEnabled,UI,XUI,x,,Enabled
+xuiModVersionTooltip,UI,XUI,x,,Installed mod version
+xuiOpenModsFolder,UI,XUI,x,,Open Mods Folder
+xuiModInformation,UI,XUI,x,,Info
+xuiModSettings,UI,XUI,x,,Settings
+xuiModWebsite,UI,XUI,x,,Visit Website
+xuiModEnabled,UI,XUI,x,,Enabled
+xuiModFolder,UI,XUI,x,,View Mod Folder
+xuiModDisableStateReasonDisallowed,UI,XUI,x,,This mod cannot be disabled.
+xuiModDisableStateReasonDisallowedPreloaded,UI,XUI,x,,"This mod cannot be disabled because it loads before the Mod Manager does. To fix this, ensure that the mod's position in your Mods folder is underneath the Mod Manager folder in alphanumerical order (sort by 0-9 A-Z). This option will then become available on game restart."

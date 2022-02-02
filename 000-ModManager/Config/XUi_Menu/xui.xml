@@ -1,0 +1,7 @@
+<mods_xui>
+	<append xpath="/xui/ruleset[@name='default']">
+		<window_group name="mods">
+			<window name="modsList"/>
+		</window_group>
+	</append>
+</mods_xui>
