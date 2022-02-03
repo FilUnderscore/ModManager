@@ -100,10 +100,10 @@ namespace CustomModManager.UI
             this.settingsPanel.IsVisible = visible && anySettings;
             this.pagerPanel.IsVisible = visible && anySettings && settingsCount > modSettingSelectorList.Count;
 
-            this.UpdateSettings();
-
             this.pager.CurrentPageNumber = 0;
             this.pager.LastPageNumber = settingsCount / modSettingSelectorList.Count;
+
+            this.UpdateSettings();
         }
     }
 }
