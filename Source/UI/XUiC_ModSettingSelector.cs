@@ -21,17 +21,31 @@ namespace CustomModManager.UI
             this.controlCombo.OnValueChanged += ControlCombo_OnValueChanged;
             this.controlText = this.GetChildById("ControlText").GetChildByType<XUiC_TextInput>();
             this.controlText.OnChangeHandler += ControlText_OnChangeHandler;
+        }
 
-            if (this.IsTextInput())
-                return;
+        public void UpdateModSetting(string key, ModManagerModSettings.BaseModSetting modSetting)
+        {
+            this.modSetting = modSetting;
 
-            this.SetupOptions();
+            if (this.modSetting != null)
+            {
+                if(!this.IsTextInput())
+                    this.SetupOptions();
+                else
+                    this.controlText.Text = this.modSetting.GetValueAsString();
+
+                this.RefreshBindings(true);
+                this.controlCombo.ViewComponent.IsVisible = !this.IsTextInput();
+                this.controlText.ViewComponent.IsVisible = this.IsTextInput();
+            }
         }
 
         private void SetupOptions()
         {
+            this.controlCombo.Elements.Clear();
+            
             string[] allowedValues = this.modSetting.GetAllowedValuesAsStrings();
-            for(int index = 0; index < allowedValues.Length; index++)
+            for (int index = 0; index < allowedValues.Length; index++)
             {
                 this.controlCombo.Elements.Add(new ModOptionValue(allowedValues[index]));
             }
@@ -39,14 +53,7 @@ namespace CustomModManager.UI
 
         private bool IsTextInput()
         {
-            return this.modSetting != null ? this.modSetting.GetAllowedValuesAsStrings() != null : true;
-        }
-
-        public override void OnOpen()
-        {
-            base.OnOpen();
-            this.controlCombo.ViewComponent.IsVisible = !this.IsTextInput();
-            this.controlText.ViewComponent.IsVisible= this.IsTextInput();
+            return this.modSetting != null ? this.modSetting.GetAllowedValuesAsStrings() == null : true;
         }
 
         public override bool GetBindingValue(ref string _value, string _bindingName)
@@ -54,7 +61,7 @@ namespace CustomModManager.UI
             switch(_bindingName)
             {
                 case "title":
-                    _value = modSetting != null ? modSetting.unlocalizedName : "NONAME";
+                    _value = modSetting != null ? modSetting.unlocalizedName : "";
                     return true;
                 default:
                     return false;
@@ -81,6 +88,11 @@ namespace CustomModManager.UI
             public ModOptionValue(string value)
             {
                 this.Value = value;
+            }
+
+            public override string ToString()
+            {
+                return this.Value;
             }
         }
     }

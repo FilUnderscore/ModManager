@@ -35,17 +35,17 @@ namespace CustomModManager.API
         {
             if(!IsModManagerLoaded())
             {
-                Log.Warning("[Mod Manager API] Attempted to create mod settings while mod manager is not installed.");
+                Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Attempted to create mod settings while mod manager is not installed.");
                 return null;
             }
 
             try
             {
-                return new ModSettings(CORE_ASSEMBLY.CreateInstance("CustomModManager.ModManagerModSettings", true, 0, null, new object[] { modInstance }, null, null));
+                return new ModSettings(modInstance, CORE_ASSEMBLY.CreateInstance("CustomModManager.ModManagerModSettings", true, 0, null, new object[] { modInstance }, null, null));
             }
             catch
             {
-                Log.Warning("[Mod Manager API] Failed to locate ModSettings instance in Mod Manager. Perhaps an out-of-date API version is being used?");
+                Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Failed to locate ModSettings instance in Mod Manager. Perhaps an out-of-date API version is being used?");
 
                 return null;
             }
@@ -53,10 +53,12 @@ namespace CustomModManager.API
 
         public class ModSettings
         {
+            private readonly Mod modInstance;
             private readonly object instance;
 
-            public ModSettings(object instance)
+            public ModSettings(Mod modInstance, object instance)
             {
+                this.modInstance = modInstance;
                 this.instance = instance;
             }
 
@@ -69,7 +71,7 @@ namespace CustomModManager.API
                 }
                 catch
                 {
-                    Log.Warning("[Mod Manager API] Failed to hook variables into ModSettings instance. Perhaps an out-of-date API version is being used?");
+                    Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Failed to hook variables into ModSettings instance. Perhaps an out-of-date API version is being used?");
                 }
             }
         }

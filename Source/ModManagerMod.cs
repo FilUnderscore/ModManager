@@ -6,6 +6,7 @@ namespace CustomModManager
 {
     public class ModManagerMod : IModApi
     {
+        private bool showPatchNotesOnStartup = true;
         private int testValue = 0;
 
         public ModManagerMod()
@@ -28,6 +29,12 @@ namespace CustomModManager
                     bool result = int.TryParse(str, out int val);
                     return (val, result);
                 });
+
+                settings.Hook("showPatchNotesOnStartup", "xuiShowPatchNotesOnStartupSetting", "LOL OK", value => showPatchNotesOnStartup = value, () => showPatchNotesOnStartup, (value) => value.ToString(), (str) =>
+                {
+                    bool result = bool.TryParse(str, out bool val);
+                    return (val, result);
+                }, new bool[] { true, false });
             }
         }
     }

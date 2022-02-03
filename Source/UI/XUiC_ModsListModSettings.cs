@@ -16,6 +16,10 @@ namespace CustomModManager.UI
         private XUiV_Panel settingsPanel;
         private XUiV_Panel pagerPanel;
 
+        private readonly List<XUiC_ModSettingSelector> modSettingSelectorList = new List<XUiC_ModSettingSelector>();
+
+        private int page;
+
         public override void Init()
         {
             base.Init();
@@ -23,6 +27,11 @@ namespace CustomModManager.UI
             this.noModSettingsDetectedLabel = (XUiV_Label)this.GetChildById("NoModSettingsDetected").ViewComponent;
             this.settingsPanel = (XUiV_Panel)this.GetChildById("settingsPanel").ViewComponent;
             this.pagerPanel = (XUiV_Panel)this.GetChildById("pagerPanel").ViewComponent;
+
+            foreach (XUiC_ModSettingSelector xuiCModSettingSelector in this.GetChildById("settings").GetChildrenByType<XUiC_ModSettingSelector>())
+            {
+                modSettingSelectorList.Add(xuiCModSettingSelector);
+            }
         }
 
         public override void OnOpen()
@@ -42,12 +51,25 @@ namespace CustomModManager.UI
             this.settingsPanel.IsVisible = visible && anySettings;
             this.pagerPanel.IsVisible = visible && anySettings;
 
+            foreach(var selector in modSettingSelectorList)
+            {
+                selector.ViewComponent.IsVisible = false;
+            }
+
+            int entryIndex = 0;
             foreach(var settingEntry in ModManagerModSettings.modSettingsInstances[currentModEntry].settings)
             {
+                if (entryIndex == modSettingSelectorList.Count - 1)
+                    break;
+
                 var key = settingEntry.Key;
                 var setting = settingEntry.Value;
 
-                
+                XUiC_ModSettingSelector selector = modSettingSelectorList[entryIndex];
+                selector.ViewComponent.IsVisible = true;
+                selector.UpdateModSetting(key, setting);
+
+                entryIndex++;
             }
         }
 

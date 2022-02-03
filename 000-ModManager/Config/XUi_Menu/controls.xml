@@ -16,7 +16,7 @@
 			<rect width="262" height="32" controller="CustomModManager.UI.XUiC_ModSettingSelector, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
 				<label name="ControlLabel" depth="4" pos="0,0" width="262" height="30" style="hover" tooltip_key="{title}Desc" text_key="{title}" font_size="28" color="[white]" justify="right" pivot="topleft" />
 				<combobox name="ControlCombo" type="ComboBoxList`1[[CustomModManager.UI.XUiC_ModSettingSelector+ModOptionValue, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]" value_min="{value_min}" value_max="{value_max}" value_wrap="{value_wrap}" value_increment="{value_increment}" values="{values}" reverse_list="{reverse_list}" localization_prefix="{localization_prefix}" format_string="{format_string}" pos="269,0" width="300" height="32" />
-				<textfield name="ControlText" depth="5" pos="0,0" width="232" height="32" pivot="topLeft" />
+				<textfield name="ControlText" depth="5" pos="303,0" width="232" height="32" pivot="topLeft" />
 			</rect>
 		</modoption>
 	</append>

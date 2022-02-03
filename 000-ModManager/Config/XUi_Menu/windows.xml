@@ -70,7 +70,7 @@
 						</panel>
 						
 						<panel name="settingsPanel" depth="4" disableautobackground="true">
-							<grid name="settings" pos="6,-40" rows="6" cols="2" cell_width="262" cell_height="45" repeat_content="true" arrangement="vertical">
+							<grid name="settings" pos="6,-40" rows="6" cols="1" cell_width="262" cell_height="45" repeat_content="true" arrangement="horizontal">
 								<modoption depth="4" width="262" height="45"/>
 							</grid>
 							
