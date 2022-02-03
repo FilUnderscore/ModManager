@@ -8,6 +8,7 @@ namespace CustomModManager
     {
         private bool showPatchNotesOnStartup = true;
         int tester;
+        private int banana2;
         
         public ModManagerMod()
         {
@@ -34,6 +35,12 @@ namespace CustomModManager
                     bool result = int.TryParse(str, out int val);
                     return (val, result);
                 }).SetMinimumMaximumAndIncrementValues(0, 100, 10).SetWrap(false);
+
+                settings.Hook("test1", "test", value => banana2 = value, () => banana2, (value) => (value.ToString(), value.ToString() + " bananas"), str =>
+                {
+                    bool result = int.TryParse(str, out int val);
+                    return (val, result);
+                });
             }
         }
     }
