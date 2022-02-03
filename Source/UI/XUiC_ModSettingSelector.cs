@@ -24,6 +24,7 @@ namespace CustomModManager.UI
             this.controlCombo.OnValueChanged += ControlCombo_OnValueChanged;
             this.controlText = this.GetChildById("ControlText").GetChildByType<XUiC_TextInput>();
             this.controlText.OnChangeHandler += ControlText_OnChangeHandler;
+            this.controlText.OnSelect += ControlText_OnSelect;
         }
 
         public void UpdateModSetting(string key, ModManagerModSettings.BaseModSetting modSetting)
@@ -35,7 +36,7 @@ namespace CustomModManager.UI
                 if(!this.IsTextInput())
                     this.SetupOptions();
                 else
-                    this.controlText.Text = this.modSetting.GetValueAsString().unformatted;
+                    this.controlText.Text = this.modSetting.GetValueAsString().formatted;
 
                 this.RefreshBindings(true);
                 this.controlCombo.ViewComponent.IsVisible = !this.IsTextInput();
@@ -86,12 +87,20 @@ namespace CustomModManager.UI
             }
         }
 
+        private bool textSelected;
+
+        private void ControlText_OnSelect(XUiController _sender, bool _selected)
+        {
+            textSelected = _selected;
+            this.controlText.Text = _selected ? this.modSetting.GetValueAsString().unformatted : this.modSetting.GetValueAsString().formatted;
+        }
+
         private void ControlText_OnChangeHandler(XUiController _sender, string _text, bool _changeFromCode)
         {
             if (!this.IsTextInput())
                 return;
 
-            this.controlText.ActiveTextColor = this.modSetting.SetValueFromString(_text) ? Color.white : Color.red;
+            this.controlText.ActiveTextColor = !textSelected || this.modSetting.SetValueFromString(_text) ? Color.white : Color.red;
         }
 
         private void ControlCombo_OnValueChanged(XUiController _sender, ModOptionValue _oldValue, ModOptionValue _newValue)

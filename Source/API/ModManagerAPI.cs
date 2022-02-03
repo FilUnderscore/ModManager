@@ -62,7 +62,7 @@ namespace CustomModManager.API
                 this.instance = instance;
             }
 
-            public ModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, (string, string)> toString, Func<string, (T, bool)> fromString) where T : IComparable<T>
+            public ModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, (string unformatted, string formatted)> toString, Func<string, (T, bool)> fromString) where T : IComparable<T>
             {
                 try
                 {
@@ -77,6 +77,15 @@ namespace CustomModManager.API
                 }
 
                 return null;
+            }
+
+            public ModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString) where T : IComparable<T>
+            {
+                return Hook(key, nameUnlocalized, setCallback, getCallback, (value) =>
+                {
+                    string valueAsString = toString(value);
+                    return (valueAsString, valueAsString);
+                }, fromString);
             }
 
             public void CreateTab(string key, string nameUnlocalized)
