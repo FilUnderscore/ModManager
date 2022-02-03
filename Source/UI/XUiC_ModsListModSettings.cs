@@ -15,6 +15,7 @@ namespace CustomModManager.UI
         private XUiV_Label noModSettingsDetectedLabel;
         private XUiV_Panel settingsPanel;
         private XUiV_Panel pagerPanel;
+        private XUiC_Paging pager;
 
         private XUiC_SimpleButton resetButton;
 
@@ -29,6 +30,8 @@ namespace CustomModManager.UI
             this.noModSettingsDetectedLabel = (XUiV_Label)this.GetChildById("NoModSettingsDetected").ViewComponent;
             this.settingsPanel = (XUiV_Panel)this.GetChildById("settingsPanel").ViewComponent;
             this.pagerPanel = (XUiV_Panel)this.GetChildById("pagerPanel").ViewComponent;
+            this.pager = this.GetChildByType<XUiC_Paging>();
+            this.pager.OnPageChanged += Pager_OnPageChanged;
 
             this.resetButton = (XUiC_SimpleButton) this.GetChildById("resetSettingsButton");
             this.resetButton.OnPressed += ResetButton_OnPressed;
@@ -37,6 +40,14 @@ namespace CustomModManager.UI
             {
                 modSettingSelectorList.Add(xuiCModSettingSelector);
             }
+        }
+
+        private void Pager_OnPageChanged()
+        {
+            if (currentModEntry == null || !ModManagerModSettings.modSettingsInstances.ContainsKey(currentModEntry))
+                return;
+
+            this.UpdateSettings();
         }
 
         private void ResetButton_OnPressed(XUiController _sender, int _mouseButton)
@@ -53,6 +64,32 @@ namespace CustomModManager.UI
             }
         }
 
+        private void UpdateSettings()
+        {
+            foreach (var selector in modSettingSelectorList)
+            {
+                selector.ViewComponent.IsVisible = false;
+            }
+
+            int entryIndex = 0;
+            for (int index = this.pager.CurrentPageNumber * (modSettingSelectorList.Count - 1); index < ModManagerModSettings.modSettingsInstances[currentModEntry].settings.Count; index++)
+            {
+                if (entryIndex == modSettingSelectorList.Count - 1)
+                    break;
+
+                var settingEntry = ModManagerModSettings.modSettingsInstances[currentModEntry].settings.ElementAt(index);
+
+                var key = settingEntry.Key;
+                var setting = settingEntry.Value;
+
+                XUiC_ModSettingSelector selector = modSettingSelectorList[entryIndex];
+                selector.ViewComponent.IsVisible = true;
+                selector.UpdateModSetting(key, setting);
+
+                entryIndex++;
+            }
+        }
+
         internal void UpdateView(bool visible)
         {
             if (currentModEntry == null || !ModManagerModSettings.modSettingsInstances.ContainsKey(currentModEntry))
@@ -65,26 +102,10 @@ namespace CustomModManager.UI
             this.settingsPanel.IsVisible = visible && anySettings;
             this.pagerPanel.IsVisible = visible && anySettings && settingsCount > modSettingSelectorList.Count;
 
-            foreach(var selector in modSettingSelectorList)
-            {
-                selector.ViewComponent.IsVisible = false;
-            }
+            this.UpdateSettings();
 
-            int entryIndex = 0;
-            foreach(var settingEntry in ModManagerModSettings.modSettingsInstances[currentModEntry].settings)
-            {
-                if (entryIndex == modSettingSelectorList.Count - 1)
-                    break;
-
-                var key = settingEntry.Key;
-                var setting = settingEntry.Value;
-
-                XUiC_ModSettingSelector selector = modSettingSelectorList[entryIndex];
-                selector.ViewComponent.IsVisible = true;
-                selector.UpdateModSetting(key, setting);
-
-                entryIndex++;
-            }
+            this.pager.CurrentPageNumber = 0;
+            this.pager.LastPageNumber = settingsCount / modSettingSelectorList.Count;
         }
     }
 }

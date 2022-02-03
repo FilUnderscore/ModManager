@@ -4,7 +4,6 @@ namespace CustomModManager.UI
 {
     public class XUiC_ModSettingSelector : XUiController
     {
-        private XUiV_Label controlLabel;
         private XUiC_ComboBoxList<ModOptionValue> controlCombo;
         private XUiC_TextInput controlText;
 
@@ -16,7 +15,6 @@ namespace CustomModManager.UI
         {
             base.Init();
 
-            this.controlLabel = (XUiV_Label)this.GetChildById("ControlLabel").ViewComponent;
             this.controlCombo = this.GetChildById("ControlCombo").GetChildByType<XUiC_ComboBoxList<ModOptionValue>>();
             this.controlCombo.OnValueChanged += ControlCombo_OnValueChanged;
             this.controlText = this.GetChildById("ControlText").GetChildByType<XUiC_TextInput>();
