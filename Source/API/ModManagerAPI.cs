@@ -62,7 +62,7 @@ namespace CustomModManager.API
                 this.instance = instance;
             }
 
-            public ModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString)
+            public ModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString) where T : IComparable<T>
             {
                 try
                 {
@@ -92,7 +92,7 @@ namespace CustomModManager.API
                 }
             }
 
-            public class ModSetting<T>
+            public class ModSetting<T> where T : IComparable<T>
             {
                 private readonly ModSettings settingsInstance;
                 private readonly string key;
@@ -128,6 +128,62 @@ namespace CustomModManager.API
                     catch
                     {
                         Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set tab key {tabKey} for mod setting {this.key}");
+                    }
+
+                    return this;
+                }
+
+                public ModSetting<T> SetMinimumValue(T minimumValue)
+                {
+                    try
+                    {
+                        TryInvokeMethod("SetMinimumValue", minimumValue);
+                    }
+                    catch
+                    {
+                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set minimum value for mod setting {this.key}");
+                    }
+
+                    return this;
+                }
+
+                public ModSetting<T> SetMaximumValue(T maximumValue)
+                {
+                    try
+                    {
+                        TryInvokeMethod("SetMaximumValue", maximumValue);
+                    }
+                    catch
+                    {
+                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set maximum value for mod setting {this.key}");
+                    }
+
+                    return this;
+                }
+
+                public ModSetting<T> SetIncrementValue(T incrementValue)
+                {
+                    try
+                    {
+                        TryInvokeMethod("SetIncrementValue", incrementValue);
+                    }
+                    catch
+                    {
+                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set increment value for mod setting {this.key}");
+                    }
+
+                    return this;
+                }
+
+                public ModSetting<T> SetWrap(bool wrap)
+                {
+                    try
+                    {
+                        TryInvokeMethod("SetWrap", wrap);
+                    }
+                    catch
+                    {
+                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set wrap flag for mod setting {this.key}");
                     }
 
                     return this;

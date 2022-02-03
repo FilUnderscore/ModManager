@@ -1,9 +1,14 @@
 ﻿using UnityEngine;
 
+using HarmonyLib;
+using System.Reflection;
+
 namespace CustomModManager.UI
 {
     public class XUiC_ModSettingSelector : XUiController
     {
+        private static readonly FieldInfo WrapField = AccessTools.Field(typeof(XUiC_ComboBox<ModOptionValue>), "Wrap");
+
         private XUiC_ComboBoxList<ModOptionValue> controlCombo;
         private XUiC_TextInput controlText;
 
@@ -55,8 +60,13 @@ namespace CustomModManager.UI
                 }
             }
 
+            this.controlCombo.MinIndex = 0;
+            this.controlCombo.MaxIndex = allowedValues.Length;
+
             if (!detectedSetting)
                 this.controlCombo.SelectedIndex = this.controlCombo.MinIndex;
+
+            WrapField.SetValue(this.controlCombo, this.modSetting.GetWrap());
         }
 
         private bool IsTextInput()

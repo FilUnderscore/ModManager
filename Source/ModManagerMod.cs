@@ -7,6 +7,7 @@ namespace CustomModManager
     public class ModManagerMod : IModApi
     {
         private bool showPatchNotesOnStartup = true;
+        int tester;
         
         public ModManagerMod()
         {
@@ -27,6 +28,12 @@ namespace CustomModManager
                     bool result = bool.TryParse(str, out bool val);
                     return (val, result);
                 }).SetAllowedValues(new bool[] { true, false });
+
+                settings.Hook("test", "test", value => tester = value, () => tester, (value) => value.ToString(), str =>
+                {
+                    bool result = int.TryParse(str, out int val);
+                    return (val, result);
+                }).SetMinimumValue(0).SetMaximumValue(100).SetIncrementValue(10).SetWrap(false);
             }
         }
     }

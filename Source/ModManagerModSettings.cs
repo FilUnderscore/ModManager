@@ -26,7 +26,7 @@ namespace CustomModManager
             modSettingsInstances.Add(entry, this);
         }
 
-        public IModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T,string> toString, Func<string, (T, bool)> fromString)
+        public IModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T,string> toString, Func<string, (T, bool)> fromString) where T : IComparable<T>
         {
             if(settings.ContainsKey(key))
             {
@@ -93,15 +93,21 @@ namespace CustomModManager
             internal abstract void SetLastValueInternal();
 
             public abstract string GetTabKey();
+
+            public abstract bool GetWrap();
         }
 
-        internal class ModSetting<T> : BaseModSetting, IModSetting<T>
+        internal class ModSetting<T> : BaseModSetting, IModSetting<T> where T : IComparable<T>
         {
             private readonly T defaultValue;
             private T savedValue;
             private T[] allowedValues;
             private string tab;
 
+            private T minimumValue;
+            private T maximumValue;
+            private bool wrap;
+            
             private Action<T> setCallback;
             private Func<T> getCallback;
             private Func<T, string> toString;
@@ -199,6 +205,54 @@ namespace CustomModManager
             public override string GetTabKey()
             {
                 return this.tab;
+            }
+
+            public void SetMinimumValue(T value)
+            {
+                this.minimumValue = value;
+            }
+
+            public void SetMaximumValue(T value)
+            {
+                this.maximumValue = value;
+            }
+
+            public void SetIncrementValue(T value)
+            {
+                if(!float.TryParse(toString(value), out float valueAsFloat))
+                    return;
+
+                if (!float.TryParse(toString(minimumValue), out float minimumValueAsFloat))
+                    return;
+
+                if (!float.TryParse(toString(maximumValue), out float maximumValueAsFloat))
+                    return;
+
+                List<T> values = new List<T>();
+                for(float v = minimumValueAsFloat; v < (maximumValueAsFloat + valueAsFloat); v += valueAsFloat)
+                {
+                    string str = v.ToString();
+
+                    if(typeof(T) == typeof(int) && str.Contains("."))
+                        str = str.Substring(0, str.IndexOf("."));
+
+                    (T calculatedValue, bool success) = fromString(str);
+
+                    if (success)
+                        values.Add(calculatedValue);
+                }
+
+                SetAllowedValues(values.ToArray());
+            }
+
+            public void SetWrap(bool wrap)
+            {
+                this.wrap = wrap;
+            }
+
+            public override bool GetWrap()
+            {
+                return this.wrap;
             }
         }
     }
