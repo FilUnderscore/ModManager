@@ -62,7 +62,7 @@ namespace CustomModManager.API
                 this.instance = instance;
             }
 
-            public ModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, (string unformatted, string formatted)> toString, Func<string, (T, bool)> fromString) where T : IComparable<T>
+            public ModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, (string unformatted, string formatted)> toString, Func<string, (T, bool)> fromString)
             {
                 try
                 {
@@ -79,7 +79,7 @@ namespace CustomModManager.API
                 return null;
             }
 
-            public ModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString) where T : IComparable<T>
+            public ModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString)
             {
                 return Hook(key, nameUnlocalized, setCallback, getCallback, (value) =>
                 {
@@ -101,7 +101,7 @@ namespace CustomModManager.API
                 }
             }
 
-            public class ModSetting<T> where T : IComparable<T>
+            public class ModSetting<T>
             {
                 private readonly ModSettings settingsInstance;
                 private readonly string key;
