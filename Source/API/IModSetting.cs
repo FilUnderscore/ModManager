@@ -2,13 +2,12 @@
 
 namespace CustomModManager.API
 {
-    public interface IModSetting<T> where T : IComparable<T>
+    public interface IModSetting<T>
     {
         void SetAllowedValues(T[] values);
         void SetTab(string tabKey);
-        void SetMinimumValue(T value);
-        void SetMaximumValue(T value);
-        void SetIncrementValue(T value);
+        void SetMinimumMaximumAndIncrementValues(T minimumValue, T maximumValue, T incrementValue);
         void SetWrap(bool wrap);
+        void SetDisplayFormat(Func<T, string> displayGetter);
     }
 }

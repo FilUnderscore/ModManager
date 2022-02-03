@@ -133,43 +133,15 @@ namespace CustomModManager.API
                     return this;
                 }
 
-                public ModSetting<T> SetMinimumValue(T minimumValue)
+                public ModSetting<T> SetMinimumMaximumAndIncrementValues(T minimumValue, T maximumValue, T incrementValue)
                 {
                     try
                     {
-                        TryInvokeMethod("SetMinimumValue", minimumValue);
+                        TryInvokeMethod("SetMinimumMaximumAndIncrementValues", minimumValue, maximumValue, incrementValue);
                     }
                     catch
                     {
-                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set minimum value for mod setting {this.key}");
-                    }
-
-                    return this;
-                }
-
-                public ModSetting<T> SetMaximumValue(T maximumValue)
-                {
-                    try
-                    {
-                        TryInvokeMethod("SetMaximumValue", maximumValue);
-                    }
-                    catch
-                    {
-                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set maximum value for mod setting {this.key}");
-                    }
-
-                    return this;
-                }
-
-                public ModSetting<T> SetIncrementValue(T incrementValue)
-                {
-                    try
-                    {
-                        TryInvokeMethod("SetIncrementValue", incrementValue);
-                    }
-                    catch
-                    {
-                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set increment value for mod setting {this.key}");
+                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set minimum/maximum/increment values for mod setting {this.key}");
                     }
 
                     return this;
@@ -184,6 +156,20 @@ namespace CustomModManager.API
                     catch
                     {
                         Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set wrap flag for mod setting {this.key}");
+                    }
+
+                    return this;
+                }
+
+                public ModSetting<T> SetDisplayFormat(Func<T, string> displayGetter)
+                {
+                    try
+                    {
+                        TryInvokeMethod("SetDisplayFormat", displayGetter);
+                    }
+                    catch
+                    {
+                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set display format for mod setting {this.key}");
                     }
 
                     return this;

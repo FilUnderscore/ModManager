@@ -86,7 +86,7 @@ namespace CustomModManager
 
             public abstract void Reset();
 
-            public abstract string[] GetAllowedValuesAsStrings();
+            public abstract string[] GetAllowedValuesAsStrings(bool formatted);
 
             public abstract Type GetValueType();
 
@@ -97,21 +97,21 @@ namespace CustomModManager
             public abstract bool GetWrap();
         }
 
-        internal class ModSetting<T> : BaseModSetting, IModSetting<T> where T : IComparable<T>
+        internal class ModSetting<T> : BaseModSetting, IModSetting<T>
         {
             private readonly T defaultValue;
             private T savedValue;
             private T[] allowedValues;
             private string tab;
 
-            private T minimumValue;
-            private T maximumValue;
             private bool wrap;
             
             private Action<T> setCallback;
             private Func<T> getCallback;
             private Func<T, string> toString;
             private Func<string, (T, bool)> fromString;
+
+            private Func<T, string> displayGetter;
 
             public ModSetting(string unlocalizedName, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString) : base(unlocalizedName)
             {
@@ -161,7 +161,7 @@ namespace CustomModManager
                 savedValue = GetValue();
             }
 
-            public override string[] GetAllowedValuesAsStrings()
+            public override string[] GetAllowedValuesAsStrings(bool formatted)
             {
                 if (allowedValues == null)
                     return null;
@@ -173,7 +173,7 @@ namespace CustomModManager
                     if (value == null)
                         continue;
 
-                    values.Add(toString(value));
+                    values.Add(formatted && displayGetter != null ? displayGetter(value) : toString(value));
                 }
 
                 return values.ToArray();
@@ -207,29 +207,15 @@ namespace CustomModManager
                 return this.tab;
             }
 
-            public void SetMinimumValue(T value)
+            public void SetMinimumMaximumAndIncrementValues(T minimumValue, T maximumValue, T incrementValue)
             {
-                this.minimumValue = value;
-            }
-
-            public void SetMaximumValue(T value)
-            {
-                this.maximumValue = value;
-            }
-
-            public void SetIncrementValue(T value)
-            {
-                if(!float.TryParse(toString(value), out float valueAsFloat))
-                    return;
-
-                if (!float.TryParse(toString(minimumValue), out float minimumValueAsFloat))
-                    return;
-
-                if (!float.TryParse(toString(maximumValue), out float maximumValueAsFloat))
+                if(!float.TryParse(toString(minimumValue), out float minimumValueAsFloat) ||
+                    !float.TryParse(toString(maximumValue), out float maximumValueAsFloat) ||
+                    !float.TryParse(toString(incrementValue), out float incrementValueAsFloat))
                     return;
 
                 List<T> values = new List<T>();
-                for(float v = minimumValueAsFloat; v < (maximumValueAsFloat + valueAsFloat); v += valueAsFloat)
+                for(float v = minimumValueAsFloat; v < (maximumValueAsFloat + incrementValueAsFloat); v += incrementValueAsFloat)
                 {
                     string str = v.ToString();
 
@@ -248,6 +234,11 @@ namespace CustomModManager
             public void SetWrap(bool wrap)
             {
                 this.wrap = wrap;
+            }
+
+            public void SetDisplayFormat(Func<T, string> displayGetter)
+            {
+                this.displayGetter = displayGetter;
             }
 
             public override bool GetWrap()

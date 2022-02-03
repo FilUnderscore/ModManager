@@ -27,13 +27,13 @@ namespace CustomModManager
                 {
                     bool result = bool.TryParse(str, out bool val);
                     return (val, result);
-                }).SetAllowedValues(new bool[] { true, false });
+                }).SetAllowedValues(new bool[] { true, false }).SetWrap(true);
 
                 settings.Hook("test", "test", value => tester = value, () => tester, (value) => value.ToString(), str =>
                 {
                     bool result = int.TryParse(str, out int val);
                     return (val, result);
-                }).SetMinimumValue(0).SetMaximumValue(100).SetIncrementValue(10).SetWrap(false);
+                }).SetMinimumMaximumAndIncrementValues(0, 100, 10).SetWrap(false).SetDisplayFormat(value => value.ToString() + "%");
             }
         }
     }

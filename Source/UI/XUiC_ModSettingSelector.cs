@@ -46,12 +46,13 @@ namespace CustomModManager.UI
         private void SetupOptions()
         {
             this.controlCombo.Elements.Clear();
-            
-            string[] allowedValues = this.modSetting.GetAllowedValuesAsStrings();
+
+            string[] allowedValues = this.modSetting.GetAllowedValuesAsStrings(false);
+            string[] formattedAllowedValues = this.modSetting.GetAllowedValuesAsStrings(true);
             bool detectedSetting = false;
             for (int index = 0; index < allowedValues.Length; index++)
             {
-                this.controlCombo.Elements.Add(new ModOptionValue(allowedValues[index]));
+                this.controlCombo.Elements.Add(new ModOptionValue(formattedAllowedValues[index], allowedValues[index]));
 
                 if(allowedValues[index] == this.modSetting.GetValueAsString())
                 {
@@ -71,7 +72,7 @@ namespace CustomModManager.UI
 
         private bool IsTextInput()
         {
-            return this.modSetting != null ? this.modSetting.GetAllowedValuesAsStrings() == null : true;
+            return this.modSetting != null ? this.modSetting.GetAllowedValuesAsStrings(false) == null : true;
         }
 
         public override bool GetBindingValue(ref string _value, string _bindingName)
@@ -101,16 +102,18 @@ namespace CustomModManager.UI
 
         public struct ModOptionValue
         {
+            public readonly string Display;
             public readonly string Value;
 
-            public ModOptionValue(string value)
+            public ModOptionValue(string display, string value)
             {
+                this.Display = display;
                 this.Value = value;
             }
 
             public override string ToString()
             {
-                return this.Value;
+                return this.Display;
             }
         }
     }
