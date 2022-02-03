@@ -13,35 +13,25 @@ namespace CustomModManager
         internal readonly Dictionary<string, BaseModSetting> settings = new Dictionary<string, BaseModSetting>();
         internal static readonly Dictionary<string, Dictionary<string, string>> loadedSettings = new Dictionary<string, Dictionary<string, string>>();
 
+        internal static bool changed = false;
+        private readonly Dictionary<string, string> loadedSettingsInstance;
+
         public ModManagerModSettings(Mod mod)
         {
             this.entry = CustomModManager.GetModEntryFromModInstance(mod);
-            this.Load();
+            loadedSettingsInstance = loadedSettings.ContainsKey(this.entry.info.Name.Value) ? loadedSettings[this.entry.info.Name.Value] : new Dictionary<string, string>();
 
             modSettingsInstances.Add(entry, this);
         }
 
         public void Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T,string> toString, Func<string, (T, bool)> fromString, T[] allowedValues)
         {
-            settings.Add(key, new ModSetting<T>(nameUnlocalized, setCallback, getCallback, toString, fromString, allowedValues));
-        }
+            ModSetting<T> setting = new ModSetting<T>(nameUnlocalized, setCallback, getCallback, toString, fromString, allowedValues);
+            settings.Add(key, setting);
 
-        public void Load()
-        {
-            if (!loadedSettings.ContainsKey(this.entry.info.Name.Value))
-                return;
-
-            Dictionary<string, string> settingsAsStrings = loadedSettings[this.entry.info.Name.Value];
-
-            foreach(var settingAsStringEntry in settingsAsStrings)
+            if(loadedSettingsInstance.ContainsKey(key))
             {
-                var settingKey = settingAsStringEntry.Key;
-                var settingAsString = settingAsStringEntry.Value;
-                
-                if(settings.ContainsKey(settingKey))
-                {
-                    settings[settingKey].SetValueFromString(settingAsString);
-                }
+                setting.SetValueFromStringInternal(loadedSettingsInstance[key], true);
             }
         }
 
@@ -56,18 +46,26 @@ namespace CustomModManager
 
             public abstract string GetValueAsString();
 
-            public abstract bool SetValueFromString(string str);
+            internal abstract bool SetValueFromStringInternal(string str, bool loaded);
+            
+            public bool SetValueFromString(string str)
+            {
+                return SetValueFromStringInternal(str, false);
+            }
 
             public abstract void Reset();
 
             public abstract string[] GetAllowedValuesAsStrings();
 
             public abstract Type GetValueType();
+
+            internal abstract void SetLastValueInternal();
         }
 
         internal class ModSetting<T> : BaseModSetting
         {
             private readonly T defaultValue;
+            private T savedValue;
             private readonly T[] allowedValues;
 
             private Action<T> setCallback;
@@ -88,6 +86,7 @@ namespace CustomModManager
 
             public void SetValue(T newValue)
             {
+                changed = !newValue.Equals(savedValue);
                 setCallback(newValue);
             }
 
@@ -101,14 +100,28 @@ namespace CustomModManager
                 return toString(GetValue());
             }
 
-            public override bool SetValueFromString(string str)
+            internal override bool SetValueFromStringInternal(string str, bool loaded)
             {
                 (T value, bool success) = fromString(str);
-                
-                if(success)
+
+                Log.Out($"Load {success} from {str}");
+
+                if (success)
+                {
                     SetValue(value);
 
+                    if(loaded)
+                    {
+                        SetLastValueInternal();
+                    }
+                }
+
                 return success;
+            }
+
+            internal override void SetLastValueInternal()
+            {
+                savedValue = GetValue();
             }
 
             public override string[] GetAllowedValuesAsStrings()

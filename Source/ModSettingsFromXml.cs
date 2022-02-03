@@ -69,6 +69,9 @@ namespace CustomModManager
 
         internal static void Save()
         {
+            if (!ModManagerModSettings.changed)
+                return;
+
             XmlDocument xmlDoc = new XmlDocument();
             XmlElement settingsRoot = xmlDoc.AddXmlElement("mod_settings");
 
@@ -89,12 +92,16 @@ namespace CustomModManager
                     settingElement.SetAttribute("key", key);
                     settingElement.SetAttribute("value", setting.GetValueAsString());
                     modElement.AppendChild(settingElement);
+
+                    setting.SetLastValueInternal();
                 }
 
                 settingsRoot.AppendChild(modElement);
             }
 
             xmlDoc.Save(CustomModManager.GetSettingsFileLocation());
+
+            ModManagerModSettings.changed = false;
         }
     }
 }

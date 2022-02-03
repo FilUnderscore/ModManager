@@ -21,8 +21,6 @@ namespace CustomModManager.UI
 
         private readonly List<XUiC_ModSettingSelector> modSettingSelectorList = new List<XUiC_ModSettingSelector>();
 
-        private int page;
-
         public override void Init()
         {
             base.Init();
