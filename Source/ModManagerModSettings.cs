@@ -13,6 +13,8 @@ namespace CustomModManager
         internal readonly Dictionary<string, BaseModSetting> settings = new Dictionary<string, BaseModSetting>();
         internal static readonly Dictionary<string, Dictionary<string, string>> loadedSettings = new Dictionary<string, Dictionary<string, string>>();
 
+        internal readonly Dictionary<string, ModSettingTab> settingTabs = new Dictionary<string, ModSettingTab>();
+
         internal static bool changed = false;
         private readonly Dictionary<string, string> loadedSettingsInstance;
 
@@ -26,6 +28,12 @@ namespace CustomModManager
 
         public IModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T,string> toString, Func<string, (T, bool)> fromString)
         {
+            if(settings.ContainsKey(key))
+            {
+                Log.Error($"[Mod Manager] [{this.entry.info.Name.Value}] A setting with key {key} already exists.");
+                return null;
+            }
+
             ModSetting<T> setting = new ModSetting<T>(nameUnlocalized, setCallback, getCallback, toString, fromString);
             settings.Add(key, setting);
 
@@ -39,7 +47,23 @@ namespace CustomModManager
 
         public void CreateTab(string key, string nameUnlocalized)
         {
+            if(settingTabs.ContainsKey(key))
+            {
+                Log.Error($"[Mod Manager] [{this.entry.info.Name.Value}] A tab with key {key} already exists.");
+                return;
+            }
 
+            settingTabs.Add(key, new ModSettingTab(nameUnlocalized));
+        }
+
+        public class ModSettingTab
+        {
+            public readonly string nameUnlocalized;
+
+            public ModSettingTab(string nameUnlocalized)
+            {
+                this.nameUnlocalized = nameUnlocalized;
+            }
         }
 
         public abstract class BaseModSetting

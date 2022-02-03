@@ -79,6 +79,19 @@ namespace CustomModManager.API
                 return null;
             }
 
+            public void CreateTab(string key, string nameUnlocalized)
+            {
+                try
+                {
+                    MethodInfo method = CORE_ASSEMBLY.GetType("CustomModManager.API.IModSettings").GetMethods().Single(m => m.Name == "CreateTab" && m.IsVirtual);
+                    method.Invoke(instance, new object[] { key, nameUnlocalized });
+                }
+                catch
+                {
+                    Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Failed to create Mod Setting tab. Perhaps an out-of-date API version is being used?");
+                }
+            }
+
             public class ModSetting<T>
             {
                 private readonly ModSettings settingsInstance;
