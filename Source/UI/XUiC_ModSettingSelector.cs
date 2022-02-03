@@ -45,10 +45,20 @@ namespace CustomModManager.UI
             this.controlCombo.Elements.Clear();
             
             string[] allowedValues = this.modSetting.GetAllowedValuesAsStrings();
+            bool detectedSetting = false;
             for (int index = 0; index < allowedValues.Length; index++)
             {
                 this.controlCombo.Elements.Add(new ModOptionValue(allowedValues[index]));
+
+                if(allowedValues[index] == this.modSetting.GetValueAsString())
+                {
+                    this.controlCombo.SelectedIndex = index;
+                    detectedSetting = true;
+                }
             }
+
+            if (!detectedSetting)
+                this.controlCombo.SelectedIndex = this.controlCombo.MinIndex;
         }
 
         private bool IsTextInput()

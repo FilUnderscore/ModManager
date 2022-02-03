@@ -21,9 +21,9 @@ namespace CustomModManager
             modSettingsInstances.Add(entry, this);
         }
 
-        public void Hook<T>(string key, string nameUnlocalized, string tooltip, Action<T> setCallback, Func<T> getCallback, Func<T,string> toString, Func<string, (T, bool)> fromString, T[] allowedValues)
+        public void Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T,string> toString, Func<string, (T, bool)> fromString, T[] allowedValues)
         {
-            settings.Add(key, new ModSetting<T>(nameUnlocalized, tooltip, setCallback, getCallback, toString, fromString, allowedValues));
+            settings.Add(key, new ModSetting<T>(nameUnlocalized, setCallback, getCallback, toString, fromString, allowedValues));
         }
 
         public void Load()
@@ -48,12 +48,10 @@ namespace CustomModManager
         public abstract class BaseModSetting
         {
             public readonly string unlocalizedName;
-            public readonly string tooltip;
-
-            public BaseModSetting(string unlocalizedName, string tooltip)
+            
+            public BaseModSetting(string unlocalizedName)
             {
                 this.unlocalizedName = unlocalizedName;
-                this.tooltip = tooltip;
             }
 
             public abstract string GetValueAsString();
@@ -77,7 +75,7 @@ namespace CustomModManager
             private Func<T, string> toString;
             private Func<string, (T, bool)> fromString;
 
-            public ModSetting(string unlocalizedName, string tooltip, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString, T[] allowedValues) : base(unlocalizedName, tooltip)
+            public ModSetting(string unlocalizedName, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString, T[] allowedValues) : base(unlocalizedName)
             {
                 this.setCallback = setCallback;
                 this.getCallback = getCallback;

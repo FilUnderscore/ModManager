@@ -70,11 +70,11 @@
 						</panel>
 						
 						<panel name="settingsPanel" depth="4" disableautobackground="true">
-							<grid name="settings" pos="6,-40" rows="6" cols="1" cell_width="262" cell_height="45" repeat_content="true" arrangement="horizontal">
+							<grid name="settings" pos="6,-56" rows="12" cols="1" cell_width="262" cell_height="45" repeat_content="true" arrangement="horizontal">
 								<modoption depth="4" width="262" height="45"/>
 							</grid>
 							
-							<simplebutton name="resetSettingsButton" depth="4" pos="385,-570" width="200" height="36" font_size="32" caption_key="xuiModReset"/>
+							<simplebutton name="resetSettingsButton" depth="4" pos="385,-570" width="200" height="36" font_size="32" caption_key="xuiModSettingsReset"/>
 						</panel>
 					</rect>
 				</rect>

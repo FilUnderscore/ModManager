@@ -62,12 +62,12 @@ namespace CustomModManager.API
                 this.instance = instance;
             }
 
-            public void Hook<T>(string key, string nameUnlocalized, string tooltip, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString, T[] allowedValues = null)
+            public void Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString, T[] allowedValues = null)
             {
                 try
                 {
                     MethodInfo method = CORE_ASSEMBLY.GetType("CustomModManager.API.IModSettings").GetMethods().Single(m => m.Name == "Hook" && m.IsGenericMethod && m.IsVirtual).MakeGenericMethod(typeof(T));
-                    method.Invoke(instance, new object[] { key, nameUnlocalized, tooltip, setCallback, getCallback, toString, fromString, allowedValues });
+                    method.Invoke(instance, new object[] { key, nameUnlocalized, setCallback, getCallback, toString, fromString, allowedValues });
                 }
                 catch
                 {

@@ -16,6 +16,8 @@ namespace CustomModManager.UI
         private XUiV_Panel settingsPanel;
         private XUiV_Panel pagerPanel;
 
+        private XUiC_SimpleButton resetButton;
+
         private readonly List<XUiC_ModSettingSelector> modSettingSelectorList = new List<XUiC_ModSettingSelector>();
 
         private int page;
@@ -28,16 +30,27 @@ namespace CustomModManager.UI
             this.settingsPanel = (XUiV_Panel)this.GetChildById("settingsPanel").ViewComponent;
             this.pagerPanel = (XUiV_Panel)this.GetChildById("pagerPanel").ViewComponent;
 
+            this.resetButton = (XUiC_SimpleButton) this.GetChildById("resetSettingsButton");
+            this.resetButton.OnPressed += ResetButton_OnPressed;
+
             foreach (XUiC_ModSettingSelector xuiCModSettingSelector in this.GetChildById("settings").GetChildrenByType<XUiC_ModSettingSelector>())
             {
                 modSettingSelectorList.Add(xuiCModSettingSelector);
             }
         }
 
-        public override void OnOpen()
+        private void ResetButton_OnPressed(XUiController _sender, int _mouseButton)
         {
-            base.OnOpen();
+            if (currentModEntry == null || !ModManagerModSettings.modSettingsInstances.ContainsKey(currentModEntry))
+                return;
 
+            foreach(var settingEntry in ModManagerModSettings.modSettingsInstances[currentModEntry].settings)
+            {
+                var setting = settingEntry.Value;
+
+                setting.Reset();
+                this.UpdateView(true);
+            }
         }
 
         internal void UpdateView(bool visible)
@@ -45,11 +58,12 @@ namespace CustomModManager.UI
             if (currentModEntry == null || !ModManagerModSettings.modSettingsInstances.ContainsKey(currentModEntry))
                 return;
 
-            bool anySettings = ModManagerModSettings.modSettingsInstances[currentModEntry].settings.Count > 0;
+            int settingsCount = ModManagerModSettings.modSettingsInstances[currentModEntry].settings.Count;
+            bool anySettings = settingsCount > 0;
 
             this.noModSettingsDetectedLabel.IsVisible = visible && !anySettings;
             this.settingsPanel.IsVisible = visible && anySettings;
-            this.pagerPanel.IsVisible = visible && anySettings;
+            this.pagerPanel.IsVisible = visible && anySettings && settingsCount > modSettingSelectorList.Count;
 
             foreach(var selector in modSettingSelectorList)
             {
@@ -70,20 +84,6 @@ namespace CustomModManager.UI
                 selector.UpdateModSetting(key, setting);
 
                 entryIndex++;
-            }
-        }
-
-        public override bool GetBindingValue(ref string _value, string _bindingName)
-        {
-            Log.Out(_bindingName);
-            switch(_bindingName)
-            {
-                case "isvisible":
-                    _value = (currentModEntry != null && ModManagerModSettings.modSettingsInstances.ContainsKey(currentModEntry) && ModManagerModSettings.modSettingsInstances[currentModEntry].settings.Count > 0).ToString();
-                    Log.Out(_value);
-                    return true;
-                default:
-                    return false;
             }
         }
     }
