@@ -23,17 +23,17 @@ namespace CustomModManager
             {
                 ModManagerAPI.ModSettings settings = ModManagerAPI.GetModSettings(_modInstance);
 
-                settings.Hook("showPatchNotesOnStartup", "xuiModManagerShowPatchNotesOnStartupSetting", value => showPatchNotesOnStartup = value, () => showPatchNotesOnStartup, (value) => value.ToString(), (str) =>
+                settings.Hook("showPatchNotesOnStartup", "xuiModManagerShowPatchNotesOnStartupSetting", value => showPatchNotesOnStartup = value, () => showPatchNotesOnStartup, (value) => (value.ToString(), value ? "Yes" : "No"), (str) =>
                 {
                     bool result = bool.TryParse(str, out bool val);
                     return (val, result);
                 }).SetAllowedValues(new bool[] { true, false }).SetWrap(true);
 
-                settings.Hook("test", "test", value => tester = value, () => tester, (value) => value.ToString(), str =>
+                settings.Hook("test", "test", value => tester = value, () => tester, (value) => (value.ToString(), value.ToString() + "%"), str =>
                 {
                     bool result = int.TryParse(str, out int val);
                     return (val, result);
-                }).SetMinimumMaximumAndIncrementValues(0, 100, 10).SetWrap(false).SetDisplayFormat(value => value.ToString() + "%");
+                }).SetMinimumMaximumAndIncrementValues(0, 100, 10).SetWrap(false);
             }
         }
     }

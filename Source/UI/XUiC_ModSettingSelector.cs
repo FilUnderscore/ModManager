@@ -24,6 +24,7 @@ namespace CustomModManager.UI
             this.controlCombo.OnValueChanged += ControlCombo_OnValueChanged;
             this.controlText = this.GetChildById("ControlText").GetChildByType<XUiC_TextInput>();
             this.controlText.OnChangeHandler += ControlText_OnChangeHandler;
+            this.controlText.OnInputAbortedHandler += ControlText_OnInputAbortedHandler;
         }
 
         public void UpdateModSetting(string key, ModManagerModSettings.BaseModSetting modSetting)
@@ -35,7 +36,7 @@ namespace CustomModManager.UI
                 if(!this.IsTextInput())
                     this.SetupOptions();
                 else
-                    this.controlText.Text = this.modSetting.GetValueAsString();
+                    this.controlText.Text = this.modSetting.GetValueAsString().formatted;
 
                 this.RefreshBindings(true);
                 this.controlCombo.ViewComponent.IsVisible = !this.IsTextInput();
@@ -47,12 +48,11 @@ namespace CustomModManager.UI
         {
             this.controlCombo.Elements.Clear();
 
-            string[] allowedValues = this.modSetting.GetAllowedValuesAsStrings(false);
-            string[] formattedAllowedValues = this.modSetting.GetAllowedValuesAsStrings(true);
+            (string unformatted, string formatted)[] allowedValues = this.modSetting.GetAllowedValuesAsStrings();
             bool detectedSetting = false;
             for (int index = 0; index < allowedValues.Length; index++)
             {
-                this.controlCombo.Elements.Add(new ModOptionValue(formattedAllowedValues[index], allowedValues[index]));
+                this.controlCombo.Elements.Add(new ModOptionValue(allowedValues[index].formatted, allowedValues[index].unformatted));
 
                 if(allowedValues[index] == this.modSetting.GetValueAsString())
                 {
@@ -72,7 +72,7 @@ namespace CustomModManager.UI
 
         private bool IsTextInput()
         {
-            return this.modSetting != null ? this.modSetting.GetAllowedValuesAsStrings(false) == null : true;
+            return this.modSetting != null ? this.modSetting.GetAllowedValuesAsStrings() == null : true;
         }
 
         public override bool GetBindingValue(ref string _value, string _bindingName)
@@ -87,12 +87,23 @@ namespace CustomModManager.UI
             }
         }
 
+        private bool validTextInput;
+
         private void ControlText_OnChangeHandler(XUiController _sender, string _text, bool _changeFromCode)
         {
             if (!this.IsTextInput())
                 return;
 
-            this.controlText.ActiveTextColor = this.modSetting.SetValueFromString(_text) ? Color.white : Color.red;
+            validTextInput = this.modSetting.SetValueFromString(_text);
+            this.controlText.ActiveTextColor = validTextInput ? Color.white : Color.red;
+        }
+
+        private void ControlText_OnInputAbortedHandler(XUiController _sender)
+        {
+            if (!validTextInput)
+                return;
+
+            this.controlText.Text = this.modSetting.GetValueAsString().formatted;
         }
 
         private void ControlCombo_OnValueChanged(XUiController _sender, ModOptionValue _oldValue, ModOptionValue _newValue)

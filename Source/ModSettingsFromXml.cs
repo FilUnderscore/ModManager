@@ -90,7 +90,7 @@ namespace CustomModManager
 
                     XmlElement settingElement = modElement.AddXmlElement("setting");
                     settingElement.SetAttribute("key", key);
-                    settingElement.SetAttribute("value", setting.GetValueAsString());
+                    settingElement.SetAttribute("value", setting.GetValueAsString().unformatted);
                     modElement.AppendChild(settingElement);
 
                     setting.SetLastValueInternal();

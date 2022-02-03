@@ -62,7 +62,7 @@ namespace CustomModManager.API
                 this.instance = instance;
             }
 
-            public ModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString) where T : IComparable<T>
+            public ModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, (string, string)> toString, Func<string, (T, bool)> fromString) where T : IComparable<T>
             {
                 try
                 {
@@ -156,20 +156,6 @@ namespace CustomModManager.API
                     catch
                     {
                         Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set wrap flag for mod setting {this.key}");
-                    }
-
-                    return this;
-                }
-
-                public ModSetting<T> SetDisplayFormat(Func<T, string> displayGetter)
-                {
-                    try
-                    {
-                        TryInvokeMethod("SetDisplayFormat", displayGetter);
-                    }
-                    catch
-                    {
-                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set display format for mod setting {this.key}");
                     }
 
                     return this;

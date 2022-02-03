@@ -26,7 +26,7 @@ namespace CustomModManager
             modSettingsInstances.Add(entry, this);
         }
 
-        public IModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T,string> toString, Func<string, (T, bool)> fromString) where T : IComparable<T>
+        public IModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, (string, string)> toString, Func<string, (T, bool)> fromString) where T : IComparable<T>
         {
             if(settings.ContainsKey(key))
             {
@@ -75,7 +75,7 @@ namespace CustomModManager
                 this.unlocalizedName = unlocalizedName;
             }
 
-            public abstract string GetValueAsString();
+            public abstract (string unformatted, string formatted) GetValueAsString();
 
             internal abstract bool SetValueFromStringInternal(string str, bool loaded);
             
@@ -86,7 +86,7 @@ namespace CustomModManager
 
             public abstract void Reset();
 
-            public abstract string[] GetAllowedValuesAsStrings(bool formatted);
+            public abstract (string unformattedString, string formattedString)[] GetAllowedValuesAsStrings();
 
             public abstract Type GetValueType();
 
@@ -108,12 +108,10 @@ namespace CustomModManager
             
             private Action<T> setCallback;
             private Func<T> getCallback;
-            private Func<T, string> toString;
+            private Func<T, (string, string)> toString;
             private Func<string, (T, bool)> fromString;
 
-            private Func<T, string> displayGetter;
-
-            public ModSetting(string unlocalizedName, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString) : base(unlocalizedName)
+            public ModSetting(string unlocalizedName, Action<T> setCallback, Func<T> getCallback, Func<T, (string, string)> toString, Func<string, (T, bool)> fromString) : base(unlocalizedName)
             {
                 this.setCallback = setCallback;
                 this.getCallback = getCallback;
@@ -134,7 +132,7 @@ namespace CustomModManager
                 return getCallback();
             }
 
-            public override string GetValueAsString()
+            public override (string unformatted, string formatted) GetValueAsString()
             {
                 return toString(GetValue());
             }
@@ -161,19 +159,19 @@ namespace CustomModManager
                 savedValue = GetValue();
             }
 
-            public override string[] GetAllowedValuesAsStrings(bool formatted)
+            public override (string unformattedString, string formattedString)[] GetAllowedValuesAsStrings()
             {
                 if (allowedValues == null)
                     return null;
 
-                List<string> values = new List<string>();
+                List<(string, string)> values = new List<(string, string)>();
 
                 foreach(var value in allowedValues)
                 {
                     if (value == null)
                         continue;
 
-                    values.Add(formatted && displayGetter != null ? displayGetter(value) : toString(value));
+                    values.Add(toString(value));
                 }
 
                 return values.ToArray();
@@ -209,9 +207,9 @@ namespace CustomModManager
 
             public void SetMinimumMaximumAndIncrementValues(T minimumValue, T maximumValue, T incrementValue)
             {
-                if(!float.TryParse(toString(minimumValue), out float minimumValueAsFloat) ||
-                    !float.TryParse(toString(maximumValue), out float maximumValueAsFloat) ||
-                    !float.TryParse(toString(incrementValue), out float incrementValueAsFloat))
+                if(!float.TryParse(toString(minimumValue).Item1, out float minimumValueAsFloat) ||
+                    !float.TryParse(toString(maximumValue).Item1, out float maximumValueAsFloat) ||
+                    !float.TryParse(toString(incrementValue).Item1, out float incrementValueAsFloat))
                     return;
 
                 List<T> values = new List<T>();
@@ -234,11 +232,6 @@ namespace CustomModManager
             public void SetWrap(bool wrap)
             {
                 this.wrap = wrap;
-            }
-
-            public void SetDisplayFormat(Func<T, string> displayGetter)
-            {
-                this.displayGetter = displayGetter;
             }
 
             public override bool GetWrap()

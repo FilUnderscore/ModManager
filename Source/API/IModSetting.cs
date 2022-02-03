@@ -8,6 +8,5 @@ namespace CustomModManager.API
         void SetTab(string tabKey);
         void SetMinimumMaximumAndIncrementValues(T minimumValue, T maximumValue, T incrementValue);
         void SetWrap(bool wrap);
-        void SetDisplayFormat(Func<T, string> displayGetter);
     }
 }
