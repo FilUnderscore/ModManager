@@ -24,15 +24,22 @@ namespace CustomModManager
             modSettingsInstances.Add(entry, this);
         }
 
-        public void Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T,string> toString, Func<string, (T, bool)> fromString, T[] allowedValues)
+        public IModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T,string> toString, Func<string, (T, bool)> fromString)
         {
-            ModSetting<T> setting = new ModSetting<T>(nameUnlocalized, setCallback, getCallback, toString, fromString, allowedValues);
+            ModSetting<T> setting = new ModSetting<T>(nameUnlocalized, setCallback, getCallback, toString, fromString);
             settings.Add(key, setting);
 
             if(loadedSettingsInstance.ContainsKey(key))
             {
                 setting.SetValueFromStringInternal(loadedSettingsInstance[key], true);
             }
+
+            return setting;
+        }
+
+        public void CreateTab(string key, string nameUnlocalized)
+        {
+
         }
 
         public abstract class BaseModSetting
@@ -60,20 +67,23 @@ namespace CustomModManager
             public abstract Type GetValueType();
 
             internal abstract void SetLastValueInternal();
+
+            public abstract string GetTabKey();
         }
 
-        internal class ModSetting<T> : BaseModSetting
+        internal class ModSetting<T> : BaseModSetting, IModSetting<T>
         {
             private readonly T defaultValue;
             private T savedValue;
-            private readonly T[] allowedValues;
+            private T[] allowedValues;
+            private string tab;
 
             private Action<T> setCallback;
             private Func<T> getCallback;
             private Func<T, string> toString;
             private Func<string, (T, bool)> fromString;
 
-            public ModSetting(string unlocalizedName, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString, T[] allowedValues) : base(unlocalizedName)
+            public ModSetting(string unlocalizedName, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString) : base(unlocalizedName)
             {
                 this.setCallback = setCallback;
                 this.getCallback = getCallback;
@@ -81,7 +91,6 @@ namespace CustomModManager
                 this.fromString = fromString;
 
                 this.defaultValue = getCallback();
-                this.allowedValues = allowedValues;
             }
 
             public void SetValue(T newValue)
@@ -103,8 +112,6 @@ namespace CustomModManager
             internal override bool SetValueFromStringInternal(string str, bool loaded)
             {
                 (T value, bool success) = fromString(str);
-
-                Log.Out($"Load {success} from {str}");
 
                 if (success)
                 {
@@ -150,6 +157,24 @@ namespace CustomModManager
             public override Type GetValueType()
             {
                 return typeof(T);
+            }
+
+            public void SetAllowedValues(T[] values)
+            {
+                if (values == null)
+                    return;
+
+                allowedValues = values;
+            }
+
+            public void SetTab(string tabKey)
+            {
+                this.tab = tabKey;
+            }
+
+            public override string GetTabKey()
+            {
+                return this.tab;
             }
         }
     }

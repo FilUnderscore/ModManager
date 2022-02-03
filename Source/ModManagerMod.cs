@@ -26,7 +26,7 @@ namespace CustomModManager
                 {
                     bool result = bool.TryParse(str, out bool val);
                     return (val, result);
-                }, new bool[] { true, false });
+                }).SetAllowedValues(new bool[] { true, false });
             }
         }
     }
