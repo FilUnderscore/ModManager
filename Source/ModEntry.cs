@@ -16,17 +16,18 @@ namespace CustomModManager
         private readonly bool isLoaded = false;
         private bool? willBeEnabled = null;
 
+        public readonly ModManifest manifest;
+
         public ModEntry(string folderName, ModInfo.ModInfo info)
         {
             this.folderName = folderName;
             this.info = info;
+            this.manifest = ModManifestFromXml.FromXml(this);
         }
 
-        public ModEntry(string folderName, Mod mod, EModDisableState modDisableState)
+        public ModEntry(string folderName, Mod mod, EModDisableState modDisableState) : this(folderName, mod.ModInfo)
         {
-            this.folderName = folderName;
             this.instance = mod;
-            this.info = mod.ModInfo;
 
             this.isLoaded = true;
 
@@ -83,9 +84,9 @@ namespace CustomModManager
             }
         }
 
-        public bool HasUpdateAvailable() // TODO: Manifest
+        public bool HasUpdateAvailable()
         {
-            return true;
+            return manifest != null && manifest.NewVersionAvailable();
         }
     }
 }

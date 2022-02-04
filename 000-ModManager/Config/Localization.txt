@@ -15,3 +15,11 @@ xuiNoModSettingsDetected,UI,XUI,x,,No mod settings were detected.
 xuiModSettingsReset,UI,XUI,x,,Reset
 xuiModManagerShowPatchNotesOnStartupSetting,UI,XUI,x,,Show Patch Notes On Startup
 xuiModManagerShowPatchNotesOnStartupSettingDesc,UI,XUI,x,,Whether to show patch notes from new mod updates when starting up new versions for the first time.
+xuiModVersionTooltipCurrentVersion,UI,XUI,x,,Installed Version
+xuiModVersionTooltipForGameVersion,UI,XUI,x,,For Game Version
+xuiModVersionTooltipAnUpdateIsAvailable,UI,XUI,x,,An update is available
+xuiModVersionTooltipCurrentVersionMayNotBeCompatible,UI,XUI,x,,This mod version may not be compatible with the current game version. Use at your own risk.
+xuiModVersionTooltipCurrentVersionNotCompatible,UI,XUI,x,,This mod version is not compatible with the current game version.
+xuiModVersionTooltipCurrentVersionNotSpecifiedNoManifestExists,UI,XUI,x,,Could not check version compatibility as no remote manifest has been found.
+xuiModVersionTooltipCurrentVersionNotSpecifiedManifest,UI,XUI,x,,Could not check version compatibility as no version has been specified in the remote manifest.
+xuiModVersionTooltipUpToDate,UI,XUI,x,,This mod is up to date.

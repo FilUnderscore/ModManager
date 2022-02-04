@@ -8,7 +8,10 @@ namespace CustomModManager.UI
 {
     public class XUiC_ModsList : XUiC_List<XUiC_ModsList.ListEntry>
     {
-        private static string ModVersionColor = "0,255,0,255";
+        private static string ModVersionCompatibleColor = "0,255,0,255";
+        private static string ModVersionNotCompatibleColor = "255,0,0,255";
+        private static string ModVersionMayNotBeCompatibleColor = "255,216,0,255";
+        
         private static string ModEnabledColor = "0,255,0,255";
         private static string ModDisabledColor = "255,0,0,255";
         private static string ModEnabledChangeColor = "255,165,0,255";
@@ -73,10 +76,70 @@ namespace CustomModManager.UI
                         _value = modInfo.Version.Value + (modEntry.HasUpdateAvailable() ? "\u2191" : "");
                         return true;
                     case "modVersionColor":
-                        _value = ModVersionColor;
+                        if (modEntry.manifest != null)
+                        {
+                            ModManifest.EVersionUpdateComparisonResult versionUpdateComparisonResult = modEntry.manifest.CurrentVersionCompatibleWithDifferentGameVersion();
+                            ModManifest.EVersionComparisonResult versionComparisonResult = modEntry.manifest.CurrentVersionCompatibleWithGameVersion();
+
+                            if (versionUpdateComparisonResult == ModManifest.EVersionUpdateComparisonResult.Compatible || versionComparisonResult == ModManifest.EVersionComparisonResult.Compatible)
+                            {
+                                _value = ModVersionCompatibleColor;
+                            }
+                            else if(versionUpdateComparisonResult == ModManifest.EVersionUpdateComparisonResult.May_Not_Be_Compatible)
+                            {
+                                _value = ModVersionMayNotBeCompatibleColor;
+                            }
+                            else if(versionUpdateComparisonResult == ModManifest.EVersionUpdateComparisonResult.Not_Compatible)
+                            {
+                                _value = ModVersionNotCompatibleColor;
+                            }
+                        }
+
                         return true;
                     case "modVersionTooltip":
-                        _value = Localization.Get("xuiModVersionTooltip");
+                        _value = Localization.Get("xuiModVersionTooltipCurrentVersion") + ": " + modInfo.Version.Value;
+
+                        if (modEntry.manifest != null)
+                        {
+                            if (modEntry.manifest.GameVersionInformation != null)
+                            {
+                                _value += "\n" + Localization.Get("xuiModVersionTooltipForGameVersion") + ": " + modEntry.manifest.GameVersionInformation.LongString;
+                            }
+
+                            if (modEntry.HasUpdateAvailable())
+                            {
+                                _value += "\n\n" + Localization.Get("xuiModVersionTooltipAnUpdateIsAvailable") + ": " + modEntry.manifest.RemoteManifest.Version;
+                                
+                                if (modEntry.manifest.RemoteManifest.GameVersionInformation != null)
+                                {
+                                    _value += "\n" + Localization.Get("xuiModVersionTooltipForGameVersion") + ": " + modEntry.manifest.RemoteManifest.GameVersionInformation.LongString;
+                                }
+                            }
+                            else if(modEntry.manifest != null && modEntry.manifest.UpToDate())
+                            {
+                                _value += "\n\n" + Localization.Get("xuiModVersionTooltipUpToDate");
+                            }
+
+                            ModManifest.EVersionUpdateComparisonResult versionUpdateComparisonResult = modEntry.manifest.CurrentVersionCompatibleWithDifferentGameVersion();
+
+                            if (versionUpdateComparisonResult == ModManifest.EVersionUpdateComparisonResult.May_Not_Be_Compatible)
+                            {
+                                _value += "\n\n" + Localization.Get("xuiModVersionTooltipCurrentVersionMayNotBeCompatible");
+                            }
+                            else if (versionUpdateComparisonResult == ModManifest.EVersionUpdateComparisonResult.Not_Compatible)
+                            {
+                                _value += "\n\n" + Localization.Get("xuiModVersionTooltipCurrentVersionNotCompatible");
+                            }
+
+                            if (versionUpdateComparisonResult != ModManifest.EVersionUpdateComparisonResult.Compatible)
+                            {
+                                ModManifest.EVersionComparisonResult versionComparisonResult = modEntry.manifest.CurrentVersionCompatibleWithGameVersion();
+
+                                if(versionComparisonResult == ModManifest.EVersionComparisonResult.Not_Compatible)
+                                    _value += "\n\n" + (modEntry.manifest.RemoteManifest == null ? Localization.Get("xuiModVersionTooltipCurrentVersionNotSpecifiedNoManifestExists") : Localization.Get("xuiModVersionTooltipCurrentVersionNotSpecifiedManifest"));
+                            }
+                        }
+
                         return true;
                     case "modEnabled":
                         _value = GetModLoadedLocalization(modEntry.IsLoaded()) + (ModEnabledWillBeUpdated() ? "" + " \u2192 " + GetModLoadedLocalization(modEntry.WillBeEnabled().Value) : "");
