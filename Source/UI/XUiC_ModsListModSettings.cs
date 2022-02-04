@@ -138,8 +138,8 @@ namespace CustomModManager.UI
                     settingsTabs.GetTabButton(tabIndex).Enabled = false;
 
                     tabIndex++;
-                }   
-                
+                }
+
                 foreach(var spacer in tabButtonSpacers)
                 {
                     spacer.IsVisible = true;
@@ -149,7 +149,7 @@ namespace CustomModManager.UI
 
                 this.backTabButton.Enabled = startingTabIndex > 0;
                 this.backTabButton.ViewComponent.IsVisible = true;
-                this.forwardTabButton.Enabled = startingTabIndex < tabCount - 3;
+                this.forwardTabButton.Enabled = startingTabIndex < tabCount - settingsTabs.TabCount;
                 this.forwardTabButton.ViewComponent.IsVisible = true;
             }
         }

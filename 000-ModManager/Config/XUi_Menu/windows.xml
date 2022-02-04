@@ -65,26 +65,26 @@
 					<rect name="modSettings" tab_key="xuiModSettings" controller="CustomModManager.UI.XUiC_ModsListModSettings, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
 						<label name="NoModSettingsDetected" depth="4" pos="6,-274" width="584" height="32" font_size="26" justify="center" text_key="xuiNoModSettingsDetected"/>
 						
-						<panel name="pagerPanel" depth="4" pos="483,0" width="98" height="28" disableautobackground="true">
-							<pager name="pager" pos="1,-5" height="28" />
+						<panel name="pagerPanel" depth="4" pos="478,0" width="98" height="43" disableautobackground="true">
+							<pager name="pager" pos="1,-6" />
 						</panel>
 						
 						<panel name="settingsPanel" depth="4" disableautobackground="true">
-							<rect name="settingsTabs" controller="TabSelector" pos="0,0" width="478" height="528">
-								<sprite depth="10" name="border" sprite="menu_empty3px" color="[black]" type="sliced" fillcenter="false" globalopacity="true" globalopacitymod="0.9" width="482" height="39" />
-								<simplebutton name="backButton" depth="4" pos="3,-2" width="20" height="36" caption="&#9664;" font_size="20" bordercolor="[transparent]" defaultcolor="[darkGrey]" selectedsprite="menu_empty" foregroundlayer="false"/>
-								<sprite name="tabButtonSpacer" depth="8" sprite="menu_empty2px" pos="23,-2" width="2" height="35" color="[black]"/>
+							<rect name="settingsTabs" controller="TabSelector" pos="0,0" width="590" height="528">
+								<sprite depth="10" pos="0,-572" name="border" sprite="menu_empty3px" color="[black]" type="sliced" fillcenter="false" globalopacity="true" globalopacitymod="0.9" height="39" />
+								<simplebutton name="backButton" depth="4" pos="3,-575" width="20" height="36" caption="&#9664;" font_size="20" bordercolor="[transparent]" defaultcolor="[darkGrey]" selectedsprite="menu_empty" foregroundlayer="false"/>
+								<sprite name="tabButtonSpacer" depth="8" sprite="menu_empty2px" pos="23,-575" width="2" height="35" color="[black]"/>
 								<rect name="tabsHeader" height="39" depth="0">
-									<grid name="tabButtons" pos="26,-2" depth="2" rows="1" cols="3" cell_width="144" cell_height="36" repeat_content="true" arrangement="horizontal">
+									<grid name="tabButtons" pos="26,-575" depth="2" rows="1" cols="4" cell_width="134" cell_height="36" repeat_content="true" arrangement="horizontal">
 										<rect>
-											<simplebutton name="tabButton" depth="2" pos="-1,0" width="143" height="36" font_size="34" caption_key="xuiBack" bordercolor="[transparent]" defaultcolor="[darkGrey]" selectedsprite="menu_empty" selectedcolor="[mediumGrey]" foregroundlayer="false"/>
-											<sprite name="tabButtonSpacer" depth="8" sprite="menu_empty2px" pos="142,0" width="2" height="35" color="[black]"/>
+											<simplebutton name="tabButton" depth="2" pos="-1,0" width="134" height="36" font_size="34" caption_key="xuiBack" bordercolor="[transparent]" defaultcolor="[darkGrey]" selectedsprite="menu_empty" selectedcolor="[mediumGrey]" foregroundlayer="false"/>
+											<sprite name="tabButtonSpacer" depth="8" sprite="menu_empty2px" pos="133,0" width="2" height="35" color="[black]"/>
 										</rect>
 									</grid>
 								</rect>
-								<simplebutton name="forwardButton" depth="4" pos="459,-2" width="20" height="36" caption="&#9654;" font_size="20" bordercolor="[transparent]" defaultcolor="[darkGrey]" selectedsprite="menu_empty" foregroundlayer="false"/>
+								<simplebutton name="forwardButton" depth="4" pos="563,-575" width="20" height="36" caption="&#9654;" font_size="20" bordercolor="[transparent]" defaultcolor="[darkGrey]" selectedsprite="menu_empty" foregroundlayer="false"/>
 								
-								<grid name="tabsContents" rows="1" cols="3" repeat_content="true" arrangement="horizontal">
+								<grid name="tabsContents" rows="1" cols="4" repeat_content="true" arrangement="horizontal">
 									<rect/>
 								</grid>
 							</rect>
@@ -93,7 +93,7 @@
 								<modoption depth="4" width="262" height="45" />
 							</grid>
 							
-							<simplebutton name="resetSettingsButton" depth="4" pos="385,-570" width="200" height="36" font_size="32" caption_key="xuiModSettingsReset"/>
+							<simplebutton name="resetSettingsButton" depth="4" pos="385,-633" width="200" height="36" font_size="32" caption_key="xuiModSettingsReset" upper_case="true"/>
 						</panel>
 					</rect>
 				</rect>
