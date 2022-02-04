@@ -227,20 +227,5 @@ namespace CustomModManager.UI
             this.UpdateTabs();
             this.UpdateSettings();
         }
-
-        public override bool GetBindingValue(ref string _value, string _bindingName)
-        {
-            switch(_bindingName)
-            {
-                case "tabButtonPositionX":
-                    _value = "30";
-                    return true;
-                case "tabButtonCols":
-                    _value = currentModEntry != null ? "4" : "3";
-                    return true;
-                default:
-                    return false;
-            }
-        }
     }
 }
