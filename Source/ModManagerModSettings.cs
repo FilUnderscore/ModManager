@@ -15,7 +15,7 @@ namespace CustomModManager
 
         internal readonly Dictionary<string, ModSettingTab> settingTabs = new Dictionary<string, ModSettingTab>();
 
-        internal static bool changed = false;
+        internal static readonly List<BaseModSetting> changed = new List<BaseModSetting>();
         private readonly Dictionary<string, string> loadedSettingsInstance;
 
         public ModManagerModSettings(Mod mod)
@@ -123,7 +123,15 @@ namespace CustomModManager
 
             public void SetValue(T newValue)
             {
-                changed = !newValue.Equals(savedValue);
+                if(!newValue.Equals(savedValue) && !changed.Contains(this))
+                {
+                    changed.Add(this);
+                }
+                else if(newValue.Equals(savedValue) && changed.Contains(this))
+                {
+                    changed.Remove(this);
+                }
+
                 setCallback(newValue);
             }
 

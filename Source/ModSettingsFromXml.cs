@@ -69,7 +69,7 @@ namespace CustomModManager
 
         internal static void Save()
         {
-            if (!ModManagerModSettings.changed)
+            if (ModManagerModSettings.changed.Count == 0)
                 return;
 
             XmlDocument xmlDoc = new XmlDocument();
@@ -101,7 +101,7 @@ namespace CustomModManager
 
             xmlDoc.Save(CustomModManager.GetSettingsFileLocation());
 
-            ModManagerModSettings.changed = false;
+            ModManagerModSettings.changed.Clear();
         }
     }
 }

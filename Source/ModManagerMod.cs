@@ -41,16 +41,6 @@ namespace CustomModManager
                     bool result = int.TryParse(str, out int val);
                     return (val, result);
                 });
-
-                for(int index = 0; index < 10; index++)
-                {
-                    settings.CreateTab("tab" + index, "nameTab" + index);
-                    settings.Hook("testS" + index, "testS" + index, value => { }, () => 0, value => (value.ToString()), str =>
-                    {
-                        bool success = int.TryParse(str, out int val);
-                        return (val, success);
-                    }).SetTab("tab" + index);
-                }
             }
         }
     }
