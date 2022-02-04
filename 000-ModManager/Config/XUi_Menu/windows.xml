@@ -70,8 +70,25 @@
 						</panel>
 						
 						<panel name="settingsPanel" depth="4" disableautobackground="true">
-							<grid name="settings" pos="6,-56" rows="12" cols="1" cell_width="262" cell_height="45" repeat_content="true" arrangement="horizontal">
-								<modoption depth="4" width="262" height="45"/>
+							<rect name="settingsTabs" controller="TabSelector" pos="0,0" width="590" height="528">
+								<rect name="tabsHeader" height="39" depth="0">
+								<button name="back" depth="2" style="icon30px, press, hover" pos="0,0" width="36" height="36" pivot="center" sprite="ui_game_symbol_arrow_menu" disabledcolor="[disabledColor]" sound="[paging_click]" />
+									<grid name="tabButtons" pos="{tabButtonPositionX},0" depth="2" rows="1" cols="3" cell_width="144" cell_height="36" repeat_content="true" arrangement="horizontal">
+										<rect>
+											<simplebutton name="tabButton" depth="2" pos="-1,0" width="143" height="36" font_size="34" caption_key="xuiBack" bordercolor="[transparent]" defaultcolor="[darkGrey]" selectedsprite="menu_empty" selectedcolor="[mediumGrey]" foregroundlayer="false"/>
+											<sprite name="tabButtonSpacer" depth="8" sprite="menu_empty2px" pos="142,0" width="2" height="35" color="[black]"/>
+										</rect>
+									</grid>
+								</rect>
+								<button name="forward" depth="2" style="icon30px, press, hover" pos="554,0" width="36" height="36" pivot="center" sprite="ui_game_symbol_arrow_menu" disabledcolor="[disabledColor]" sound="[paging_click]" flip="Horizontally" />
+										
+								<grid name="tabsContents" rows="1" cols="3" repeat_content="true" arrangement="horizontal">
+									<rect/>
+								</grid>
+							</rect>
+												
+							<grid name="settings" pos="6,-56" rows="11" cols="1" cell_width="262" cell_height="45" repeat_content="true" arrangement="horizontal">
+								<modoption depth="4" width="262" height="45" />
 							</grid>
 							
 							<simplebutton name="resetSettingsButton" depth="4" pos="385,-570" width="200" height="36" font_size="32" caption_key="xuiModSettingsReset"/>
