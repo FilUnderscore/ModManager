@@ -190,12 +190,11 @@ namespace CustomModManager.UI
 
             int settingsCount = ModManagerModSettings.modSettingsInstances[currentModEntry].settings.Count;
             bool anySettings = settingsCount > 0;
+            bool anyTabs = ModManagerModSettings.modSettingsInstances[currentModEntry].settingTabs.Count > 0;
 
             this.noModSettingsDetectedLabel.IsVisible = visible && !anySettings;
             this.settingsPanel.IsVisible = visible && anySettings;
-            this.pagerPanel.IsVisible = visible && anySettings;
-
-            bool anyTabs = ModManagerModSettings.modSettingsInstances[currentModEntry].settingTabs.Count > 0;
+            this.pagerPanel.IsVisible = visible && (anyTabs || anySettings && settingsCount > modSettingSelectorList.Count);
 
             if (anyTabs)
             {
