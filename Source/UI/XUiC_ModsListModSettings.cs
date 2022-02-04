@@ -81,7 +81,7 @@ namespace CustomModManager.UI
 
         private void SettingsTabs_OnTabChanged(int tabIndex, string tabName)
         {
-            currentTabKey = ModManagerModSettings.modSettingsInstances[currentModEntry].settingTabs.ElementAt(tabIndex).Key;
+            currentTabKey = ModManagerModSettings.modSettingsInstances[currentModEntry].settingTabs.ElementAt(tabIndex + this.startingTabIndex).Key;
             this.UpdateSettings();
         }
 
@@ -193,7 +193,7 @@ namespace CustomModManager.UI
 
             this.noModSettingsDetectedLabel.IsVisible = visible && !anySettings;
             this.settingsPanel.IsVisible = visible && anySettings;
-            this.pagerPanel.IsVisible = visible && anySettings && settingsCount > modSettingSelectorList.Count;
+            this.pagerPanel.IsVisible = visible && anySettings;
 
             bool anyTabs = ModManagerModSettings.modSettingsInstances[currentModEntry].settingTabs.Count > 0;
 
@@ -222,7 +222,7 @@ namespace CustomModManager.UI
             this.borderSprite.IsVisible = anyTabs;
 
             this.pager.CurrentPageNumber = 0;
-            this.pager.LastPageNumber = settingsCount / modSettingSelectorList.Count;
+            this.pager.LastPageNumber = ModManagerModSettings.modSettingsInstances[currentModEntry].settings.Where(entry => !anyTabs || (currentTabKey != null && entry.Value.GetTabKey() == currentTabKey)).ToDictionary(entry => entry.Key, entry => entry.Value).Count / modSettingSelectorList.Count;
 
             this.UpdateTabs();
             this.UpdateSettings();
