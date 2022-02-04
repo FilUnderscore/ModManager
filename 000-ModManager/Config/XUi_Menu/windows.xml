@@ -73,7 +73,7 @@
 							<rect name="settingsTabs" controller="TabSelector" pos="0,0" width="478" height="528">
 								<sprite depth="10" name="border" sprite="menu_empty3px" color="[black]" type="sliced" fillcenter="false" globalopacity="true" globalopacitymod="0.9" width="482" height="39" />
 								<simplebutton name="backButton" depth="4" pos="3,-2" width="20" height="36" caption="&#9664;" font_size="20" bordercolor="[transparent]" defaultcolor="[darkGrey]" selectedsprite="menu_empty" foregroundlayer="false"/>
-								<sprite name="tabButtonSpacer" depth="8" sprite="menu_empty2px" pos="23,0" width="2" height="35" color="[black]"/>
+								<sprite name="tabButtonSpacer" depth="8" sprite="menu_empty2px" pos="23,-2" width="2" height="35" color="[black]"/>
 								<rect name="tabsHeader" height="39" depth="0">
 									<grid name="tabButtons" pos="26,-2" depth="2" rows="1" cols="3" cell_width="144" cell_height="36" repeat_content="true" arrangement="horizontal">
 										<rect>
