@@ -18,6 +18,11 @@ namespace CustomModManager.UI
         private XUiC_Paging pager;
 
         private XUiC_TabSelector settingsTabs;
+        private XUiC_SimpleButton backTabButton;
+        private XUiC_SimpleButton forwardTabButton;
+        private XUiV_Sprite borderSprite;
+
+        private int startingTabIndex;
 
         private XUiC_SimpleButton resetButton;
 
@@ -41,7 +46,13 @@ namespace CustomModManager.UI
 
             this.settingsTabs = (XUiC_TabSelector)this.GetChildById("settingsTabs");
             this.settingsTabs.OnTabChanged += SettingsTabs_OnTabChanged;
-            
+
+            this.backTabButton = (XUiC_SimpleButton)this.GetChildById("backButton");
+            this.backTabButton.OnPressed += BackTabButton_OnPressed;
+            this.forwardTabButton = (XUiC_SimpleButton)this.GetChildById("forwardButton");
+            this.forwardTabButton.OnPressed += ForwardTabButton_OnPressed;
+            this.borderSprite = (XUiV_Sprite)this.GetChildById("border").ViewComponent;
+
             foreach (XUiController tabButtonSpacer in this.GetChildrenById("tabButtonSpacer"))
             {
                 if(tabButtonSpacer.ViewComponent is XUiV_Sprite)
@@ -52,6 +63,20 @@ namespace CustomModManager.UI
             {
                 modSettingSelectorList.Add(xuiCModSettingSelector);
             }
+        }
+
+        private void ForwardTabButton_OnPressed(XUiController _sender, int _mouseButton)
+        {
+            this.startingTabIndex++;
+            this.settingsTabs.SelectedTabIndex--;
+            this.UpdateTabs();
+        }
+
+        private void BackTabButton_OnPressed(XUiController _sender, int _mouseButton)
+        {
+            this.startingTabIndex--;
+            this.settingsTabs.SelectedTabIndex++;
+            this.UpdateTabs();
         }
 
         private void SettingsTabs_OnTabChanged(int tabIndex, string tabName)
@@ -78,8 +103,9 @@ namespace CustomModManager.UI
                 var setting = settingEntry.Value;
 
                 setting.Reset();
-                this.UpdateView(true);
             }
+
+            this.UpdateSettings();
         }
 
         private void UpdateTabs()
@@ -91,7 +117,7 @@ namespace CustomModManager.UI
             {
                 int tabIndex = 0;
 
-                for (int index = 0; index < tabs.Count; index++) // TODO: Change index = to currentPageNumber of pager.
+                for (int index = startingTabIndex; index < tabs.Count; index++)
                 {
                     if (tabIndex == settingsTabs.TabCount)
                         break;
@@ -101,10 +127,30 @@ namespace CustomModManager.UI
 
                     settingsTabs.GetTabButton(tabIndex).Label = Localization.Get(tab.nameUnlocalized);
                     settingsTabs.GetTabButton(tabIndex).ViewComponent.IsVisible = true;
-                    tabButtonSpacers[tabIndex].IsVisible = true;
-
+                    
                     tabIndex++;
                 }
+
+                while(tabIndex < settingsTabs.TabCount)
+                {
+                    settingsTabs.GetTabButton(tabIndex).Label = "";
+                    settingsTabs.GetTabButton(tabIndex).ViewComponent.IsVisible = true;
+                    settingsTabs.GetTabButton(tabIndex).Enabled = false;
+
+                    tabIndex++;
+                }   
+                
+                foreach(var spacer in tabButtonSpacers)
+                {
+                    spacer.IsVisible = true;
+                }
+
+                int tabCount = ModManagerModSettings.modSettingsInstances[currentModEntry].settingTabs.Count;
+
+                this.backTabButton.Enabled = startingTabIndex > 0;
+                this.backTabButton.ViewComponent.IsVisible = true;
+                this.forwardTabButton.Enabled = startingTabIndex < tabCount - 3;
+                this.forwardTabButton.ViewComponent.IsVisible = true;
             }
         }
 
@@ -149,17 +195,31 @@ namespace CustomModManager.UI
             this.settingsPanel.IsVisible = visible && anySettings;
             this.pagerPanel.IsVisible = visible && anySettings && settingsCount > modSettingSelectorList.Count;
 
-            for (int tabIndex = 0; tabIndex < settingsTabs.TabCount; tabIndex++)
-            {
-                settingsTabs.GetTabButton(tabIndex).ViewComponent.IsVisible = false;
-                tabButtonSpacers[tabIndex].IsVisible = false;
-            }
+            bool anyTabs = ModManagerModSettings.modSettingsInstances[currentModEntry].settingTabs.Count > 0;
 
-            if (ModManagerModSettings.modSettingsInstances[currentModEntry].settingTabs.Count > 0)
+            if (anyTabs)
             {
                 settingsTabs.SelectedTabIndex = 0;
                 currentTabKey = ModManagerModSettings.modSettingsInstances[currentModEntry].settingTabs.ElementAt(0).Key;
+                startingTabIndex = 0;
             }
+            else
+            {
+                for (int tabIndex = 0; tabIndex < settingsTabs.TabCount; tabIndex++)
+                {
+                    settingsTabs.GetTabButton(tabIndex).ViewComponent.IsVisible = false;
+                }
+
+                foreach (var spacer in tabButtonSpacers)
+                {
+                    spacer.IsVisible = false;
+                }
+
+                this.backTabButton.ViewComponent.IsVisible = false;
+                this.forwardTabButton.ViewComponent.IsVisible = false;
+            }
+
+            this.borderSprite.IsVisible = anyTabs;
 
             this.pager.CurrentPageNumber = 0;
             this.pager.LastPageNumber = settingsCount / modSettingSelectorList.Count;
