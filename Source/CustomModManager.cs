@@ -56,6 +56,11 @@ namespace CustomModManager
             return true;
         }
 
+        internal static bool HasModBeenChanged()
+        {
+            return loadedMods.list.Any(mod => mod.HasBeenChanged());
+        }
+
         private static void SaveModSettings()
         {
             ModSettingsFromXml.Save();

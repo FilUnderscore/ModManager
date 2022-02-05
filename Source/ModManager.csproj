@@ -72,6 +72,7 @@
     <Compile Include="UI\XUiC_Mods.cs" />
     <Compile Include="UI\XUiC_ModSettingSelector.cs" />
     <Compile Include="UI\XUiC_ModsList.cs" />
+    <Compile Include="UI\XUiC_ModsListChanged.cs" />
     <Compile Include="UI\XUiC_ModsListModInfo.cs" />
     <Compile Include="UI\XUiC_ModsListModSettings.cs" />
   </ItemGroup>

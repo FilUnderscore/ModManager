@@ -23,3 +23,5 @@ xuiModVersionTooltipCurrentVersionNotCompatible,UI,XUI,x,,This mod version is no
 xuiModVersionTooltipCurrentVersionNotSpecifiedNoManifestExists,UI,XUI,x,,Could not check version compatibility as no remote manifest has been found.
 xuiModVersionTooltipCurrentVersionNotSpecifiedManifest,UI,XUI,x,,Could not check version compatibility as no version has been specified in the remote manifest.
 xuiModVersionTooltipUpToDate,UI,XUI,x,,This mod is up to date.
+xuiModsListChanged,UI,XUI,x,,Mods List Changed
+xuiModsListChangedText,UI,XUI,x,,"For these changes to take effect, restart your game."

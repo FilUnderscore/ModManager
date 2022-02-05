@@ -79,13 +79,13 @@ namespace CustomModManager.UI
         private void BtnBack_OnPressed(XUiController _sender, int mouseButton)
         {
             this.xui.playerUI.windowManager.Close(this.windowGroup.ID);
-            this.xui.playerUI.windowManager.Open(XUiC_MainMenu.ID, true);
+            this.xui.playerUI.windowManager.Open(CustomModManager.HasModBeenChanged() ? XUiC_ModsListChanged.ID : XUiC_MainMenu.ID, true);
         }
 
         public override void OnOpen()
         {
             base.OnOpen();
-            this.windowGroup.openWindowOnEsc = XUiC_MainMenu.ID;
+            this.windowGroup.openWindowOnEsc = CustomModManager.HasModBeenChanged() ? XUiC_ModsListChanged.ID : XUiC_MainMenu.ID;
 
             modTabs.ViewComponent.IsVisible = false;
         }
