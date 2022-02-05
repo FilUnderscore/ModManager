@@ -103,5 +103,22 @@
 				<simplebutton name="btnBack" depth="3" pos="0,0" width="200" height="36" font_size="32" caption_key="xuiBack" upper_case="true"/>
 			</rect>
 		</window>
+		
+		<window name="modsListChanged" anchor="CenterCenter" pos="-300,150" width="593" height="700" controller="CustomModManager.UI.XUiC_ModsListChanged, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" cursor_area="true">
+			<panel name="header" pos="0,0" height="43" depth="1" backgroundspritename="ui_game_panel_header" bordercolor="[black]" borderthickness="3">
+				<label style="header.name" name="windowheader" pos="6,-6" width="486" text_key="xuiModsListChanged"/>
+			</panel>
+			
+			<rect pos="0,-50" height="200">
+				<sprite depth="10" name="border" sprite="menu_empty3px" color="[black]" type="sliced" fillcenter="false" globalopacity="true" globalopacitymod="0.9" />
+				<sprite depth="0" pos="2,0" width="589" name="backgroundMain" sprite="menu_empty3px" color="[mediumGrey]" type="sliced" fillcenter="true"/>		
+				
+				<label depth="4" name="modsListChangedLabel" pos="7,-18" pivot="left" width="588" height="190" font_size="32" text_key="xuiModsListChangedText"/>
+			</rect>
+			
+			<rect pos="393,-265">
+				<simplebutton name="btnOk" depth="3" pos="0,0" width="200" height="36" font_size="32" caption_key="xuiOk" upper_case="true"/>
+			</rect>
+		</window>
 	</append>
 </modmanager_windows>

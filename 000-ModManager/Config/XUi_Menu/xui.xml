@@ -3,5 +3,8 @@
 		<window_group name="mods">
 			<window name="modsList"/>
 		</window_group>
+		<window_group name="modsListChanged">
+			<window name="modsListChanged"/>
+		</window_group>
 	</append>
 </mods_xui>
