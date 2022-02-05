@@ -10,16 +10,9 @@ namespace CustomModManager
         public ModManifest RemoteManifest;
 
         public SemVer Version;
+        public List<string> Dependencies;
         public VersionInformation GameVersionInformation;
-        public string UpdateUrl;
         public Dictionary<string, List<PatchNote>> PatchNotes;
-
-        public readonly ModEntry entry;
-
-        public ModManifest(ModEntry entry)
-        {
-            this.entry = entry;
-        }
 
         public class PatchNote
         {

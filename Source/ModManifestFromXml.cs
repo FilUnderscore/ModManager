@@ -9,36 +9,36 @@ namespace CustomModManager
 {
     public class ModManifestFromXml
     {
-        public static ModManifest FromXml(ModEntry entry)
+        public static ModManifest FromXml(string modName, string path)
         {
-            string path = CustomModManager.GetModEntryFolderLocation(entry) + "/Manifest.xml";
+            path += "/Manifest.xml";
 
             if (!File.Exists(path))
                 return null;
 
-            return FromXml(entry, path);
+            return FromUrl(modName, path);
         }
 
-        private static ModManifest FromXml(ModEntry entry, string path)
+        private static ModManifest FromUrl(string modName, string path)
         {
             try
             {
                 XmlDocument document = new XmlDocument();
                 document.Load(path);
 
-                return ParseManifest(entry, document.DocumentElement);
+                return ParseManifest(modName, document.DocumentElement);
             }
             catch
             {
-                Log.Warning($"[{entry.info.Name.Value}] [Manifest] Failed fetching manifest from {path}.");
+                Log.Warning($"[{modName}] [Manifest] Failed fetching manifest from {path}.");
             }
 
             return null;
         }
 
-        private static ModManifest ParseManifest(ModEntry entry, XmlElement documentElement)
+        private static ModManifest ParseManifest(string modName, XmlElement documentElement)
         {
-            ModManifest manifest = new ModManifest(entry);
+            ModManifest manifest = new ModManifest();
 
             foreach(XmlNode node in documentElement.ChildNodes)
             {
@@ -48,7 +48,7 @@ namespace CustomModManager
 
                     if(element.Name.EqualsCaseInsensitive("ManifestUrl"))
                     {
-                        manifest.RemoteManifest = FromXml(entry, element.InnerText);
+                        manifest.RemoteManifest = FromUrl(modName, element.InnerText);
                     }
                     else if(element.Name.EqualsCaseInsensitive("Version"))
                     {
@@ -69,13 +69,13 @@ namespace CustomModManager
                         VersionInformation versionInformation = new VersionInformation(gameReleaseType, majorVersion, minorVersion, buildVersion);
                         manifest.GameVersionInformation = versionInformation;
                     }
-                    else if(element.Name.EqualsCaseInsensitive("UpdateUrl"))
+                    else if(element.Name.EqualsCaseInsensitive("Dependencies"))
                     {
-                        manifest.UpdateUrl = element.InnerText;
+                        ParseDependencies(modName, manifest, element);
                     }
                     else if(element.Name.EqualsCaseInsensitive("PatchNotes"))
                     {
-                        ParsePatchNotes(manifest, element);
+                        ParsePatchNotes(modName, manifest, element);
                     }
                 }
             }
@@ -83,7 +83,29 @@ namespace CustomModManager
             return manifest;
         }
 
-        private static void ParsePatchNotes(ModManifest manifest, XmlElement patchNotesElement)
+        private static void ParseDependencies(string modName, ModManifest manifest, XmlElement dependenciesElement)
+        {
+            manifest.Dependencies = new List<string>();
+
+            foreach(XmlNode child in dependenciesElement.ChildNodes)
+            {
+                if(child.NodeType == XmlNodeType.Element)
+                {
+                    XmlElement dependencyElement = (XmlElement)child;
+
+                    if(!dependencyElement.HasAttribute("Name"))
+                    {
+                        Log.Warning($"[{modName}] [Manifest] Failed to parse dependency.");
+                        continue;
+                    }
+
+                    string dependency = dependencyElement.GetAttribute("Name");
+                    manifest.Dependencies.Add(dependency);
+                }
+            }
+        }
+
+        private static void ParsePatchNotes(string modName, ModManifest manifest, XmlElement patchNotesElement)
         {
             manifest.PatchNotes = new Dictionary<string, List<ModManifest.PatchNote>>();
 
@@ -93,13 +115,13 @@ namespace CustomModManager
                 {
                     XmlElement patchNoteElement = (XmlElement)child;
 
-                    if (!patchNoteElement.HasAttribute("version"))
+                    if (!patchNoteElement.HasAttribute("Version"))
                     {
-                        Log.Warning($"[{manifest.entry.info.Name.Value}] [Manifest] Failed to parse patch note version.");
+                        Log.Warning($"[{modName}] [Manifest] Failed to parse patch note version.");
                         continue;
                     }
 
-                    string version = patchNoteElement.GetAttribute("version");
+                    string version = patchNoteElement.GetAttribute("Version");
 
                     foreach (XmlNode entryChild in patchNoteElement.ChildNodes)
                     {
@@ -109,8 +131,8 @@ namespace CustomModManager
 
                             Color color = Color.white;
 
-                            if (entryNoteElement.HasAttribute("color"))
-                                color = StringParsers.ParseColor32(entryNoteElement.GetAttribute("color"));
+                            if (entryNoteElement.HasAttribute("Color"))
+                                color = StringParsers.ParseColor32(entryNoteElement.GetAttribute("Color"));
 
                             string patchNote = entryNoteElement.InnerText;
 

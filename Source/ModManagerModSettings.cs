@@ -20,7 +20,7 @@ namespace CustomModManager
 
         public ModManagerModSettings(Mod mod)
         {
-            this.entry = CustomModManager.GetModEntryFromModInstance(mod);
+            this.entry = ModLoader.GetModEntryFromModInstance(mod);
             loadedSettingsInstance = loadedSettings.ContainsKey(this.entry.info.Name.Value) ? loadedSettings[this.entry.info.Name.Value] : new Dictionary<string, string>();
 
             modSettingsInstances.Add(entry, this);

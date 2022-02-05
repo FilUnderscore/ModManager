@@ -18,14 +18,14 @@ namespace CustomModManager
 
         public readonly ModManifest manifest;
 
-        public ModEntry(string folderName, ModInfo.ModInfo info)
+        public ModEntry(string folderName, ModInfo.ModInfo info, ModManifest manifest)
         {
             this.folderName = folderName;
             this.info = info;
-            this.manifest = ModManifestFromXml.FromXml(this);
+            this.manifest = manifest;
         }
 
-        public ModEntry(string folderName, Mod mod, EModDisableState modDisableState) : this(folderName, mod.ModInfo)
+        public ModEntry(string folderName, Mod mod, EModDisableState modDisableState, ModManifest manifest) : this(folderName, mod.ModInfo, manifest)
         {
             this.instance = mod;
 

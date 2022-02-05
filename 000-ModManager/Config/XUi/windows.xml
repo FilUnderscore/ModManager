@@ -1,0 +1,7 @@
+<modmanager_windows>
+	<append xpath="/windows">
+		<window name="modsException">
+			<sprite depth="0" pos="2,0" width="586" name="backgroundMain" sprite="menu_empty3px" color="[mediumGrey]" type="sliced" fillcenter="true"/>
+		</window>
+	</append>
+</modmanager_windows>

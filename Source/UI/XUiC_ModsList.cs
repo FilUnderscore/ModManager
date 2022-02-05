@@ -37,7 +37,7 @@ namespace CustomModManager.UI
 
         private void ScanMods()
         {
-            List<ModEntry> loadedMods = CustomModManager.GetLoadedMods();
+            List<ModEntry> loadedMods = ModLoader.GetLoadedMods();
 
             foreach(var mod in loadedMods)
             {

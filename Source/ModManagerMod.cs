@@ -18,7 +18,8 @@ namespace CustomModManager
 
         public void InitMod(Mod _modInstance)
         {
-            CustomModManager.CheckForUndetectedMods();
+            //CustomModManager.CheckForUndetectedMods();
+            ModLoader.StartLoading();
 
             if(ModManagerAPI.IsModManagerLoaded())
             {

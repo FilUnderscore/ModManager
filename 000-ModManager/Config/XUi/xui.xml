@@ -1,0 +1,7 @@
+<modmanager_xui>
+	<append xpath="/xui/ruleset[@name='default']">
+		<window_group name="modsException">
+			<window name="modsException"/>
+		</window_group>
+	</append>
+</modmanager_xui>
