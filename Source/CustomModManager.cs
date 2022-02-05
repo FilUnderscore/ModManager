@@ -58,7 +58,7 @@ namespace CustomModManager
 
         internal static bool HasModBeenChanged()
         {
-            return loadedMods.list.Any(mod => mod.HasBeenChanged());
+            return ModLoader.GetLoadedMods().Any(mod => mod.HasBeenChanged());
         }
 
         private static void SaveModSettings()

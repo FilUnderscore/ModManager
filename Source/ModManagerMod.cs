@@ -14,14 +14,15 @@ namespace CustomModManager
         {
             var harmony = new Harmony("filunderscore.modmanager");
             harmony.PatchAll();
+
+            ModLoader.harmony = harmony;
         }
 
         public void InitMod(Mod _modInstance)
         {
-            //CustomModManager.CheckForUndetectedMods();
-            ModLoader.StartLoading();
+            ModLoader.CheckForUndetectedMods();
 
-            if(ModManagerAPI.IsModManagerLoaded())
+            if (ModManagerAPI.IsModManagerLoaded())
             {
                 ModManagerAPI.ModSettings settings = ModManagerAPI.GetModSettings(_modInstance);
 

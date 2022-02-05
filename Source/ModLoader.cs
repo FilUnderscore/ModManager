@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,8 @@ namespace CustomModManager
 {
     public class ModLoader
     {
+        internal static Harmony harmony;
+
         private static readonly FieldInfo MOD_MANAGER_MOD_PATH_FIELD = AccessTools.DeclaredField(typeof(ModManager), "MOD_PATH");
 
         private static readonly string modPath = (string)MOD_MANAGER_MOD_PATH_FIELD.GetValue(null);
@@ -19,11 +22,6 @@ namespace CustomModManager
         private static readonly DictionaryList<string, ModEntry> loadedMods = new DictionaryList<string, ModEntry>();
 
         private static bool loading = false;
-
-        static ModLoader()
-        {
-            CheckForUndetectedMods();
-        }
 
         internal static void CheckForUndetectedMods()
         {
@@ -34,9 +32,8 @@ namespace CustomModManager
                 string modName = modEntry.Key;
                 Mod mod = modEntry.Value;
 
-                if (!loadedMods.dict.ContainsKey(modName))
+                if (!loadedMods.dict.ContainsKey(modName) && !modName.EndsWith(":Ignore"))
                 {
-                    Log.Out("MP: " + mod.Path);
                     loadedMods.Add(modName, new ModEntry(GetModFolderName(mod.Path), mod, mod.ApiInstance is ModManagerMod ? ModEntry.EModDisableState.Disallowed : ModEntry.EModDisableState.Disallowed_Preloaded, ModManifestFromXml.FromXml(mod.ModInfo.Name.Value, mod.Path)));
                 }
             }
@@ -49,7 +46,7 @@ namespace CustomModManager
 
         internal static void StartLoading()
         {
-            GUIWindowConsole.
+            harmony.Unpatch(typeof(ThreadManager).GetMethod("RunCoroutineSync"), HarmonyPatchType.Prefix, "filunderscore.modmanager");
 
             loading = true;
 
@@ -97,7 +94,7 @@ namespace CustomModManager
                     int dependencyLoadIndex = detectedEntries[dependency].loadOrder;
 
                     if(dependencyLoadIndex > modEntry.loadOrder)
-                        modEntry.loadOrder = dependencyLoadIndex;
+                        modEntry.loadOrder = dependencyLoadIndex + 1;
 
                     modEntry.dependentOn.Add(detectedEntries[dependency]);
                 }
@@ -123,7 +120,9 @@ namespace CustomModManager
             List<ModLoadEntry> loadOrder = new List<ModLoadEntry>(detectedEntries.Values);
             loadOrder.Sort();
 
-            foreach(var entry in loadOrder)
+            DictionaryList<string, Mod> modManagerLoadedMods = (DictionaryList<string, Mod>) MOD_MANAGER_LOADED_MODS_FIELD.GetValue(null);
+
+            foreach (var entry in loadOrder)
             {
                 Log.Out("Loading " + entry.info.Name.Value);
 
@@ -155,6 +154,21 @@ namespace CustomModManager
                     }
                 }
 
+                loadedMods.Add(mod.ModInfo.Name.Value, new ModEntry(GetModFolderName(entry.path), mod, ModEntry.EModDisableState.Allowed, entry.manifest));
+                entry.loaded = true;
+                entry.instance = mod;
+
+                modManagerLoadedMods.Remove(entry.path);
+                modManagerLoadedMods.Add(mod.ModInfo.Name.Value, mod);
+            }
+
+            foreach(var loadedModEntry in loadedMods.dict)
+            {
+                if (loadedModEntry.Value.GetModDisableState() != ModEntry.EModDisableState.Allowed)
+                    continue;
+
+                Mod mod = loadedModEntry.Value.instance;
+
                 if (mod.ApiInstance != null)
                 {
                     try
@@ -163,14 +177,11 @@ namespace CustomModManager
                     }
                     catch (Exception ex)
                     {
-                        Log.Error($"[Mod Loader] Failed initializing IModApi instance from mod {entry.info.Name.Value} from DLL {Path.GetFileName(mod.MainAssembly.Location)}");
+                        Log.Error($"[Mod Loader] Failed initializing IModApi instance from mod {mod.ModInfo.Name.Value} from DLL {Path.GetFileName(mod.MainAssembly.Location)}");
                         Log.Exception(ex);
                         continue;
                     }
                 }
-
-                loadedMods.Add(mod.ModInfo.Name.Value, new ModEntry(GetModFolderName(entry.path), mod, ModEntry.EModDisableState.Allowed, entry.manifest));
-                entry.loaded = true;
             }
 
             loading = false;
@@ -183,6 +194,7 @@ namespace CustomModManager
             public ModManifest manifest;
             public int loadOrder;
             public bool loaded = false;
+            public Mod instance;
             public List<ModLoadEntry> dependentOn = new List<ModLoadEntry>();
 
             public int CompareTo(ModLoadEntry other)
@@ -190,7 +202,7 @@ namespace CustomModManager
                 if (other == null)
                     return 1;
 
-                return other.loadOrder.CompareTo(this.loadOrder);
+                return loadOrder.CompareTo(other.loadOrder);
             }
         }
 
@@ -211,9 +223,15 @@ namespace CustomModManager
             return loadedMods.list;
         }
 
-        public static ModEntry GetModEntryFromModInstance(Mod mod)
+        internal static ModEntry GetModEntryFromModInstance(Mod modInstance)
         {
-            return loadedMods.dict[mod.ModInfo.Name.Value];
+            foreach(var mod in loadedMods.list)
+            {
+                if (mod.instance == modInstance)
+                    return mod;
+            }
+
+            return null;
         }
 
         class HarmonyPatches
@@ -222,28 +240,30 @@ namespace CustomModManager
             [HarmonyPatch(nameof(Mod.LoadFromFolder))]
             class ModLoadFromFolderHook
             {
-                static bool Prefix(string _path)
+                static bool Prefix(string _path, ref Mod __result)
                 {
+                    if(!loading)
+                    {
+                        __result = new Mod();
+                        typeof(Mod).GetProperty("ModInfo").SetValue(__result, new ModInfo.ModInfo()
+                        {
+                            Name = new DataItem<string>("Name", _path + ":Ignore")
+                        });
+                    }
+
                     return loading;
                 }
-
-                static void Postfix(Mod __result)
-                {
-
-                }
             }
 
-            /*
-            [HarmonyPatch(typeof(Log))]
-            [HarmonyPatch(nameof(Log.Warning))]
-            class LogWarningHook
+            [HarmonyPatch(typeof(ThreadManager))]
+            [HarmonyPatch(nameof(ThreadManager.RunCoroutineSync))]
+            class ModManagerLoadPatchStuffHook
             {
-                static bool Prefix(string str)
+                static void Prefix()
                 {
-                    return !str.StartsWith("[MODS] Failed loading mod folder folder:");
+                    StartLoading();
                 }
             }
-            */
         }
     }
 }
