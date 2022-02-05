@@ -54,7 +54,7 @@ namespace CustomModManager
                     }
                     else if(element.Name.EqualsCaseInsensitive("Version"))
                     {
-                        manifest.Version = element.InnerText;
+                        manifest.Version = ModManifest.SemVer.Parse(element.InnerText);
                     }
                     else if(element.Name.EqualsCaseInsensitive("GameVersion"))
                     {

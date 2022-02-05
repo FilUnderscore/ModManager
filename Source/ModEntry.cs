@@ -84,9 +84,9 @@ namespace CustomModManager
             }
         }
 
-        public bool HasUpdateAvailable()
+        public string GetVersion()
         {
-            return manifest != null && manifest.NewVersionAvailable();
+            return manifest != null && manifest.Version != null ? manifest.Version.ToString() : info.Version.Value;
         }
     }
 }

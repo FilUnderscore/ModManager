@@ -73,7 +73,7 @@ namespace CustomModManager.UI
                         _value = modInfo.Name.Value;
                         return true;
                     case "modVersion":
-                        _value = modInfo.Version.Value + (modEntry.HasUpdateAvailable() ? "\u2191" : "");
+                        _value = modEntry.GetVersion() + (modEntry.manifest != null && modEntry.manifest.UpToDate() == ModManifest.EVersionStatus.Not_Up_To_Date ? "\u2191" : "");
                         return true;
                     case "modVersionColor":
                         if (modEntry.manifest != null)
@@ -97,7 +97,7 @@ namespace CustomModManager.UI
 
                         return true;
                     case "modVersionTooltip":
-                        _value = Localization.Get("xuiModVersionTooltipCurrentVersion") + ": " + modInfo.Version.Value;
+                        _value = Localization.Get("xuiModVersionTooltipCurrentVersion") + ": " + modEntry.GetVersion();
 
                         if (modEntry.manifest != null)
                         {
@@ -106,7 +106,7 @@ namespace CustomModManager.UI
                                 _value += "\n" + Localization.Get("xuiModVersionTooltipForGameVersion") + ": " + modEntry.manifest.GameVersionInformation.LongString;
                             }
 
-                            if (modEntry.HasUpdateAvailable())
+                            if (modEntry.manifest.UpToDate() == ModManifest.EVersionStatus.Not_Up_To_Date)
                             {
                                 _value += "\n\n" + Localization.Get("xuiModVersionTooltipAnUpdateIsAvailable") + ": " + modEntry.manifest.RemoteManifest.Version;
                                 
@@ -115,7 +115,7 @@ namespace CustomModManager.UI
                                     _value += "\n" + Localization.Get("xuiModVersionTooltipForGameVersion") + ": " + modEntry.manifest.RemoteManifest.GameVersionInformation.LongString;
                                 }
                             }
-                            else if(modEntry.manifest != null && modEntry.manifest.UpToDate())
+                            else if(modEntry.manifest != null && modEntry.manifest.UpToDate() == ModManifest.EVersionStatus.Up_To_Date)
                             {
                                 _value += "\n\n" + Localization.Get("xuiModVersionTooltipUpToDate");
                             }
