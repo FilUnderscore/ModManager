@@ -114,9 +114,6 @@ namespace CustomModManager
                 string prerelease = "";
                 string buildMetadata = "";
 
-                Log.Out("Match Groups: " + match.Groups.Count);
-                Log.Out($"Maj {major} {major} {patch}");
-
                 if (match.Groups.Count > 3)
                     prerelease = match.Groups["prerelease"].Value;
 

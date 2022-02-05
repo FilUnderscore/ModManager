@@ -13,8 +13,6 @@ namespace CustomModManager
         {
             string path = CustomModManager.GetModEntryFolderLocation(entry) + "/Manifest.xml";
 
-            Log.Out("Path: " + path + " E: " + File.Exists(path));
-
             if (!File.Exists(path))
                 return null;
 
