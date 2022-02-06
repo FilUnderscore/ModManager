@@ -9,12 +9,72 @@ namespace CustomModManager
     public class ModEntry
     {
         public readonly ModLoadInfo loadInfo;
-        public readonly Mod instance;
+        internal Mod instance;
 
-        public ModEntry(ModLoadInfo loadInfo, Mod modInstance)
+        private bool? willBeEnabled;
+        internal EModDisableState disableState;
+
+        public ModInfo.ModInfo info => loadInfo.modInfo;
+        public ModManifest manifest => loadInfo.manifest;
+
+        public ModEntry(ModLoadInfo loadInfo)
         {
             this.loadInfo = loadInfo;
-            this.instance = modInstance;
+        }
+
+        public bool IsLoaded()
+        {
+            return this.loadInfo.load;
+        }
+
+        public bool? WillBeEnabled()
+        {
+            return this.willBeEnabled;
+        }
+
+        public void Toggle()
+        {
+            if (this.willBeEnabled == null)
+                this.willBeEnabled = !this.IsLoaded();
+            else
+                this.willBeEnabled = !this.willBeEnabled;
+        }
+
+        public bool HasBeenChanged()
+        {
+            return this.willBeEnabled != null && this.willBeEnabled.Value != this.IsLoaded();
+        }
+
+        public EModDisableState GetModDisableState()
+        {
+            return this.disableState;
+        }
+
+        public enum EModDisableState
+        {
+            Allowed,
+            Disallowed,
+            Disallowed_Preloaded
+        }
+
+        public string GetModDisableStateReason()
+        {
+            switch (this.disableState)
+            {
+                case EModDisableState.Allowed:
+                    return "";
+                case EModDisableState.Disallowed:
+                    return Localization.Get("xuiModDisableStateReasonDisallowed");
+                case EModDisableState.Disallowed_Preloaded:
+                    return Localization.Get("xuiModDisableStateReasonDisallowedPreloaded");
+                default:
+                    return "";
+            }
+        }
+
+        public string GetVersion()
+        {
+            return manifest != null && manifest.Version != null ? manifest.Version.ToString() : info.Version.Value;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace CustomModManager
         private static readonly string modPath = (string)MOD_MANAGER_MOD_PATH_FIELD.GetValue(null);
 
         private static readonly FieldInfo MOD_MANAGER_LOADED_MODS_FIELD = AccessTools.DeclaredField(typeof(ModManager), "loadedMods");
-        private static readonly DictionaryList<string, ModEntry> loadedMods = new DictionaryList<string, ModEntry>();
+        private static readonly DictionaryList<string, ModEntry> mods = new DictionaryList<string, ModEntry>();
 
         private static bool loading = false;
 
@@ -32,9 +32,13 @@ namespace CustomModManager
                 string modName = modEntry.Key;
                 Mod mod = modEntry.Value;
 
-                if (!loadedMods.dict.ContainsKey(modName) && !modName.EndsWith(":Ignore"))
+                if (!mods.dict.ContainsKey(modName) && !modName.EndsWith(":Ignore"))
                 {
-                    loadedMods.Add(modName, new ModEntry(GetModFolderName(mod.Path), mod, mod.ApiInstance is ModManagerMod ? ModEntry.EModDisableState.Disallowed : ModEntry.EModDisableState.Disallowed_Preloaded, ModManifestFromXml.FromXml(mod.ModInfo.Name.Value, mod.Path)));
+                    mods.Add(modName, new ModEntry(new ModLoadInfo(mod.ModInfo, ModManifestFromXml.FromXml(mod.ModInfo.Name.Value, mod.Path), mod.Path))
+                    {
+                        instance = mod,
+                        disableState = mod.ApiInstance is ModManagerMod ? ModEntry.EModDisableState.Disallowed : ModEntry.EModDisableState.Disallowed_Preloaded
+                    });
                 }
             }
         }
@@ -44,166 +48,160 @@ namespace CustomModManager
             return path.Substring(modPath.Length).Trim('\\', '/');
         }
 
+        private static Dictionary<string, ModLoadInfo> DetectMods()
+        {
+            string[] mods = Directory.GetDirectories(modPath);
+
+            Dictionary<string, ModLoadInfo> detectedEntries = new Dictionary<string, ModLoadInfo>();
+
+            foreach (var modDir in mods)
+            {
+                ModInfo.ModInfo info = LoadModInfoFromXml(modDir);
+
+                if (info == null || ModLoader.mods.dict.ContainsKey(info.Name.Value))
+                    continue;
+
+                detectedEntries.Add(info.Name.Value, new ModLoadInfo(info, ModManifestFromXml.FromXml(info.Name.Value, modDir), modDir));
+            }
+
+            return detectedEntries;
+        }
+
+        private static void LoadMods()
+        {
+            Dictionary<string, ModLoadInfo> detectedMods = DetectMods();
+
+            foreach (var detectedMod in detectedMods.Values)
+            {
+                SortDependencies(detectedMod, detectedMods);
+                mods.Add(detectedMod.modInfo.Name.Value, new ModEntry(detectedMod));
+            }
+
+            List<ModLoadInfo> sortedMods = new List<ModLoadInfo>(detectedMods.Values);
+            sortedMods.Sort();
+
+            DictionaryList<string, Mod> modManagerLoadedMods = (DictionaryList<string, Mod>) MOD_MANAGER_LOADED_MODS_FIELD.GetValue(null);
+
+            foreach (var detectedMod in sortedMods)
+            {
+                if (detectedMod.load)
+                {
+                    List<ModLoadInfo.ModLoadDependency> failedToLoad = detectedMod.dependencies.FindAll(dep => !dep.parent.load);
+                    
+                    if(failedToLoad.Any())
+                    {
+                        Log.Error($"[Mod Loader] Failed to load {detectedMod.modInfo.Name.Value} due to the following dependencies failing to load: " + failedToLoad.StringFromList(dep => dep.parentName));
+                        continue;
+                    }
+
+                    if(LoadMod(detectedMod, out Mod mod))
+                    {
+                        mods.dict[detectedMod.modInfo.Name.Value].instance = mod;
+
+                        modManagerLoadedMods.Remove(detectedMod.modPath + ":Ignore");
+                        modManagerLoadedMods.Add(mod.ModInfo.Name.Value, mod);
+                    }
+
+                    detectedMod.load = mod != null;
+                }
+            }
+
+            foreach (var detectedMod in sortedMods)
+            {
+                if (detectedMod.load)
+                {
+                    detectedMod.load = InitMod(detectedMod);
+                }
+            }
+        }
+
+        private static void SortDependencies(ModLoadInfo modLoadInfo, Dictionary<string, ModLoadInfo> mods)
+        {
+            if (modLoadInfo.manifest == null || modLoadInfo.manifest.Dependencies == null)
+                return;
+
+            foreach(var dependency in modLoadInfo.manifest.Dependencies)
+            {
+                if (mods.ContainsKey(dependency))
+                    modLoadInfo.dependencies.Add(new ModLoadInfo.ModLoadDependency(modLoadInfo, mods[dependency]));
+                else
+                    modLoadInfo.dependencies.Add(new ModLoadInfo.ModLoadDependency(modLoadInfo, dependency));
+            }
+
+            List<string> missingDependencies = new List<string>();
+
+            modLoadInfo.dependencies.ForEach(dep =>
+            {
+                if (!dep.success)
+                    missingDependencies.Add(dep.parentName);
+            });
+
+            if(missingDependencies.Count > 0)
+            {
+                modLoadInfo.load = false;
+                Log.Error($"[Mod Loader] Could not load {modLoadInfo.modInfo.Name.Value} due to the following missing dependencies: {missingDependencies.StringFromList()}");
+            }
+        }
+
+        private static bool LoadMod(ModLoadInfo modLoadInfo, out Mod modInstance)
+        {
+            Log.Out($"[Mod Loader] Loading {modLoadInfo.modInfo.Name.Value}");
+
+            Mod mod = null;
+
+            try
+            {
+                mod = Mod.LoadFromFolder(modLoadInfo.modPath);
+
+                if (mod == null)
+                {
+                    Log.Warning($"[Mod Loader] Failed to load {modLoadInfo.modInfo.Name.Value} from folder {modLoadInfo.modPath}.");
+                    modInstance = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                if (mod == null)
+                {
+                    Log.Error($"[Mod Loader] Failed to load {modLoadInfo.modInfo.Name.Value} from folder {modLoadInfo.modPath}.");
+                    Log.Exception(ex);
+                }
+            }
+
+            modInstance = mod;
+            return mod != null;
+        }
+
+        private static bool InitMod(ModLoadInfo modLoadInfo)
+        {
+            Mod mod = mods.dict[modLoadInfo.modInfo.Name.Value].instance;
+
+            if (mod.ApiInstance != null)
+            {
+                try
+                {
+                    mod.ApiInstance.InitMod(mod);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"[Mod Loader] Failed initializing IModApi instance from mod {mod.ModInfo.Name.Value} from DLL {Path.GetFileName(mod.MainAssembly.Location)}");
+                    Log.Exception(ex);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         internal static void StartLoading()
         {
             harmony.Unpatch(typeof(ThreadManager).GetMethod("RunCoroutineSync"), HarmonyPatchType.Prefix, "filunderscore.modmanager");
 
             loading = true;
 
-            string[] mods = Directory.GetDirectories(modPath);
-
-            Dictionary<string, ModLoadEntry> detectedEntries = new Dictionary<string, ModLoadEntry>();
-            int loadIndex = 0;
-            foreach(var modDir in mods)
-            {
-                ModInfo.ModInfo info = LoadModInfoFromXml(modDir);
-
-                if (info == null || loadedMods.dict.ContainsKey(info.Name.Value))
-                    continue;
-
-                detectedEntries.Add(info.Name.Value, new ModLoadEntry
-                {
-                    path = modDir,
-                    info = info,
-                    manifest = ModManifestFromXml.FromXml(info.Name.Value, modDir),
-                    loadOrder = loadIndex++
-                });
-            }
-
-            foreach(var modLoadEntry in detectedEntries)
-            {
-                var modEntry = modLoadEntry.Value;
-
-                if (modEntry.manifest == null || modEntry.manifest.Dependencies == null)
-                    continue;
-
-                List<string> dependencies = modEntry.manifest.Dependencies;
-                List<string> missingDependencies = new List<string>(); ;
-
-                for (int index = 0; index < dependencies.Count; index++)
-                {
-                    string dependency = dependencies[index];
-                    
-                    if(!detectedEntries.ContainsKey(dependency))
-                    {
-                        missingDependencies.Add(dependency);
-
-                        continue;
-                    }
-
-                    int dependencyLoadIndex = detectedEntries[dependency].loadOrder;
-
-                    if(dependencyLoadIndex > modEntry.loadOrder)
-                        modEntry.loadOrder = dependencyLoadIndex + 1;
-
-                    modEntry.dependentOn.Add(detectedEntries[dependency]);
-                }
-
-                if(missingDependencies.Count > 0)
-                {
-                    string dependenciesMissingListStr = "";
-
-                    for(int index = 0; index < missingDependencies.Count; index++)
-                    {
-                        dependenciesMissingListStr += missingDependencies[index];
-
-                        if (index < missingDependencies.Count - 1)
-                            dependenciesMissingListStr += ", ";
-                    }
-
-                    Log.Warning($"[Mod Loader] Failed to load mod {modEntry.info.Name.Value} due to the following dependencies missing: " + dependenciesMissingListStr);
-
-                    continue;
-                }
-            }
-
-            List<ModLoadEntry> loadOrder = new List<ModLoadEntry>(detectedEntries.Values);
-            loadOrder.Sort();
-
-            DictionaryList<string, Mod> modManagerLoadedMods = (DictionaryList<string, Mod>) MOD_MANAGER_LOADED_MODS_FIELD.GetValue(null);
-
-            foreach (var entry in loadOrder)
-            {
-                Log.Out("Loading " + entry.info.Name.Value);
-
-                if(entry.dependentOn.Count(dependency => !dependency.loaded) > 0)
-                {
-                    Log.Warning($"[Mod Loader] Failed to load mod {entry.info.Name.Value} due to one of its dependencies failing to load.");
-                    continue;
-                }
-
-                Mod mod = null;
-
-                try
-                {
-                    mod = Mod.LoadFromFolder(entry.path);
-
-                    if (mod == null)
-                    {
-                        Log.Warning($"[Mod Loader] Failed to load mod {entry.info.Name.Value} from folder {entry.path}.");
-                        continue;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (mod == null)
-                    {
-                        Log.Error($"[Mod Loader] Failed to load mod {entry.info.Name.Value} from folder {entry.path}.");
-                        Log.Exception(ex);
-                        continue;
-                    }
-                }
-
-                loadedMods.Add(mod.ModInfo.Name.Value, new ModEntry(GetModFolderName(entry.path), mod, ModEntry.EModDisableState.Allowed, entry.manifest));
-                entry.loaded = true;
-                entry.instance = mod;
-
-                modManagerLoadedMods.Remove(entry.path);
-                modManagerLoadedMods.Add(mod.ModInfo.Name.Value, mod);
-            }
-
-            foreach(var loadedModEntry in loadedMods.dict)
-            {
-                if (loadedModEntry.Value.GetModDisableState() != ModEntry.EModDisableState.Allowed)
-                    continue;
-
-                Mod mod = loadedModEntry.Value.instance;
-
-                if (mod.ApiInstance != null)
-                {
-                    try
-                    {
-                        mod.ApiInstance.InitMod(mod);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error($"[Mod Loader] Failed initializing IModApi instance from mod {mod.ModInfo.Name.Value} from DLL {Path.GetFileName(mod.MainAssembly.Location)}");
-                        Log.Exception(ex);
-                        continue;
-                    }
-                }
-            }
+            LoadMods();
 
             loading = false;
-        }
-
-        class ModLoadEntry : IComparable<ModLoadEntry>
-        {
-            public string path;
-            public ModInfo.ModInfo info;
-            public ModManifest manifest;
-            public int loadOrder;
-            public bool loaded = false;
-            public Mod instance;
-            public List<ModLoadEntry> dependentOn = new List<ModLoadEntry>();
-
-            public int CompareTo(ModLoadEntry other)
-            {
-                if (other == null)
-                    return 1;
-
-                return loadOrder.CompareTo(other.loadOrder);
-            }
         }
 
         private static ModInfo.ModInfo LoadModInfoFromXml(string path)
@@ -220,12 +218,12 @@ namespace CustomModManager
 
         public static List<ModEntry> GetLoadedMods()
         {
-            return loadedMods.list;
+            return mods.list;
         }
 
         internal static ModEntry GetModEntryFromModInstance(Mod modInstance)
         {
-            foreach(var mod in loadedMods.list)
+            foreach(var mod in mods.list)
             {
                 if (mod.instance == modInstance)
                     return mod;

@@ -6,27 +6,51 @@ using System.Threading.Tasks;
 
 namespace CustomModManager
 {
-    public class ModLoadInfo
+    public class ModLoadInfo : IComparable<ModLoadInfo>
     {
-        public ModInfo.ModInfo modInfo;
-        public ModManifest manifest;
-        public int loadIndex;
-        public List<ModLoadDependency> dependencies;
+        public readonly ModInfo.ModInfo modInfo;
+        public readonly ModManifest manifest;
+        public readonly string modPath;
+        public List<ModLoadDependency> dependencies = new List<ModLoadDependency>();
+        public bool load = true;
 
-        public EModLoadState loadState;
-
-        public enum EModLoadState
+        public ModLoadInfo(ModInfo.ModInfo modInfo, ModManifest manifest, string modPath)
         {
-            Loaded,
-            Unloaded,
-            Error,
-            Missing_Dependencies
+            this.modInfo = modInfo;
+            this.manifest = manifest;
+            this.modPath = modPath;
         }
 
         public class ModLoadDependency
         {
+            public string parentName;
+            public readonly bool success;
+
             public ModLoadInfo parent;
             public ModLoadInfo child;
+
+            public ModLoadDependency(ModLoadInfo child, string parentName)
+            {
+                this.child = child;
+                this.parentName = parentName;
+                this.success = false;
+            }
+
+            public ModLoadDependency(ModLoadInfo child, ModLoadInfo parent)
+            {
+                this.child = child;
+                this.parent = parent;
+                this.parent.dependencies.Add(this);
+                this.success = true;
+            }
+        }
+
+        public int CompareTo(ModLoadInfo other)
+        {
+            if (other == null)
+                return 1;
+
+            return dependencies.Any(dep => dep.parent == other) ? 1 : -1;
         }
     }
 }

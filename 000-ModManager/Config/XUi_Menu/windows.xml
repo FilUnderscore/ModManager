@@ -120,5 +120,18 @@
 				<simplebutton name="btnOk" depth="3" pos="0,0" width="200" height="36" font_size="32" caption_key="xuiOk" upper_case="true"/>
 			</rect>
 		</window>
+		
+		<window name="modsLoaderModLoadingErrorPopup" anchor="CenterCenter" pos="-600, 300" width="1185" height="780" controller="CustomModManager.UI.XUiC_ModLoaderModLoadingErrorPopup, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" cursor_area="true">
+			<panel name="header" pos="0,0" height="43" width="980" depth="1" backgroundspritename="ui_game_panel_header" bordercolor="[black]" borderthickness="3">
+				<label style="header.name" name="windowheader" pos="6,-6" width="550" text_key="xuiModLoadingError"/>
+			</panel>
+			
+			<rect pos="0,-50" weight="590" height="650">
+				<sprite depth="10" name="border" sprite="menu_empty3px" color="[black]" type="sliced" fillcenter="false" globalopacity="true" globalopacitymod="0.9" />
+				<sprite depth="0" pos="2,0" width="586" name="backgroundMain" sprite="menu_empty3px" color="[mediumGrey]" type="sliced" fillcenter="true"/>
+				
+				<label depth="4" name="modLoadingErrorLabel" pos="7,-18" pivot="left" width="586" height="645" font_size="32"/>
+			</rect>
+		</window>
 	</append>
 </modmanager_windows>

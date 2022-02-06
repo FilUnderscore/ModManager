@@ -29,6 +29,7 @@ namespace CustomModManager
 
             List<ModEntry> updatedMods = new List<ModEntry>();
 
+            /*
             foreach(var mod in ModLoader.GetLoadedMods())
             {
                 if (!mod.HasBeenChanged())
@@ -48,11 +49,11 @@ namespace CustomModManager
                 if (mod.WillBeEnabled().Value)
                     lines.RemoveAll(folderName => mod.folderName == folderName);
                 else
-                    lines.Add(mod.folderName);
+                    lines.Add(mod.loadInfo.modPath);
             }
 
             File.WriteAllLines(file, lines);
-
+            */
             return true;
         }
 
@@ -73,7 +74,7 @@ namespace CustomModManager
 
         public static string GetModEntryFolderLocation(ModEntry entry)
         {
-            return modPath + "/" + entry.folderName;
+            return entry.loadInfo.modPath;
         }
 
         internal static string GetSettingsFileLocation()
