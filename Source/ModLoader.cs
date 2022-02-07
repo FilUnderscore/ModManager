@@ -1,12 +1,10 @@
 ﻿using HarmonyLib;
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace CustomModManager
 {
@@ -22,8 +20,10 @@ namespace CustomModManager
         private static readonly DictionaryList<string, ModEntry> mods = new DictionaryList<string, ModEntry>();
 
         private static bool loading = false;
+        private static readonly List<string> disabledMods = new List<string>();
+        internal const string disabledModsFilename = "disabled-mods.txt";
 
-        internal static void CheckForUndetectedMods()
+        internal static void CheckForPreloadedMods()
         {
             DictionaryList<string, Mod> mmloadedMods = (DictionaryList<string, Mod>)MOD_MANAGER_LOADED_MODS_FIELD.GetValue(null);
 
@@ -43,13 +43,25 @@ namespace CustomModManager
             }
         }
 
-        internal static string GetModFolderName(string path)
+        private static void CheckDisabledMods()
         {
-            return path.Substring(modPath.Length).Trim('\\', '/');
+            string file = modPath + "/" + disabledModsFilename;
+
+            if (File.Exists(file))
+            {
+                string[] lines = File.ReadAllLines(file);
+
+                foreach (var line in lines)
+                {
+                    disabledMods.Add(line);
+                }
+            }
         }
 
         private static Dictionary<string, ModLoadInfo> DetectMods()
         {
+            CheckDisabledMods();
+
             string[] mods = Directory.GetDirectories(modPath);
 
             Dictionary<string, ModLoadInfo> detectedEntries = new Dictionary<string, ModLoadInfo>();
@@ -61,7 +73,10 @@ namespace CustomModManager
                 if (info == null || ModLoader.mods.dict.ContainsKey(info.Name.Value))
                     continue;
 
-                detectedEntries.Add(info.Name.Value, new ModLoadInfo(info, ModManifestFromXml.FromXml(info.Name.Value, modDir), modDir));
+                detectedEntries.Add(info.Name.Value, new ModLoadInfo(info, ModManifestFromXml.FromXml(info.Name.Value, modDir), modDir)
+                {
+                    load = !disabledMods.Contains(Path.GetFileName(modDir))
+                });
             }
 
             return detectedEntries;
@@ -193,7 +208,7 @@ namespace CustomModManager
             return true;
         }
 
-        internal static void StartLoading()
+        private static void StartLoading()
         {
             harmony.Unpatch(typeof(ThreadManager).GetMethod("RunCoroutineSync"), HarmonyPatchType.Prefix, "filunderscore.modmanager");
 

@@ -13,7 +13,6 @@ namespace CustomModManager
     public class CustomModManager
     {
         private static readonly FieldInfo MOD_MANAGER_MOD_PATH_FIELD = AccessTools.DeclaredField(typeof(ModManager), "MOD_PATH");
-        private static readonly string disabledModsFilename = "disabled-mods.txt";
         private static readonly string modSettingsFilename = "mod-settings.xml";
 
         private static readonly string modPath = (string)MOD_MANAGER_MOD_PATH_FIELD.GetValue(null);
@@ -29,7 +28,6 @@ namespace CustomModManager
 
             List<ModEntry> updatedMods = new List<ModEntry>();
 
-            /*
             foreach(var mod in ModLoader.GetLoadedMods())
             {
                 if (!mod.HasBeenChanged())
@@ -41,19 +39,19 @@ namespace CustomModManager
             if (updatedMods.Count == 0)
                 return false;
 
-            string file = modPath + "/" + disabledModsFilename;
+            string file = modPath + "/" + ModLoader.disabledModsFilename;
             List<string> lines = File.Exists(file) ? File.ReadAllLines(file).ToList() : new List<string>();
 
             foreach (var mod in updatedMods)
             {
                 if (mod.WillBeEnabled().Value)
-                    lines.RemoveAll(folderName => mod.folderName == folderName);
+                    lines.RemoveAll(folderName => Path.GetFileName(mod.loadInfo.modPath) == folderName);
                 else
-                    lines.Add(mod.loadInfo.modPath);
+                    lines.Add(Path.GetFileName(mod.loadInfo.modPath));
             }
 
             File.WriteAllLines(file, lines);
-            */
+            
             return true;
         }
 
@@ -70,11 +68,6 @@ namespace CustomModManager
         public static string GetModsFolderLocation()
         {
             return modPath;
-        }
-
-        public static string GetModEntryFolderLocation(ModEntry entry)
-        {
-            return entry.loadInfo.modPath;
         }
 
         internal static string GetSettingsFileLocation()

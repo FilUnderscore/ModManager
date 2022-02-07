@@ -34,7 +34,7 @@ namespace CustomModManager.UI
             if (currentModEntry == null)
                 return;
 
-            Application.OpenURL(CustomModManager.GetModEntryFolderLocation(currentModEntry));
+            Application.OpenURL(currentModEntry.loadInfo.modPath);
         }
 
         private void EnabledButton_OnValueChanged(XUiC_ToggleButton _sender, bool _newValue)

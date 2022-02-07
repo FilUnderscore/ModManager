@@ -20,7 +20,7 @@ namespace CustomModManager
 
         public void InitMod(Mod _modInstance)
         {
-            ModLoader.CheckForUndetectedMods();
+            ModLoader.CheckForPreloadedMods();
 
             if (ModManagerAPI.IsModManagerLoaded())
             {
