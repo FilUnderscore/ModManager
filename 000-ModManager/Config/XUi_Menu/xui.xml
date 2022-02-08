@@ -6,8 +6,5 @@
 		<window_group name="modsListChanged">
 			<window name="modsListChanged"/>
 		</window_group>
-		<window_group name="modsLoadingError">
-			
-		</window_group>
 	</append>
 </mods_xui>
