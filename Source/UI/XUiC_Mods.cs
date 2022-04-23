@@ -42,7 +42,7 @@ namespace CustomModManager.UI
 
         private void OpenModsFolder_OnPressed(XUiController _sender, int _mouseButton)
         {
-            Application.OpenURL(CustomModManager.GetModsFolderLocation());
+            Application.OpenURL(ModLoader.modPath);
         }
 
         private void ModsList_SelectionChanged(XUiC_ListEntry<XUiC_ModsList.ListEntry> _previousEntry, XUiC_ListEntry<XUiC_ModsList.ListEntry> _newEntry)

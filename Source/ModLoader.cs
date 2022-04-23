@@ -12,9 +12,9 @@ namespace CustomModManager
     {
         internal static Harmony harmony;
 
-        private static readonly FieldInfo MOD_MANAGER_MOD_PATH_FIELD = AccessTools.DeclaredField(typeof(ModManager), "MOD_PATH");
-
-        private static readonly string modPath = (string)MOD_MANAGER_MOD_PATH_FIELD.GetValue(null);
+        private static readonly FieldInfo MOD_MANAGER_MOD_PATH_FIELD = AccessTools.DeclaredField(typeof(ModManager), "ModsBasePathLegacy");
+        
+        internal static readonly string modPath = (string)MOD_MANAGER_MOD_PATH_FIELD.GetValue(null);
 
         private static readonly FieldInfo MOD_MANAGER_LOADED_MODS_FIELD = AccessTools.DeclaredField(typeof(ModManager), "loadedMods");
         private static readonly DictionaryList<string, ModEntry> mods = new DictionaryList<string, ModEntry>();
@@ -46,7 +46,7 @@ namespace CustomModManager
         private static void CheckDisabledMods()
         {
             string file = modPath + "/" + disabledModsFilename;
-
+            
             if (File.Exists(file))
             {
                 string[] lines = File.ReadAllLines(file);
@@ -62,7 +62,10 @@ namespace CustomModManager
         {
             CheckDisabledMods();
 
-            string[] mods = Directory.GetDirectories(modPath);
+            List<string> mods = new List<string>();
+
+            if(Directory.Exists(modPath))
+                mods.AddRange(Directory.GetDirectories(modPath));
 
             Dictionary<string, ModLoadInfo> detectedEntries = new Dictionary<string, ModLoadInfo>();
 

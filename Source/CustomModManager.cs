@@ -12,11 +12,8 @@ namespace CustomModManager
 {
     public class CustomModManager
     {
-        private static readonly FieldInfo MOD_MANAGER_MOD_PATH_FIELD = AccessTools.DeclaredField(typeof(ModManager), "MOD_PATH");
         private static readonly string modSettingsFilename = "mod-settings.xml";
 
-        private static readonly string modPath = (string)MOD_MANAGER_MOD_PATH_FIELD.GetValue(null);
-        
         static CustomModManager()
         {
             ModSettingsFromXml.Load();
@@ -39,7 +36,7 @@ namespace CustomModManager
             if (updatedMods.Count == 0)
                 return false;
 
-            string file = modPath + "/" + ModLoader.disabledModsFilename;
+            string file = ModLoader.modPath + "/" + ModLoader.disabledModsFilename;
             List<string> lines = File.Exists(file) ? File.ReadAllLines(file).ToList() : new List<string>();
 
             foreach (var mod in updatedMods)
@@ -63,11 +60,6 @@ namespace CustomModManager
         private static void SaveModSettings()
         {
             ModSettingsFromXml.Save();
-        }
-
-        public static string GetModsFolderLocation()
-        {
-            return modPath;
         }
 
         internal static string GetSettingsFileLocation()
