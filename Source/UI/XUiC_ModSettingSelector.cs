@@ -42,6 +42,8 @@ namespace CustomModManager.UI
                 this.controlCombo.ViewComponent.IsVisible = !this.IsTextInput();
                 this.controlText.ViewComponent.IsVisible = this.IsTextInput();
             }
+
+            this.CheckValue();
         }
 
         private void SetupOptions()
@@ -100,12 +102,27 @@ namespace CustomModManager.UI
             if (!this.IsTextInput())
                 return;
 
-            this.controlText.ActiveTextColor = !textSelected || this.modSetting.SetValueFromString(_text) ? Color.white : Color.red;
+            bool flag = this.modSetting.SetValueFromString(_text);
+            this.controlText.ActiveTextColor = !textSelected || flag ? Color.white : Color.red;
+            
+            if(flag)
+            {
+                this.CheckValue();
+            }
         }
 
         private void ControlCombo_OnValueChanged(XUiController _sender, ModOptionValue _oldValue, ModOptionValue _newValue)
         {
             this.modSetting.SetValueFromString(_newValue.Value);
+
+            this.CheckValue();
+        }
+
+        private void CheckValue()
+        {
+            bool flag = this.modSetting.IsDefault();
+            this.controlText.ActiveTextColor = flag ? Color.white : Color.yellow;
+            this.controlCombo.TextColor = flag ? Color.white : Color.yellow;
         }
 
         public struct ModOptionValue

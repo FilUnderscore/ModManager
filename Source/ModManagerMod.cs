@@ -1,14 +1,13 @@
 ﻿using HarmonyLib;
 
 using CustomModManager.API;
+using System;
 
 namespace CustomModManager
 {
     public class ModManagerMod : IModApi
     {
-        private bool showPatchNotesOnStartup = true;
-        int tester;
-        private int banana2;
+        private bool showPatchNotesOnStartup = true, showUpdatesOnStartup = true;
         
         public ModManagerMod()
         {
@@ -30,20 +29,21 @@ namespace CustomModManager
                 {
                     bool result = bool.TryParse(str, out bool val);
                     return (val, result);
-                }).SetAllowedValues(new bool[] { true, false }).SetWrap(true);
+                }).SetAllowedValues(new bool[] { true, false });
 
-                settings.Hook("test", "test", value => tester = value, () => tester, (value) => (value.ToString(), value.ToString() + "%"), str =>
+                settings.Hook("showUpdatesOnStartup", "xuiModManagerShowUpdatesOnStartupSetting", value => showUpdatesOnStartup = value, () => showUpdatesOnStartup, (value) => (value.ToString(), value ? "Yes" : "No"), (str) =>
                 {
-                    bool result = int.TryParse(str, out int val);
+                    bool result = bool.TryParse(str, out bool val);
                     return (val, result);
-                }).SetMinimumMaximumAndIncrementValues(0, 100, 10).SetWrap(false);
-
-                settings.Hook("test1", "test", value => banana2 = value, () => banana2, (value) => (value.ToString(), value.ToString() + " bananas"), str =>
-                {
-                    bool result = int.TryParse(str, out int val);
-                    return (val, result);
-                });
+                }).SetAllowedValues(new bool[] { true, false });
             }
+
+            ModEvents.GameStartDone.RegisterHandler(GameStartDone);
+        }
+
+        private void GameStartDone()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -12,6 +12,7 @@ namespace CustomModManager
         internal Mod instance;
 
         private bool? willBeEnabled;
+        internal bool flag;
         internal EModDisableState disableState;
 
         public ModInfo.ModInfo info => loadInfo.modInfo;
@@ -38,11 +39,8 @@ namespace CustomModManager
                 this.willBeEnabled = !this.IsLoaded();
             else
                 this.willBeEnabled = !this.willBeEnabled;
-        }
 
-        public bool HasBeenChanged()
-        {
-            return this.willBeEnabled != null && this.willBeEnabled.Value != this.IsLoaded();
+            this.flag = true;
         }
 
         public EModDisableState GetModDisableState()

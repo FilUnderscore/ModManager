@@ -79,13 +79,12 @@ namespace CustomModManager.UI
         private void BtnBack_OnPressed(XUiController _sender, int mouseButton)
         {
             this.xui.playerUI.windowManager.Close(this.windowGroup.ID);
-            this.xui.playerUI.windowManager.Open(CustomModManager.HasModBeenChanged() ? XUiC_ModsListChanged.ID : XUiC_MainMenu.ID, true);
         }
 
         public override void OnOpen()
         {
             base.OnOpen();
-            this.windowGroup.openWindowOnEsc = CustomModManager.HasModBeenChanged() ? XUiC_ModsListChanged.ID : XUiC_MainMenu.ID;
+            this.windowGroup.isEscClosable = true;
 
             modTabs.ViewComponent.IsVisible = false;
         }
@@ -93,11 +92,15 @@ namespace CustomModManager.UI
         public override void OnClose()
         {
             base.OnClose();
-
-            if(CustomModManager.Save())
+            
+            if (CustomModManager.Save())
             {
                 // Open dialog informing that changes will be applied on game restart.
-
+                XUiC_ModsErrorMessageBoxWindowGroup.ShowMessageBox(this.xui, Localization.Get("xuiModsListChanged"), Localization.Get("xuiModsListChangedText"), "", Localization.Get("xuiOk"), null, () => { }, true, false);
+            }
+            else
+            {
+                this.xui.playerUI.windowManager.Open(XUiC_MainMenu.ID, true);
             }
         }
     }

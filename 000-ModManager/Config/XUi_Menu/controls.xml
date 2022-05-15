@@ -17,7 +17,16 @@
 				<label name="ControlLabel" depth="4" pos="0,0" width="262" height="30" style="hover" tooltip_key="{title}Desc" text_key="{title}" font_size="28" color="[white]" justify="right" pivot="topleft" />
 				<combobox name="ControlCombo" type="ComboBoxList`1[[CustomModManager.UI.XUiC_ModSettingSelector+ModOptionValue, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]" pos="269,0" width="300" height="32" />
 				<textfield name="ControlText" depth="5" pos="303,0" width="232" height="32" pivot="topLeft" />
+				<label name="ControlLabel2" depth="4" pos="0,0" width="552" height="30" style="hover" tooltip_key="{title}Desc" text_key="{title}" font_size="28" color="[white]" justify="center" />
 			</rect>
 		</modoption>
 	</append>
+	
+	<append xpath="/controls/savegames_list_entry/rect">
+		<label depth="4" name="Mods" pos="${width-10},-2" style="press, doubleclick, hover, scroll" color="[labelColor]" width="96" height="32" text="{moddedtext}" tooltip="{modstooltip}" font_size="26" justify="right" pivot="topright" sound="[recipe_click]" visible="{ismodded}" />
+	</append>
+	
+	<setattribute xpath="/controls/savegames_list_entry/rect/label[@name='Version']" name="pos">
+		${width-96},-2
+	</setattribute>
 </modmanager_controls>

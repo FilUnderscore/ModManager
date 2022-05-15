@@ -95,6 +95,8 @@ namespace CustomModManager
             public abstract string GetTabKey();
 
             public abstract bool GetWrap();
+
+            public abstract bool IsDefault();
         }
 
         internal class ModSetting<T> : BaseModSetting, IModSetting<T>
@@ -245,6 +247,11 @@ namespace CustomModManager
             public override bool GetWrap()
             {
                 return this.wrap;
+            }
+
+            public override bool IsDefault()
+            {
+                return this.defaultValue.Equals(this.GetValue());
             }
         }
     }

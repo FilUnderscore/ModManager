@@ -15,6 +15,8 @@ xuiNoModSettingsDetected,UI,XUI,x,,No mod settings were detected.
 xuiModSettingsReset,UI,XUI,x,,Reset
 xuiModManagerShowPatchNotesOnStartupSetting,UI,XUI,x,,Show Patch Notes On Startup
 xuiModManagerShowPatchNotesOnStartupSettingDesc,UI,XUI,x,,Whether to show patch notes from new mod updates when starting up new versions for the first time.
+xuiModManagerShowUpdatesOnStartupSetting,UI,XUI,x,,Show Updates On Startup
+xuiModManagerShowUpdatesOnStartupSettingDesc,UI,XUI,x,,Whether to show new mod updates when starting up the main menu.
 xuiModVersionTooltipCurrentVersion,UI,XUI,x,,Installed Version
 xuiModVersionTooltipForGameVersion,UI,XUI,x,,For Game Version
 xuiModVersionTooltipAnUpdateIsAvailable,UI,XUI,x,,An update is available
@@ -25,3 +27,9 @@ xuiModVersionTooltipCurrentVersionNotSpecifiedManifest,UI,XUI,x,,Could not check
 xuiModVersionTooltipUpToDate,UI,XUI,x,,This mod is up to date.
 xuiModsListChanged,UI,XUI,x,,Mods List Changed
 xuiModsListChangedText,UI,XUI,x,,"For these changes to take effect, restart your game."
+xuiGameModListChanged,UI,XUI,x,,"This world has been saved with the following mods:\n{0}\nAre you sure you want to continue?"
+xuiGameModError,UI,XUI,x,,Error
+xuiGameModErrorDesc,UI,XUI,,,"{0} has reported an error when trying to execute the {1} event: {2}\n\n"
+xuiGameModErrorDescStackTrace,UI,XUI,,,"Click the book icon to copy the error message and the associated stacktrace to help the mod author."
+xuiGameModErrorIgnore,UI,XUI,x,,Ignore
+xuiGameModErrorButtonCopy,UI,XUI,x,,"Copy to Clipboard"

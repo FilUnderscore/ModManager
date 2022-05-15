@@ -3,6 +3,10 @@
 		<mainmenubutton name="btnMods" pivot="center" width="400" height="50" caption_key="xuiMods"/>
 	</insertBefore>
 	
+	<insertAfter xpath="/windows/window[@name='mainMenu']/grid">
+		<button name="button" pos="300,-220" sprite="server_history" width="36" height="36" defaultcolor="180,180,180" hovercolor="[white]" foregroundlayer="true" type="simple" hoverscale="1.1" pivot="center" tooltip_key="xuiModPatchNotes"/>
+	</insertAfter>
+	
 	<remove xpath="/windows/window[@name='mainMenu']/grid/rect"/>
 	
 	<append xpath="/windows">
@@ -11,7 +15,7 @@
 				<label style="header.name" name="windowheader" pos="6,-6" width="550" text_key="xuiMods"/>
 			</panel>
 			
-			<simplebutton name="openModsFolder" pos="985,-6" width="200" height="37" font_size="26" text="Open Mods Folder" text_key="xuiOpenModsFolder" caption_key="xuiOpenModsFolder" upper_case="true"/>
+			<simplebutton name="openModsFolder" pos="985,0" width="200" height="43" font_size="26" text="Open Mods Folder" text_key="xuiOpenModsFolder" caption_key="xuiOpenModsFolder" upper_case="true"/>
 			
 			<rect pos="0,-50" height="134" width="590">
 				<rect name="mods" pos="0,0" height="650" width="590" controller="CustomModManager.UI.XUiC_ModsList, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -104,21 +108,49 @@
 			</rect>
 		</window>
 		
-		<window name="modsListChanged" anchor="CenterCenter" pos="-300,150" width="593" height="700" controller="CustomModManager.UI.XUiC_ModsListChanged, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" cursor_area="true">
-			<panel name="header" pos="0,0" height="43" depth="1" backgroundspritename="ui_game_panel_header" bordercolor="[black]" borderthickness="3">
-				<label style="header.name" name="windowheader" pos="6,-6" width="486" text_key="xuiModsListChanged"/>
-			</panel>
-			
-			<rect pos="0,-50" height="200">
-				<sprite depth="10" name="border" sprite="menu_empty3px" color="[black]" type="sliced" fillcenter="false" globalopacity="true" globalopacitymod="0.9" />
-				<sprite depth="0" pos="2,0" width="589" name="backgroundMain" sprite="menu_empty3px" color="[mediumGrey]" type="sliced" fillcenter="true"/>		
+		<window name="modsErrorMessageBox" anchor="CenterCenter" pos="-280,140" width="560" height="279" cursor_area="true">
+			<panel depth="20000" createuipanel="true" disableautobackground="true">
+				<panel name="outclick" pos="-2000,2000" width="8000" height="8000" depth="1" createuipanel="true" on_press="true" disableautobackground="true">
+					<sprite depth="0" name="backgroundMain" sprite="menu_empty3px" color="30,30,30,160" type="sliced" fillcenter="true" />
+				</panel>
 				
-				<label depth="4" name="modsListChangedLabel" pos="7,-18" pivot="left" width="588" height="190" font_size="32" text_key="xuiModsListChangedText"/>
-			</rect>
-			
-			<rect pos="393,-265">
-				<simplebutton name="btnOk" depth="3" pos="0,0" width="200" height="36" font_size="32" caption_key="xuiOk" upper_case="true"/>
-			</rect>
+				<panel name="noclick" depth="2" createuipanel="true" on_press="true" pos="-20,20" width="440" height="240" clipping="softclip" clippingsoftness="20,20" disableautobackground="true">
+					<sprite depth="0" name="backgroundMain" sprite="menu_empty" color="0,0,0,50" type="sliced" fillcenter="true" />
+				</panel>
+				
+				<panel name="header" pos="0,0" height="43" depth="1" backgroundspritename="ui_game_panel_header" bordercolor="[black]" borderthickness="3" >
+					<label style="header.name" pos="6,-6" width="550" text="{msgTitle}" />
+				</panel>
+				
+				<panel name="content" pos="0,-46" height="194" depth="1" backgroundcolor="[darkGrey]" bordercolor="[black]" borderthickness="3" pivot="center">
+					<sprite depth="8" name="backgroundMain" sprite="menu_empty3px" pos="0,0" height="194" color="[black]" type="sliced" fillcenter="false" />	
+					<label depth="3" name="descriptionText" pos="8,-6" width="544" text="{msgText}" font_size="28" overflow="resizeheight" upper_case="false" />
+				</panel>
+
+				<rect name="btnLeft" depth="3" pos="0, -243" width="200" height="36" disableautobackground="true" visible="{showleftbutton}">
+					<sprite depth="8" name="backgroundMain" sprite="menu_empty3px" color="[black]" type="sliced" fillcenter="false" />	
+					<rect depth="3" pos="0,-3" height="31">
+						<button name="clickable2" sprite="menu_empty" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced" hoverscale="1.0"/>
+						<!-- <sprite depth="2" name="windowIcon" width="24" height="24" pos="45,-2" color="[iconColor]" sprite="ui_game_symbol_check"/> -->
+						<label depth="2" name="btnLabel" pos="0,-2" justify="center" text_key="{leftbuttontext}" effect="outline" upper_case="true" />
+					</rect>
+				</rect>
+				
+				<rect name="btnRight" depth="3" pos="360, -243" width="200" height="36" disableautobackground="true">
+					<sprite depth="8" name="backgroundMain" sprite="menu_empty3px" color="[black]" type="sliced" fillcenter="false" />	
+					<rect depth="3" pos="0,-3" height="31">
+						<button name="clickable" sprite="menu_empty" defaultcolor="[mediumGrey]" hoversprite="ui_game_select_row" hovercolor="[white]" type="sliced" hoverscale="1.0"/>
+						<!-- <sprite depth="2" name="windowIcon" width="24" height="24" pos="45,-2" color="[iconColor]" sprite="ui_game_symbol_check"/> -->
+						<label depth="2" name="btnLabel" pos="0,-2" justify="center" text_key="{rightbuttontext}" effect="outline" upper_case="true" />
+					</rect>
+				</rect>
+			</panel>
 		</window>
+	</append>
+	
+	<setattribute xpath="/windows/window[@name='loadingScreen']/label[@name='lblText']" name="anchor_bottom">#cam,0,40</setattribute>
+	
+	<append xpath="/windows/window[@name='loadingScreen']">
+		<label name="lblTextMods" depth="6" anchor_left="#cam,0,20"   anchor_right="#cam,1,-20"   anchor_bottom="#cam,0,10"  anchor_top="#cam,0,40" font_size="24" justify="left" spacing_y="5" text="{modlisttext}" />
 	</append>
 </modmanager_windows>

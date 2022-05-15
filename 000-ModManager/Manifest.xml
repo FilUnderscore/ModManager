@@ -1,6 +1,6 @@
 <ModManifest>
 	<Version>1.0.0</Version>
-	<GameVersion ReleaseType="Alpha" Major="20" Minor="1" Build="6"/>
+	<GameVersion ReleaseType="Alpha" Major="20" Minor="4" Build="42"/>
 	<PatchNotesList>
 		<PatchNotes Version="1.0.0">
 			<PatchNoteEntry Color="0,255,0">
