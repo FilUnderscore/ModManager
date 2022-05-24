@@ -28,6 +28,8 @@
 						<sprite depth="4" name="searchIcon" style="icon30px" pos="5,-22" sprite="ui_game_symbol_search" pivot="Left"/>
 						<textfield name="searchInput" depth="5" pos="40,-22" width="250" height="30" pivot="Left" search_field="true" />
 						
+						<button name="btnSort" depth="3" pos="384,-22" sprite="ui_game_symbol_sort" style="icon32px, press, hover" pivot="center" tooltip="{sortingTooltip}"/>
+						
 						<panel pos="478,0" width="98" height="43" disableautobackground="true">
 							<pager name="pager" pos="1,-6" />
 						</panel>

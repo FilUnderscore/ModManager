@@ -25,6 +25,8 @@ namespace CustomModManager
             {
                 ModManagerAPI.ModSettings settings = ModManagerAPI.GetModSettings(_modInstance);
 
+                settings.Category("startup", "Startup");
+
                 settings.Hook("showPatchNotesOnStartup", "xuiModManagerShowPatchNotesOnStartupSetting", value => showPatchNotesOnStartup = value, () => showPatchNotesOnStartup, (value) => (value.ToString(), value ? "Yes" : "No"), (str) =>
                 {
                     bool result = bool.TryParse(str, out bool val);

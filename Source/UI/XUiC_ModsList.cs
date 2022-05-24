@@ -16,15 +16,59 @@ namespace CustomModManager.UI
         private static string ModDisabledColor = "255,0,0,255";
         private static string ModEnabledChangeColor = "255,165,0,255";
 
+        private SortingType sortingType = SortingType.Alphanumerical;
+
         public override void Init()
         {
             base.Init();
+
+            this.GetChildById("btnSort").ViewComponent.Controller.OnPress += new XUiEvent_OnPressEventHandler(SortButton_OnPressed);
+        }
+
+        private void SortButton_OnPressed(XUiController _sender, int _mouseButton)
+        {
+            this.sortingType = this.sortingType.CycleEnum();
+            this.RefreshBindings(true);
+
+            this.allEntries.Sort((x, y) => Sort(x, y));
+            this.RefreshView(false);
+        }
+
+        private int Sort(ListEntry a, ListEntry b)
+        {
+            switch(sortingType)
+            {
+                case SortingType.Alphanumerical:
+                    return a.modInfo.Name.Value.CompareTo(b.modInfo.Name.Value);
+                case SortingType.LoadOrder:
+                    return a.modEntry.loadInfo.CompareTo(b.modEntry.loadInfo);
+                case SortingType.Author:
+                    return a.modInfo.Author.Value.CompareTo(b.modInfo.Author.Value);
+            }
+
+            return 0;
+        }
+
+        private string GetSortingName()
+        {
+            switch(sortingType)
+            {
+                case SortingType.Alphanumerical:
+                    return "Alphanumerical";
+                case SortingType.LoadOrder:
+                    return "Load Order";
+                case SortingType.Author:
+                    return "Author";
+            }
+
+            return "Undefined";
         }
 
         public override void OnOpen()
         {
             base.OnOpen();
             this.RebuildList(false);
+            this.RefreshBindings(true);
         }
 
         public override void RebuildList(bool _resetFilter = false)
@@ -43,6 +87,18 @@ namespace CustomModManager.UI
             {
                 ListEntry entry = new ListEntry(mod);
                 this.allEntries.Add(entry);
+            }
+        }
+
+        public override bool GetBindingValue(ref string _value, string _bindingName)
+        {
+            switch(_bindingName)
+            {
+                case "sortingTooltip":
+                    _value = "Sort by: " + GetSortingName();
+                    return true;
+                default:
+                    return base.GetBindingValue(ref _value, _bindingName);
             }
         }
 
@@ -189,6 +245,13 @@ namespace CustomModManager.UI
                         return false;
                 }
             }
+        }
+
+        private enum SortingType
+        {
+            Alphanumerical,
+            LoadOrder,
+            Author
         }
     }
 }

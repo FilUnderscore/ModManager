@@ -26,6 +26,20 @@ namespace CustomModManager
             modSettingsInstances.Add(entry, this);
         }
 
+        public IModSetting<string> Category(string key, string nameUnlocalized)
+        {
+            if(settings.ContainsKey(key))
+            {
+                Log.Error($"[Mod Manager] [{this.entry.info.Name.Value}] A setting with key {key} already exists.");
+                return null;
+            }
+
+            CategoryModSetting setting = new CategoryModSetting(nameUnlocalized);
+            settings.Add(key, setting);
+
+            return setting;
+        }
+
         public IModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, (string, string)> toString, Func<string, (T, bool)> fromString) where T : IComparable<T>
         {
             if(settings.ContainsKey(key))
@@ -97,6 +111,87 @@ namespace CustomModManager
             public abstract bool GetWrap();
 
             public abstract bool IsDefault();
+
+            public abstract bool IsSerializable();
+        }
+
+        internal sealed class CategoryModSetting : BaseModSetting, IModSetting<String>
+        {
+            private string tab;
+            
+            public CategoryModSetting(string unlocalizedName) : base(unlocalizedName)
+            {
+            }
+
+            public override (string unformattedString, string formattedString)[] GetAllowedValuesAsStrings()
+            {
+                return null;
+            }
+
+            public override string GetTabKey()
+            {
+                return this.tab;
+            }
+
+            public override (string unformatted, string formatted) GetValueAsString()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override Type GetValueType()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override bool GetWrap()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override bool IsDefault()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void Reset()
+            {
+
+            }
+
+            public void SetAllowedValues(string[] values)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void SetMinimumMaximumAndIncrementValues(string minimumValue, string maximumValue, string incrementValue)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void SetTab(string tabKey)
+            {
+                this.tab = tabKey;
+            }
+
+            public void SetWrap(bool wrap)
+            {
+                throw new NotImplementedException();
+            }
+
+            internal override void SetLastValueInternal()
+            {
+                throw new NotImplementedException();
+            }
+
+            internal override bool SetValueFromStringInternal(string str, bool loaded)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override bool IsSerializable()
+            {
+                return false;
+            }
         }
 
         internal class ModSetting<T> : BaseModSetting, IModSetting<T>
@@ -252,6 +347,11 @@ namespace CustomModManager
             public override bool IsDefault()
             {
                 return this.defaultValue.Equals(this.GetValue());
+            }
+
+            public override bool IsSerializable()
+            {
+                return true;
             }
         }
     }

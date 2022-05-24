@@ -79,6 +79,23 @@ namespace CustomModManager.API
                 return null;
             }
 
+            public ModSetting<string> Category(string key, string nameUnlocalized)
+            {
+                try
+                {
+                    MethodInfo method = CORE_ASSEMBLY.GetType("CustomModManager.API.IModSettings").GetMethods().Single(m => m.Name == "Category");
+                    object settingInstance = method.Invoke(instance, new object[] { key, nameUnlocalized });
+
+                    return new ModSetting<string>(this, key, settingInstance);
+                }
+                catch
+                {
+                    Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Failed to create Mod Setting instance. Perhaps an out-of-date API version is being used?");
+                }
+
+                return null;
+            }
+
             public ModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString)
             {
                 return Hook(key, nameUnlocalized, setCallback, getCallback, (value) =>

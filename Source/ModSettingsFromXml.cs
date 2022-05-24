@@ -88,6 +88,9 @@ namespace CustomModManager
                     var key = settingEntry.Key;
                     var setting = settingEntry.Value;
 
+                    if (!setting.IsSerializable())
+                        continue;
+
                     XmlElement settingElement = modElement.AddXmlElement("setting");
                     settingElement.SetAttribute("key", key);
                     settingElement.SetAttribute("value", setting.GetValueAsString().unformatted);

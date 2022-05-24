@@ -12,6 +12,9 @@ namespace CustomModManager.UI
         private XUiC_ComboBoxList<ModOptionValue> controlCombo;
         private XUiC_TextInput controlText;
 
+        private XUiV_Label textLabel;
+        private XUiV_Label label;
+
         public ModManagerModSettings.BaseModSetting modSetting;
 
         public XUiC_ModSettingSelector() { }
@@ -25,6 +28,8 @@ namespace CustomModManager.UI
             this.controlText = this.GetChildById("ControlText").GetChildByType<XUiC_TextInput>();
             this.controlText.OnChangeHandler += ControlText_OnChangeHandler;
             this.controlText.OnSelect += ControlText_OnSelect;
+            this.textLabel = this.GetChildById("ControlLabel").ViewComponent as XUiV_Label;
+            this.label = this.GetChildById("ControlLabel2").ViewComponent as XUiV_Label;
         }
 
         public void UpdateModSetting(string key, ModManagerModSettings.BaseModSetting modSetting)
@@ -33,6 +38,22 @@ namespace CustomModManager.UI
 
             if (this.modSetting != null)
             {
+                if(this.modSetting is ModManagerModSettings.CategoryModSetting)
+                {
+                    this.RefreshBindings(true);
+                    this.controlCombo.ViewComponent.IsVisible = false;
+                    this.controlText.ViewComponent.IsVisible = false;
+                    this.label.IsVisible = true;
+                    this.textLabel.IsVisible = false;
+
+                    return;
+                }
+                else
+                {
+                    this.textLabel.IsVisible = true;
+                    this.label.IsVisible = false;
+                }
+
                 if(!this.IsTextInput())
                     this.SetupOptions();
                 else
