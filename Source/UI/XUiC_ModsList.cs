@@ -49,19 +49,19 @@ namespace CustomModManager.UI
             return 0;
         }
 
-        private string GetSortingName()
+        private string GetSortingNameUnlocalized()
         {
             switch(sortingType)
             {
                 case SortingType.Alphanumerical:
-                    return "Alphanumerical";
+                    return Localization.Get("xuiModsSortAlphanumerical");
                 case SortingType.LoadOrder:
-                    return "Load Order";
+                    return Localization.Get("xuiModsSortLoadOrder");
                 case SortingType.Author:
-                    return "Author";
+                    return Localization.Get("xuiModsSortAuthor");
             }
 
-            return "Undefined";
+            return Localization.Get("xuiModsSortUndefined");
         }
 
         public override void OnOpen()
@@ -95,7 +95,7 @@ namespace CustomModManager.UI
             switch(_bindingName)
             {
                 case "sortingTooltip":
-                    _value = "Sort by: " + GetSortingName();
+                    _value = string.Format(Localization.Get("xuiModsSort"), GetSortingNameUnlocalized());
                     return true;
                 default:
                     return base.GetBindingValue(ref _value, _bindingName);

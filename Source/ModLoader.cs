@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using CustomModManager.UI;
+using HarmonyLib;
 
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace CustomModManager
     public class ModLoader
     {
         internal static Harmony harmony;
+        internal static bool mainMenuLoaded = false;
 
         private static readonly FieldInfo MOD_MANAGER_MOD_PATH_FIELD = AccessTools.DeclaredField(typeof(ModManager), "ModsBasePathLegacy");
         
@@ -108,7 +110,8 @@ namespace CustomModManager
                     
                     if(failedToLoad.Any())
                     {
-                        Log.Error($"[Mod Loader] Failed to load {detectedMod.modInfo.Name.Value} due to the following dependencies failing to load: " + failedToLoad.StringFromList(dep => dep.parentName));
+                        Log.Error($"[Mod Loader] Failed to load {detectedMod.modInfo.Name.Value} due to the following dependencies failing to load: " + failedToLoad.StringFromList(dep => dep.parent.modInfo.Name.Value));
+                        detectedMod.load = false;
                         continue;
                     }
 
@@ -278,6 +281,58 @@ namespace CustomModManager
                 static void Prefix()
                 {
                     StartLoading();
+                }
+            }
+
+            [HarmonyPatch(typeof(XUiC_MainMenu))]
+            [HarmonyPatch("Open")]
+            class XUiC_MainMenuOpenHook
+            {
+                static void Postfix(XUi _xuiInstance)
+                {
+                    if (mainMenuLoaded)
+                        return;
+
+                    mainMenuLoaded = true;
+                    Dictionary<ModEntry, List<ModLoadInfo.ModLoadDependency>> dependencies = new Dictionary<ModEntry, List<ModLoadInfo.ModLoadDependency>>();
+
+                    foreach(var mod in ModLoader.GetLoadedMods())
+                    {
+                        if (!mod.loadInfo.load)
+                        {
+                            List<ModLoadInfo.ModLoadDependency> failedToLoad = mod.loadInfo.dependencies.FindAll(dep => !dep.success || !dep.parent.load);
+
+                            if(failedToLoad.Any())
+                                dependencies.Add(mod, failedToLoad);
+                        }
+                    }
+
+                    if(dependencies.Count > 0)
+                    {
+                        string str = "";
+
+                        foreach(var dependency in dependencies)
+                        {
+                            List<ModLoadInfo.ModLoadDependency> disabled = dependency.Value.Where(dep => dep.success && !dep.parent.load).ToList();
+                            List<ModLoadInfo.ModLoadDependency> missing = dependency.Value.Where(dep => !dep.success).ToList();
+
+                            string dependencyStr = "";
+                            if(disabled.Any())
+                                dependencyStr += string.Format(Localization.Get("xuiModDependencyDisabled"), disabled.StringFromList(dep => dep.parent.modInfo.Name.Value));
+
+                            if (disabled.Any() && missing.Any())
+                                dependencyStr += ";";
+
+                            if(missing.Any())
+                                dependencyStr += string.Format(Localization.Get("xuiModDependencyMissing"), missing.StringFromList(dep => dep.parentName));
+    
+                            str += string.Format(Localization.Get("xuiModDependencyMissingEntry"), dependency.Key.info.Name.Value, dependencyStr);
+                        }
+
+                        str = string.Format(Localization.Get("xuiModDependenciesMissing"), str);
+
+                        XUiC_ModsErrorMessageBoxWindowGroup.ShowMessageBox(_xuiInstance, Localization.Get("xuiGameModError"), str, "", Localization.Get("btnOk"), null, null, true, false);
+                    }
                 }
             }
         }

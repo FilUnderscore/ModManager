@@ -85,7 +85,7 @@ namespace CustomModManager.UI
         private void copyButton_OnPress(XUiController _sender, int _mouseButton)
         {
             GUIUtility.systemCopyBuffer = this.copyText;
-            GameManager.ShowTooltip(_sender.xui.playerUI.entityPlayer, "Copied error message to clipboard.");
+            GameManager.ShowTooltip(_sender.xui.playerUI.entityPlayer, Localization.Get("xuiGameModErrorCopied"));
         }
 
         private void leftButton_OnPress(XUiController _sender, int _mouseButton)

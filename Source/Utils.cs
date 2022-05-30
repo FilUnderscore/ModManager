@@ -10,10 +10,15 @@ namespace CustomModManager
     {
         public static string StringFromList(this List<string> list)
         {
-            return StringFromList(list, str => str);
+            return StringFromList(list, ", ");
         }
 
-        public static string StringFromList<T>(this List<T> list, Func<T, string> getter)
+        public static string StringFromList(this List<string> list, string separator)
+        {
+            return StringFromList(list, str => str, separator);
+        }
+
+        public static string StringFromList<T>(this List<T> list, Func<T, string> getter, string separator)
         {
             if (list == null)
                 return "null";
@@ -25,10 +30,15 @@ namespace CustomModManager
                 builder.Append(getter(list[index]));
 
                 if (index < list.Count - 1)
-                    builder.Append(", ");
+                    builder.Append(separator);
             }
 
             return builder.ToString();
+        }
+
+        public static string StringFromList<T>(this List<T> list, Func<T, string> getter)
+        {
+            return StringFromList<T>(list, getter, ", ");
         }
     }
 }

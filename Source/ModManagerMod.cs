@@ -7,7 +7,7 @@ namespace CustomModManager
 {
     public class ModManagerMod : IModApi
     {
-        private bool showPatchNotesOnStartup = true, showUpdatesOnStartup = true;
+        //private bool showPatchNotesOnStartup = true, showUpdatesOnStartup = true;
         
         public ModManagerMod()
         {
@@ -21,6 +21,7 @@ namespace CustomModManager
         {
             ModLoader.CheckForPreloadedMods();
 
+            /*
             if (ModManagerAPI.IsModManagerLoaded())
             {
                 ModManagerAPI.ModSettings settings = ModManagerAPI.GetModSettings(_modInstance);
@@ -39,13 +40,7 @@ namespace CustomModManager
                     return (val, result);
                 }).SetAllowedValues(new bool[] { true, false });
             }
-
-            ModEvents.GameStartDone.RegisterHandler(GameStartDone);
-        }
-
-        private void GameStartDone()
-        {
-            throw new NotImplementedException();
+            */
         }
     }
 }

@@ -1,11 +1,5 @@
 <ModManifest>
+	<ManifestUrl>https://github.com/FilUnderscore/ModManager/000-ModManager/Manifest.xml</ManifestUrl>
 	<Version>1.0.0</Version>
-	<GameVersion ReleaseType="Alpha" Major="20" Minor="4" Build="42"/>
-	<PatchNotesList>
-		<PatchNotes Version="1.0.0">
-			<PatchNoteEntry Color="0,255,0">
-				This is a patch note.
-			</PatchNoteEntry>
-		</PatchNotes>
-	</PatchNotesList>
+	<GameVersion ReleaseType="Alpha" Major="20" Minor="5" Build="2"/>
 </ModManifest>

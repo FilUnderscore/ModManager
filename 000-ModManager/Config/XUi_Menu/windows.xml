@@ -3,9 +3,11 @@
 		<mainmenubutton name="btnMods" pivot="center" width="400" height="50" caption_key="xuiMods"/>
 	</insertBefore>
 	
+	<!--
 	<insertAfter xpath="/windows/window[@name='mainMenu']/grid">
 		<button name="button" pos="300,-220" sprite="server_history" width="36" height="36" defaultcolor="180,180,180" hovercolor="[white]" foregroundlayer="true" type="simple" hoverscale="1.1" pivot="center" tooltip_key="xuiModPatchNotes"/>
 	</insertAfter>
+	-->
 	
 	<remove xpath="/windows/window[@name='mainMenu']/grid/rect"/>
 	

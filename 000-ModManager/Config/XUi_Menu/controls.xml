@@ -23,10 +23,10 @@
 	</append>
 	
 	<append xpath="/controls/savegames_list_entry/rect">
-		<label depth="4" name="Mods" pos="${width-10},-2" style="press, doubleclick, hover, scroll" color="[labelColor]" width="96" height="32" text="{moddedtext}" tooltip="{modstooltip}" font_size="26" justify="right" pivot="topright" sound="[recipe_click]" visible="{ismodded}" />
+		<label depth="4" name="Mods" pos="${width-10},-2" style="press, doubleclick, hover, scroll" color="[labelColor]" width="26" height="32" text="{moddedtext}" tooltip="{modstooltip}" font_size="26" justify="right" pivot="topright" sound="[recipe_click]" />
 	</append>
 	
 	<setattribute xpath="/controls/savegames_list_entry/rect/label[@name='Version']" name="pos">
-		${width-96},-2
+		${width-27},-2
 	</setattribute>
 </modmanager_controls>

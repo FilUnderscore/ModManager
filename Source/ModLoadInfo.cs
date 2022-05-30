@@ -40,7 +40,7 @@ namespace CustomModManager
             {
                 this.child = child;
                 this.parent = parent;
-                this.parent.dependencies.Add(this);
+                //this.parent.dependencies.Add(this);
                 this.success = true;
             }
         }

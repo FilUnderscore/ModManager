@@ -65,6 +65,7 @@
     <Compile Include="CustomModManager.cs" />
     <Compile Include="API\IModSettings.cs" />
     <Compile Include="ModErrorLogger.cs" />
+    <Compile Include="ModListCompatChecker.cs" />
     <Compile Include="ModLoader.cs" />
     <Compile Include="ModLoadInfo.cs" />
     <Compile Include="ModManifest.cs" />

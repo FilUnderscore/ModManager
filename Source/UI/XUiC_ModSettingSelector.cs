@@ -73,13 +73,16 @@ namespace CustomModManager.UI
 
             (string unformatted, string formatted)[] allowedValues = this.modSetting.GetAllowedValuesAsStrings();
             bool detectedSetting = false;
+
+            int selectedIndex = 0;
+
             for (int index = 0; index < allowedValues.Length; index++)
             {
                 this.controlCombo.Elements.Add(new ModOptionValue(allowedValues[index].formatted, allowedValues[index].unformatted));
 
                 if(allowedValues[index] == this.modSetting.GetValueAsString())
                 {
-                    this.controlCombo.SelectedIndex = index;
+                    selectedIndex = index;
                     detectedSetting = true;
                 }
             }
@@ -89,6 +92,8 @@ namespace CustomModManager.UI
 
             if (!detectedSetting)
                 this.controlCombo.SelectedIndex = this.controlCombo.MinIndex;
+            else
+                this.controlCombo.SelectedIndex = selectedIndex;
 
             WrapField.SetValue(this.controlCombo, this.modSetting.GetWrap());
         }
