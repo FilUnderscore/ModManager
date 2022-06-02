@@ -13,6 +13,13 @@ xuiModDisableStateReasonDisallowed,UI,XUI,x,,This mod cannot be disabled.
 xuiModDisableStateReasonDisallowedPreloaded,UI,XUI,x,,"This mod cannot be disabled because it loads before the Mod Manager does. To fix this, ensure that the mod's position in your Mods folder is underneath the Mod Manager folder in alphanumerical order (sort by 0-9 A-Z). This option will then become available on game restart."
 xuiNoModSettingsDetected,UI,XUI,x,,No mod settings were detected.
 xuiModSettingsReset,UI,XUI,x,,Reset
+xuiModManagerModDirSetting,UI,XUI,x,,Mod Directories
+xuiModManagerModDirSettingDesc,UI,XUI,x,,"The current directories to load mods from (separated by ';'). Changes are applied on restart."
+xuiModManagerCurrentModDirSetting,UI,XUI,x,,"Selected Mod Directory"
+xuiModManagerCurrentModDirSettingDesc,UI,XUI,x,,"The currently selected mod directory to open."
+xuiModManagerOpenModDirButton,UI,XUI,x,,"Open Current Mod Directory"
+xuiModManagerOpenModDirButtonDesc,UI,XUI,x,,"Click to open the currently selected mod directory."
+xuiModManagerOpenModDirButtonText,UI,XUI,x,,"Open"
 xuiModManagerShowPatchNotesOnStartupSetting,UI,XUI,x,,Show Patch Notes On Startup
 xuiModManagerShowPatchNotesOnStartupSettingDesc,UI,XUI,x,,Whether to show patch notes from new mod updates when starting up new versions for the first time.
 xuiModManagerShowUpdatesOnStartupSetting,UI,XUI,x,,Show Updates On Startup

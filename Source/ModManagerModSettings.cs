@@ -1,4 +1,5 @@
 ﻿using CustomModManager.API;
+using CustomModManager.UI;
 using System;
 using System.Collections.Generic;
 using System.Xml;
@@ -24,6 +25,20 @@ namespace CustomModManager
             loadedSettingsInstance = loadedSettings.ContainsKey(this.entry.info.Name.Value) ? loadedSettings[this.entry.info.Name.Value] : new Dictionary<string, string>();
 
             modSettingsInstances.Add(entry, this);
+        }
+
+        public IModSetting<string> Button(string key, string nameUnlocalized, Action clickCallback, Func<string> buttonText)
+        {
+            if (settings.ContainsKey(key))
+            {
+                Log.Error($"[Mod Manager] [{this.entry.info.Name.Value}] A setting with key {key} already exists.");
+                return null;
+            }
+
+            ButtonModSetting setting = new ButtonModSetting(nameUnlocalized, clickCallback, buttonText);
+            settings.Add(key, setting);
+
+            return setting;
         }
 
         public IModSetting<string> Category(string key, string nameUnlocalized)
@@ -82,8 +97,10 @@ namespace CustomModManager
 
         public abstract class BaseModSetting
         {
+            public XUiC_ModSettingSelector selector;
             public readonly string unlocalizedName;
-            
+            public Func<bool> enabled;
+
             public BaseModSetting(string unlocalizedName)
             {
                 this.unlocalizedName = unlocalizedName;
@@ -113,9 +130,126 @@ namespace CustomModManager
             public abstract bool IsDefault();
 
             public abstract bool IsSerializable();
+
+            public void Update()
+            {
+                if (selector == null)
+                    return;
+
+                selector.UpdateModSetting(this);
+            }
+
+            public void SetEnabled(Func<bool> enabled)
+            {
+                this.enabled = enabled;
+            }
+
+            public bool IsEnabled()
+            {
+                return this.enabled.Invoke();
+            }
+
+            public bool CanBeDisabled()
+            {
+                return this.enabled != null;
+            }
         }
 
-        internal sealed class CategoryModSetting : BaseModSetting, IModSetting<String>
+        internal sealed class ButtonModSetting : BaseModSetting, IModSetting<string>
+        {
+            private Action clickCallback;
+            private Func<string> buttonText;
+
+            private string tab;
+
+            public ButtonModSetting(string unlocalizedName, Action clickCallback, Func<string> buttonText) : base(unlocalizedName)
+            {
+                this.clickCallback = clickCallback;
+                this.buttonText = buttonText;
+            }
+
+            public Action GetClickCallback()
+            {
+                return this.clickCallback;
+            }
+
+            public string GetButtonText()
+            {
+                return this.buttonText.Invoke();
+            }
+
+            public override (string unformattedString, string formattedString)[] GetAllowedValuesAsStrings()
+            {
+                return null;
+            }
+
+            public override string GetTabKey()
+            {
+                return this.tab;
+            }
+
+            public override (string unformatted, string formatted) GetValueAsString()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override Type GetValueType()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override bool GetWrap()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override bool IsDefault()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override bool IsSerializable()
+            {
+                return false;
+            }
+
+            public override void Reset()
+            {
+
+            }
+
+            public void SetAllowedValues(string[] values)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void SetMinimumMaximumAndIncrementValues(string minimumValue, string maximumValue, string incrementValue)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void SetTab(string tabKey)
+            {
+                this.tab = tabKey;
+            }
+
+            public void SetWrap(bool wrap)
+            {
+                throw new NotImplementedException();
+            }
+
+            internal override void SetLastValueInternal()
+            {
+                throw new NotImplementedException();
+            }
+
+            internal override bool SetValueFromStringInternal(string str, bool loaded)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        internal sealed class CategoryModSetting : BaseModSetting, IModSetting<string>
         {
             private string tab;
             

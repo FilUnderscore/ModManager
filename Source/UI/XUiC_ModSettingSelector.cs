@@ -15,6 +15,8 @@ namespace CustomModManager.UI
         private XUiV_Label textLabel;
         private XUiV_Label label;
 
+        private XUiC_SimpleButton button;
+
         public ModManagerModSettings.BaseModSetting modSetting;
 
         public XUiC_ModSettingSelector() { }
@@ -30,11 +32,27 @@ namespace CustomModManager.UI
             this.controlText.OnSelect += ControlText_OnSelect;
             this.textLabel = this.GetChildById("ControlLabel").ViewComponent as XUiV_Label;
             this.label = this.GetChildById("ControlLabel2").ViewComponent as XUiV_Label;
+            this.button = this.GetChildById("ControlButton") as XUiC_SimpleButton;
+            this.button.OnPressed += Button_OnPressed;
         }
 
-        public void UpdateModSetting(string key, ModManagerModSettings.BaseModSetting modSetting)
+        private void Button_OnPressed(XUiController _sender, int _mouseButton)
         {
+            if (this.modSetting == null || !(this.modSetting is ModManagerModSettings.ButtonModSetting))
+            {
+                return;
+            }
+
+            (this.modSetting as ModManagerModSettings.ButtonModSetting).GetClickCallback().Invoke();
+        }
+
+        public void UpdateModSetting(ModManagerModSettings.BaseModSetting modSetting)
+        {
+            if(this.modSetting != null)
+                this.modSetting.selector = null;
+    
             this.modSetting = modSetting;
+            modSetting.selector = this;
 
             if (this.modSetting != null)
             {
@@ -45,6 +63,20 @@ namespace CustomModManager.UI
                     this.controlText.ViewComponent.IsVisible = false;
                     this.label.IsVisible = true;
                     this.textLabel.IsVisible = false;
+                    this.button.ViewComponent.IsVisible = false;
+                    
+                    return;
+                }
+                else if(this.modSetting is ModManagerModSettings.ButtonModSetting)
+                {
+                    this.RefreshBindings(true);
+                    this.controlCombo.ViewComponent.IsVisible = false;
+                    this.controlText.ViewComponent.IsVisible = false;
+                    this.textLabel.IsVisible = true;
+                    this.label.IsVisible = false;
+                    this.button.ViewComponent.IsVisible = true;
+                    this.button.Label = (this.modSetting as ModManagerModSettings.ButtonModSetting).GetButtonText();
+                    this.button.Enabled = IsEnabled();
 
                     return;
                 }
@@ -52,6 +84,7 @@ namespace CustomModManager.UI
                 {
                     this.textLabel.IsVisible = true;
                     this.label.IsVisible = false;
+                    this.button.ViewComponent.IsVisible = false;
                 }
 
                 if(!this.IsTextInput())
@@ -62,9 +95,20 @@ namespace CustomModManager.UI
                 this.RefreshBindings(true);
                 this.controlCombo.ViewComponent.IsVisible = !this.IsTextInput();
                 this.controlText.ViewComponent.IsVisible = this.IsTextInput();
+
+                this.controlCombo.ViewComponent.Enabled = IsEnabled();
+                this.controlText.ViewComponent.Enabled = IsEnabled();
             }
 
             this.CheckValue();
+        }
+
+        private bool IsEnabled()
+        {
+            if (this.modSetting == null)
+                return false;
+
+            return this.modSetting.CanBeDisabled() ? this.modSetting.IsEnabled() : true;
         }
 
         private void SetupOptions()

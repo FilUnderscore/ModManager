@@ -32,17 +32,11 @@ namespace CustomModManager.UI
             modSettings.mods = this;
             
             ((XUiC_SimpleButton)this.GetChildById("btnBack")).OnPressed += BtnBack_OnPressed;
-            ((XUiC_SimpleButton)this.GetChildById("openModsFolder")).OnPressed += OpenModsFolder_OnPressed;
         }
 
         internal void ModEnabledToggle()
         {
             modsList.IsDirty = true;
-        }
-
-        private void OpenModsFolder_OnPressed(XUiController _sender, int _mouseButton)
-        {
-            Application.OpenURL(ModLoader.modPath);
         }
 
         private void ModsList_SelectionChanged(XUiC_ListEntry<XUiC_ModsList.ListEntry> _previousEntry, XUiC_ListEntry<XUiC_ModsList.ListEntry> _newEntry)

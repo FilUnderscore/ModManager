@@ -13,11 +13,9 @@
 	
 	<append xpath="/windows">
 		<window name="modsList" anchor="CenterCenter" pos="-600,375" width="1185" height="780" controller="CustomModManager.UI.XUiC_Mods, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" cursor_area="true">
-			<panel name="header" pos="0,0" height="43" width="980" depth="1" backgroundspritename="ui_game_panel_header" bordercolor="[black]" borderthickness="3">
+			<panel name="header" pos="0,0" height="43" width="1185" depth="1" backgroundspritename="ui_game_panel_header" bordercolor="[black]" borderthickness="3">
 				<label style="header.name" name="windowheader" pos="6,-6" width="550" text_key="xuiMods"/>
 			</panel>
-			
-			<simplebutton name="openModsFolder" pos="985,0" width="200" height="43" font_size="26" text="Open Mods Folder" text_key="xuiOpenModsFolder" caption_key="xuiOpenModsFolder" upper_case="true"/>
 			
 			<rect pos="0,-50" height="134" width="590">
 				<rect name="mods" pos="0,0" height="650" width="590" controller="CustomModManager.UI.XUiC_ModsList, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">

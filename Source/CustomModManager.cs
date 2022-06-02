@@ -12,11 +12,6 @@ namespace CustomModManager
     {
         private static readonly string modSettingsFilename = "mod-settings.xml";
         
-        static CustomModManager()
-        {
-            ModSettingsFromXml.Load();
-        }
-
         internal static bool Save()
         {
             SaveModSettings();

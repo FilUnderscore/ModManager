@@ -14,9 +14,24 @@ namespace CustomModManager
         internal static Harmony harmony;
         internal static bool mainMenuLoaded = false;
 
-        private static readonly FieldInfo MOD_MANAGER_MOD_PATH_FIELD = AccessTools.DeclaredField(typeof(ModManager), "ModsBasePathLegacy");
-        
-        internal static readonly string modPath = (string)MOD_MANAGER_MOD_PATH_FIELD.GetValue(null);
+        private static readonly PropertyInfo MOD_MANAGER_MOD_PATH_PROPERTY = AccessTools.DeclaredProperty(typeof(ModManager), "ModsBasePath");
+        private static readonly FieldInfo MOD_MANAGER_MOD_PATH_LEGACY_FIELD = AccessTools.DeclaredField(typeof(ModManager), "ModsBasePathLegacy");
+
+        internal static readonly string modPath = (string)MOD_MANAGER_MOD_PATH_PROPERTY.GetValue(null);
+        internal static string[] modPaths = constructDefaultModPaths();
+
+        private static string[] constructDefaultModPaths()
+        {
+            List<string> paths = new List<string>();
+
+            if (MOD_MANAGER_MOD_PATH_PROPERTY != null)
+                paths.Add((string)MOD_MANAGER_MOD_PATH_PROPERTY.GetValue(null));
+
+            if (MOD_MANAGER_MOD_PATH_LEGACY_FIELD != null)
+                paths.Add((string)MOD_MANAGER_MOD_PATH_LEGACY_FIELD.GetValue(null));
+
+            return paths.ToArray();
+        }
 
         private static readonly FieldInfo MOD_MANAGER_LOADED_MODS_FIELD = AccessTools.DeclaredField(typeof(ModManager), "loadedMods");
         private static readonly DictionaryList<string, ModEntry> mods = new DictionaryList<string, ModEntry>();
@@ -62,12 +77,18 @@ namespace CustomModManager
 
         private static Dictionary<string, ModLoadInfo> DetectMods()
         {
+            if(!Directory.Exists(modPath))
+                Directory.CreateDirectory(modPath);
+
             CheckDisabledMods();
 
             List<string> mods = new List<string>();
 
-            if(Directory.Exists(modPath))
-                mods.AddRange(Directory.GetDirectories(modPath));
+            foreach (var modPath in modPaths)
+            {
+                if (Directory.Exists(modPath))
+                    mods.AddRange(Directory.GetDirectories(modPath));
+            }
 
             Dictionary<string, ModLoadInfo> detectedEntries = new Dictionary<string, ModLoadInfo>();
 
@@ -229,12 +250,21 @@ namespace CustomModManager
         {
             path += "/ModInfo.xml";
 
-            List<ModInfo.ModInfo> xml = ModInfo.ModInfoLoader.ParseXml(path, File.ReadAllText(path));
+            try
+            {
+                List<ModInfo.ModInfo> xml = ModInfo.ModInfoLoader.ParseXml(path, File.ReadAllText(path));
 
-            if (xml.Count != 1)
+                if (xml.Count != 1)
+                    return null;
+
+                return xml[0];
+            }
+            catch(Exception ex)
+            {
+                Log.Error($"[Mod Loader] Failed to load ModInfo.xml from path {path}.");
+                Log.Exception(ex);
                 return null;
-
-            return xml[0];
+            }
         }
 
         public static List<ModEntry> GetLoadedMods()

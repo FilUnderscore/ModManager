@@ -18,6 +18,7 @@
 				<combobox name="ControlCombo" type="ComboBoxList`1[[CustomModManager.UI.XUiC_ModSettingSelector+ModOptionValue, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]" pos="269,0" width="300" height="32" />
 				<textfield name="ControlText" depth="5" pos="303,0" width="232" height="32" pivot="topLeft" />
 				<label name="ControlLabel2" depth="4" pos="0,0" width="552" height="30" style="hover" tooltip_key="{title}Desc" text_key="{title}" font_size="28" color="[white]" justify="center" />
+				<simplebutton name="ControlButton" depth="4" pos="303,0" width="232" height="32" font_size="32" upper_case="true"/>
 			</rect>
 		</modoption>
 	</append>

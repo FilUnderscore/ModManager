@@ -177,7 +177,7 @@ namespace CustomModManager.UI
 
                 XUiC_ModSettingSelector selector = modSettingSelectorList[entryIndex];
                 selector.ViewComponent.IsVisible = true;
-                selector.UpdateModSetting(key, setting);
+                selector.UpdateModSetting(setting);
 
                 entryIndex++;
             }

@@ -96,6 +96,23 @@ namespace CustomModManager.API
                 return null;
             }
 
+            public ModSetting<string> Button(string key, string nameUnlocalized, Action clickCallback, Func<string> buttonText)
+            {
+                try
+                {
+                    MethodInfo method = CORE_ASSEMBLY.GetType("CustomModManager.API.IModSettings").GetMethods().Single(m => m.Name == "Button");
+                    object settingInstance = method.Invoke(instance, new object[] { key, nameUnlocalized, clickCallback, buttonText });
+
+                    return new ModSetting<string>(this, key, settingInstance);
+                }
+                catch
+                {
+                    Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Failed to create Mod Setting instance. Perhaps an out-of-date API version is being used?");
+                }
+
+                return null;
+            }
+
             public ModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString)
             {
                 return Hook(key, nameUnlocalized, setCallback, getCallback, (value) =>
@@ -182,6 +199,32 @@ namespace CustomModManager.API
                     catch
                     {
                         Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set wrap flag for mod setting {this.key}");
+                    }
+
+                    return this;
+                }
+
+                public void Update()
+                {
+                    try
+                    {
+                        TryInvokeMethod("Update", new object[] { });
+                    }
+                    catch
+                    {
+                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to update mod setting {this.key}");
+                    }
+                }
+
+                public ModSetting<T> SetEnabled(Func<bool> enabled)
+                {
+                    try
+                    {
+                        TryInvokeMethod("SetEnabled", enabled);
+                    }
+                    catch
+                    {
+                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set enabled selector for mod setting {this.key}");
                     }
 
                     return this;
