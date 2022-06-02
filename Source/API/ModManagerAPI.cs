@@ -36,7 +36,7 @@ namespace CustomModManager.API
             if(!IsModManagerLoaded())
             {
                 Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Attempted to create mod settings while mod manager is not installed.");
-                return null;
+                return new ModSettings(modInstance, null);
             }
 
             try
@@ -47,7 +47,7 @@ namespace CustomModManager.API
             {
                 Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Failed to locate ModSettings instance in Mod Manager. Perhaps an out-of-date API version is being used?");
 
-                return null;
+                return new ModSettings(modInstance, null);
             }
         }
 
@@ -76,7 +76,7 @@ namespace CustomModManager.API
                     Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Failed to create Mod Setting instance. Perhaps an out-of-date API version is being used?");
                 }
 
-                return null;
+                return new ModSetting<T>(this, key, null);
             }
 
             public ModSetting<string> Category(string key, string nameUnlocalized)
@@ -93,7 +93,7 @@ namespace CustomModManager.API
                     Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Failed to create Mod Setting instance. Perhaps an out-of-date API version is being used?");
                 }
 
-                return null;
+                return new ModSetting<string>(this, key, null);
             }
 
             public ModSetting<string> Button(string key, string nameUnlocalized, Action clickCallback, Func<string> buttonText)
@@ -110,7 +110,7 @@ namespace CustomModManager.API
                     Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Failed to create Mod Setting instance. Perhaps an out-of-date API version is being used?");
                 }
 
-                return null;
+                return new ModSetting<string>(this, key, null);
             }
 
             public ModSetting<T> Hook<T>(string key, string nameUnlocalized, Action<T> setCallback, Func<T> getCallback, Func<T, string> toString, Func<string, (T, bool)> fromString)
@@ -232,6 +232,9 @@ namespace CustomModManager.API
 
                 private void TryInvokeMethod(string name, params object[] parameters)
                 {
+                    if (instance == null)
+                        return;
+
                     MethodInfo setAllowedValuesMethod = CORE_ASSEMBLY.GetType("CustomModManager.API.IModSetting`1[[" + typeof(T).AssemblyQualifiedName + "]]").GetMethods().Single(m => m.Name == name && m.IsVirtual);
                     setAllowedValuesMethod.Invoke(instance, parameters);
                 }
