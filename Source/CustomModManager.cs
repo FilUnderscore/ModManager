@@ -87,7 +87,7 @@ namespace CustomModManager
                     switch(_bindingName)
                     {
                         case "modlisttext":
-                            List<ModEntry> loadedMods = ModLoader.GetLoadedMods();
+                            List<ModEntry> loadedMods = ModLoader.GetActiveMods();
 
                             string loadedModsStr = loadedMods[0].info.Name.Value;
 

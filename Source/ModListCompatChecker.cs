@@ -49,7 +49,7 @@ namespace CustomModManager
         private static EModListState GetCurrentModList(out List<string> list)
         {
             List<string> modList = new List<string>();
-            ModLoader.GetLoadedMods().ForEach(mod =>
+            ModLoader.GetActiveMods().ForEach(mod =>
             {
                 if (mod.instance.ApiInstance is ModManagerMod)
                     return;
@@ -158,7 +158,7 @@ namespace CustomModManager
                     else
                         modLists.Add(gameWorld + "/" + gameName, new List<string>());
 
-                    foreach (var modEntry in ModLoader.GetLoadedMods())
+                    foreach (var modEntry in ModLoader.GetActiveMods())
                     {
                         if (modEntry.instance.ApiInstance is ModManagerMod)
                             continue;

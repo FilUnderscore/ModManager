@@ -61,6 +61,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="..\API\ModManagerAPI.cs" />
     <Compile Include="API\IModSetting.cs" />
     <Compile Include="CustomModManager.cs" />
     <Compile Include="API\IModSettings.cs" />
@@ -71,7 +72,6 @@
     <Compile Include="ModManifest.cs" />
     <Compile Include="ModManifestFromXml.cs" />
     <Compile Include="ModEntry.cs" />
-    <Compile Include="API\ModManagerAPI.cs" />
     <Compile Include="ModManagerMod.cs" />
     <Compile Include="ModManagerModSettings.cs" />
     <Compile Include="ModSettingsFromXml.cs" />

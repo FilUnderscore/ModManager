@@ -272,6 +272,11 @@ namespace CustomModManager
             return mods.list;
         }
 
+        public static List<ModEntry> GetActiveMods()
+        {
+            return mods.list.Where(mod => mod.IsLoaded()).ToList();
+        }
+
         internal static ModEntry GetModEntryFromModInstance(Mod modInstance)
         {
             foreach(var mod in mods.list)
