@@ -150,6 +150,9 @@ namespace CustomModManager
                     string gameWorld = GamePrefs.GetString(EnumGamePrefs.GameWorld);
                     string path = GameIO.GetSaveGameDir(gameWorld, gameName);
 
+                    if(!Directory.Exists(path))
+                        Directory.CreateDirectory(path);
+
                     XmlDocument xmlDoc = new XmlDocument();
                     XmlElement modListRoot = xmlDoc.AddXmlElement("mod_list");
 
