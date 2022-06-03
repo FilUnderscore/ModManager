@@ -1,5 +1,5 @@
 <ModManifest>
-  <ManifestUrl>https://github.com/FilUnderscore/ModManager/000-ModManager/Manifest.xml</ManifestUrl>
+  <ManifestUrl>https://github.com/FilUnderscore/ModManager/blob/dev/000-ModManager/Manifest.xml</ManifestUrl>
   <Version>1.0.0</Version>
   <GameVersion ReleaseType="Alpha" Major="20" Minor="5" Build="2" />
 </ModManifest>
