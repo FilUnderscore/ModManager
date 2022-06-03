@@ -19,14 +19,14 @@ namespace CustomModManager
             return FromUrl(modName, path);
         }
 
-        private static ModManifest FromUrl(string modName, string path)
+        private static ModManifest FromUrl(string modName, string path, bool remote = false)
         {
             try
             {
                 XmlDocument document = new XmlDocument();
                 document.Load(path);
-
-                return ParseManifest(modName, document.DocumentElement);
+                
+                return ParseManifest(modName, document.DocumentElement, remote);
             }
             catch
             {
@@ -36,7 +36,7 @@ namespace CustomModManager
             return null;
         }
 
-        private static ModManifest ParseManifest(string modName, XmlElement documentElement)
+        private static ModManifest ParseManifest(string modName, XmlElement documentElement, bool remote)
         {
             ModManifest manifest = new ModManifest();
 
@@ -46,9 +46,9 @@ namespace CustomModManager
                 {
                     XmlElement element = (XmlElement)node;
 
-                    if(element.Name.EqualsCaseInsensitive("ManifestUrl"))
+                    if(element.Name.EqualsCaseInsensitive("ManifestUrl") && !remote)
                     {
-                        manifest.RemoteManifest = FromUrl(modName, element.InnerText);
+                        manifest.RemoteManifest = FromUrl(modName, element.InnerText, true);
                     }
                     else if(element.Name.EqualsCaseInsensitive("Version"))
                     {
