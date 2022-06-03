@@ -40,7 +40,7 @@ namespace CustomModManager
             {
                 this.child = child;
                 this.parent = parent;
-                //this.parent.dependencies.Add(this);
+                this.parent.dependencies.Add(this);
                 this.success = true;
             }
         }
@@ -48,9 +48,15 @@ namespace CustomModManager
         public int CompareTo(ModLoadInfo other)
         {
             if (other == null)
+                return 0;
+
+            if (dependencies.Any(dep => dep.child == other))
+                return -1;
+
+            if (!dependencies.Any(dep => dep.parent == other))
                 return 1;
 
-            return dependencies.Any(dep => dep.parent == other) ? 1 : -1;
+            return 0;
         }
     }
 }

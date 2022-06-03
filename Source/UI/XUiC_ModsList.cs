@@ -11,7 +11,8 @@ namespace CustomModManager.UI
         private static string ModVersionCompatibleColor = "0,255,0,255";
         private static string ModVersionNotCompatibleColor = "255,0,0,255";
         private static string ModVersionMayNotBeCompatibleColor = "255,216,0,255";
-        
+        private static string ModVersionNoManifestFoundColor = "255,255,255,255";
+
         private static string ModEnabledColor = "0,255,0,255";
         private static string ModDisabledColor = "255,0,0,255";
         private static string ModEnabledChangeColor = "255,165,0,255";
@@ -149,6 +150,10 @@ namespace CustomModManager.UI
                             {
                                 _value = ModVersionNotCompatibleColor;
                             }
+                        }
+                        else
+                        {
+                            _value = ModVersionNoManifestFoundColor;
                         }
 
                         return true;
