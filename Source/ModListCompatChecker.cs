@@ -71,8 +71,7 @@ namespace CustomModManager
                 private static readonly FieldInfo isContinueGameField = AccessTools.DeclaredField(typeof(XUiC_NewContinueGame), "isContinueGame");
                 private static readonly MethodInfo startGameMethod = AccessTools.DeclaredMethod(typeof(XUiC_NewContinueGame), "startGame");
                 private static readonly MethodInfo modCheckMethod = AccessTools.DeclaredMethod(typeof(XUiC_NewContinueGameBtnStart_OnPressedHook), "ModCheck");
-                private static readonly MethodInfo closeMethod = AccessTools.DeclaredMethod(typeof(GUIWindowManager), "Close", new System.Type[] { typeof(string) });
-
+                
                 static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
                 {
                     List<CodeInstruction> list = new List<CodeInstruction>(instructions);
@@ -82,15 +81,6 @@ namespace CustomModManager
                         if (list[i].Calls(startGameMethod))
                         {
                             list[i].operand = modCheckMethod;
-                        }
-                    }
-
-                    for (int i = 0; i < list.Count; i++)
-                    {
-                        if (list[i].Calls(closeMethod))
-                        {
-                            list.RemoveRange(i - 6, 8);
-                            break;
                         }
                     }
 
@@ -133,7 +123,10 @@ namespace CustomModManager
                             {
                                 SaveModList();
                                 StartGame(instance);
-                            }, () => { }, false);
+                            }, () => 
+                            {
+                                instance.xui.playerUI.windowManager.OpenIfNotOpen(instance.WindowGroup.ID, true);
+                            }, false);
                         }
                     }
                 }
