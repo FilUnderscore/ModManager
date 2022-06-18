@@ -25,7 +25,7 @@ namespace CustomModManager
             if (Version == null || RemoteManifest == null || RemoteManifest.Version == null)
                 return EVersionStatus.Not_Specified;
 
-            return Version.CompareTo(RemoteManifest.Version) == 0 ? EVersionStatus.Up_To_Date : EVersionStatus.Not_Up_To_Date;
+            return Version.CompareTo(RemoteManifest.Version) >= 0 ? EVersionStatus.Up_To_Date : EVersionStatus.Not_Up_To_Date;
         }
 
         public EVersionComparisonResult CurrentVersionCompatibleWithGameVersion()
