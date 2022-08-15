@@ -12,13 +12,7 @@ namespace CustomModManager
         public SemVer Version;
         public List<string> Dependencies;
         public VersionInformation GameVersionInformation;
-        public Dictionary<string, List<PatchNote>> PatchNotes;
-
-        public class PatchNote
-        {
-            public string Text;
-            public Color Color;
-        }
+        public SortedDictionary<SemVer, string> PatchNotes;
 
         public EVersionStatus UpToDate()
         {
@@ -128,10 +122,20 @@ namespace CustomModManager
 
                 SemVer other = (SemVer)obj;
 
-                if (this.Major > other.Major || this.Minor > other.Minor || this.Patch > other.Patch)
-                    return 1;
-                else if (this.Major < other.Major || this.Minor < other.Minor || this.Patch < other.Patch)
-                    return -1;
+                int comparison = this.Major.CompareTo(other.Major);
+
+                if (comparison != 0)
+                    return comparison;
+
+                comparison = this.Minor.CompareTo(other.Minor);
+
+                if (comparison != 0)
+                    return comparison;
+
+                comparison = this.Patch.CompareTo(other.Patch);
+
+                if (comparison != 0)
+                    return comparison;
 
                 string[] prereleaseSplit = Prerelease.Split('.');
                 string[] otherPrereleaseSplit = other.Prerelease.Split('.');
@@ -143,11 +147,10 @@ namespace CustomModManager
 
                     for(int cutIndex = 0; cutIndex < prereleaseCut.Length; cutIndex++)
                     {
-                        if (otherPrereleaseCut.Length == cutIndex || 
-                            prereleaseCut[cutIndex] > otherPrereleaseCut[cutIndex])
-                            return 1;
-                        else if (prereleaseCut[cutIndex] < otherPrereleaseCut[cutIndex])
-                            return -1;
+                        comparison = prereleaseCut[cutIndex].CompareTo(otherPrereleaseCut[cutIndex]);
+
+                        if (comparison != 0)
+                            return comparison;
                     }
                 }
 

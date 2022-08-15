@@ -107,45 +107,22 @@ namespace CustomModManager
 
         private static void ParsePatchNotes(string modName, ModManifest manifest, XmlElement patchNotesElement)
         {
-            manifest.PatchNotes = new Dictionary<string, List<ModManifest.PatchNote>>();
+            manifest.PatchNotes = new SortedDictionary<ModManifest.SemVer, string>();
 
             foreach(XmlNode child in patchNotesElement.ChildNodes)
             {
                 if (child.NodeType == XmlNodeType.Element)
                 {
                     XmlElement patchNoteElement = (XmlElement)child;
+                    ModManifest.SemVer version;
 
-                    if (!patchNoteElement.HasAttribute("Version"))
+                    if (!patchNoteElement.HasAttribute("Version") || (version = ModManifest.SemVer.Parse(patchNoteElement.GetAttribute("Version"))) == null)
                     {
                         Log.Warning($"[{modName}] [Manifest] Failed to parse patch note version.");
                         continue;
                     }
 
-                    string version = patchNoteElement.GetAttribute("Version");
-
-                    foreach (XmlNode entryChild in patchNoteElement.ChildNodes)
-                    {
-                        if(entryChild.NodeType == XmlNodeType.Element)
-                        {
-                            XmlElement entryNoteElement = (XmlElement)entryChild;
-
-                            Color color = Color.white;
-
-                            if (entryNoteElement.HasAttribute("Color"))
-                                color = StringParsers.ParseColor32(entryNoteElement.GetAttribute("Color"));
-
-                            string patchNote = entryNoteElement.InnerText;
-
-                            if (!manifest.PatchNotes.ContainsKey(version))
-                                manifest.PatchNotes.Add(version, new List<ModManifest.PatchNote>());
-
-                            manifest.PatchNotes[version].Add(new ModManifest.PatchNote
-                            {
-                                Text = patchNote,
-                                Color = color
-                            });
-                        }
-                    }
+                    manifest.PatchNotes.Add(version, patchNoteElement.InnerText);
                 }
             }
         }
