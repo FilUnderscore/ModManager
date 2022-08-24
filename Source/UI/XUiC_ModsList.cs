@@ -158,22 +158,22 @@ namespace CustomModManager.UI
 
                         return true;
                     case "modVersionTooltip":
-                        _value = Localization.Get("xuiModVersionTooltipCurrentVersion") + ": " + modEntry.GetVersion();
+                        _value = string.Format(Localization.Get("xuiModVersionTooltipCurrentVersion"), modEntry.GetVersion());
 
                         if (modEntry.manifest != null)
                         {
                             if (modEntry.manifest.GameVersionInformation != null)
                             {
-                                _value += "\n" + Localization.Get("xuiModVersionTooltipForGameVersion") + ": " + modEntry.manifest.GameVersionInformation.LongString;
+                                _value += "\n" + string.Format(Localization.Get("xuiModVersionTooltipForGameVersion"), modEntry.manifest.GameVersionInformation.LongString);
                             }
 
                             if (modEntry.manifest.UpToDate() == ModManifest.EVersionStatus.Not_Up_To_Date)
                             {
-                                _value += "\n\n" + Localization.Get("xuiModVersionTooltipAnUpdateIsAvailable") + ": " + modEntry.manifest.RemoteManifest.Version;
+                                _value += "\n\n" + string.Format(Localization.Get("xuiModVersionTooltipAnUpdateIsAvailable"), modEntry.manifest.RemoteManifest.Version);
                                 
                                 if (modEntry.manifest.RemoteManifest.GameVersionInformation != null)
                                 {
-                                    _value += "\n" + Localization.Get("xuiModVersionTooltipForGameVersion") + ": " + modEntry.manifest.RemoteManifest.GameVersionInformation.LongString;
+                                    _value += "\n" + string.Format(Localization.Get("xuiModVersionTooltipForGameVersion"), modEntry.manifest.RemoteManifest.GameVersionInformation.LongString);
                                 }
                             }
                             else if(modEntry.manifest != null && modEntry.manifest.UpToDate() == ModManifest.EVersionStatus.Up_To_Date)
@@ -192,7 +192,7 @@ namespace CustomModManager.UI
                                 _value += "\n\n" + Localization.Get("xuiModVersionTooltipCurrentVersionNotCompatible");
                             }
 
-                            if (versionUpdateComparisonResult != ModManifest.EVersionUpdateComparisonResult.Compatible)
+                            if (versionUpdateComparisonResult != ModManifest.EVersionUpdateComparisonResult.Compatible && modEntry.manifest.RemoteManifest == null)
                             {
                                 ModManifest.EVersionComparisonResult versionComparisonResult = modEntry.manifest.CurrentVersionCompatibleWithGameVersion();
 

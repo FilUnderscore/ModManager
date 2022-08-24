@@ -24,9 +24,9 @@ xuiModManagerShowPatchNotesOnStartupSetting,UI,XUI,x,,Show Patch Notes On Startu
 xuiModManagerShowPatchNotesOnStartupSettingDesc,UI,XUI,x,,Whether to show patch notes from new mod updates when starting up new versions for the first time.
 xuiModManagerShowUpdatesOnStartupSetting,UI,XUI,x,,Show Updates On Startup
 xuiModManagerShowUpdatesOnStartupSettingDesc,UI,XUI,x,,Whether to show new mod updates when starting up the main menu.
-xuiModVersionTooltipCurrentVersion,UI,XUI,x,,Installed Version
-xuiModVersionTooltipForGameVersion,UI,XUI,x,,For Game Version
-xuiModVersionTooltipAnUpdateIsAvailable,UI,XUI,x,,An update is available
+xuiModVersionTooltipCurrentVersion,UI,XUI,x,,Installed Version: {0}
+xuiModVersionTooltipForGameVersion,UI,XUI,x,,For Game Version: {0}
+xuiModVersionTooltipAnUpdateIsAvailable,UI,XUI,x,,An update is available: {0}
 xuiModVersionTooltipCurrentVersionMayNotBeCompatible,UI,XUI,x,,This mod version may not be compatible with the current game version. Use at your own risk.
 xuiModVersionTooltipCurrentVersionNotCompatible,UI,XUI,x,,This mod version is not compatible with the current game version.
 xuiModVersionTooltipCurrentVersionNotSpecifiedNoManifestExists,UI,XUI,x,,Could not check version compatibility as no remote manifest has been found.
