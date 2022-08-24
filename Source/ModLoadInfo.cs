@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CustomModManager
 {
@@ -56,7 +54,7 @@ namespace CustomModManager
             if (!dependencies.Any(dep => dep.parent == other))
                 return 1;
 
-            return 0;
+            return this.modInfo.Name.Value.CompareTo(other.modInfo.Name.Value);
         }
     }
 }
