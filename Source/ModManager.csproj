@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\000-ModManager\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MM_API_EXTENSIONS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -61,7 +61,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-	<Compile Include="..\API\ModManagerAPI.cs" />
+    <Compile Include="..\API\ModManagerAPI.cs" />
     <Compile Include="API\IModSetting.cs" />
     <Compile Include="CustomModManager.cs" />
     <Compile Include="API\IModSettings.cs" />
@@ -85,4 +85,8 @@
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>robocopy "$(TargetDir) " "C:\\Program Files (x86)\\Steam\\steamapps\\common\\7 Days To Die\\Mods\\000-$(ProjectName) " /s /e
+exit 0</PostBuildEvent>
+  </PropertyGroup>
 </Project>

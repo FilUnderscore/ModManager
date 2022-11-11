@@ -7,7 +7,7 @@ namespace CustomModManager.API
     public static class ModManagerAPI
     {
         private static string CORE_ASSEMBLY_ID = "ModManager, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-        
+
         private static bool initialized = false;
         private static Assembly CORE_ASSEMBLY;
 
@@ -33,7 +33,7 @@ namespace CustomModManager.API
 
         public static ModSettings GetModSettings(Mod modInstance)
         {
-            if(!IsModManagerLoaded())
+            if (!IsModManagerLoaded())
             {
                 Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Attempted to create mod settings while mod manager is not installed.");
                 return new ModSettings(modInstance, null);
@@ -240,5 +240,68 @@ namespace CustomModManager.API
                 }
             }
         }
+
+#if MM_API_EXTENSIONS
+        public static class Extensions
+        {
+            public static void AddStartupMessage(string title, string message)
+            {
+                StartupMessageBox.startupMessages.Add(new StartupMessageBox.StartupMessage(title, message));
+            }
+
+            private static class StartupMessageBox
+            {
+                public class StartupMessage
+                {
+                    public readonly string Title;
+                    public readonly string Message;
+
+                    public StartupMessage(string title, string message)
+                    {
+                        this.Title = title;
+                        this.Message = message;
+                    }
+                }
+
+                public static System.Collections.Generic.List<StartupMessage> startupMessages = new System.Collections.Generic.List<StartupMessage>();
+
+                [HarmonyLib.HarmonyPatch(typeof(XUiC_MainMenu))]
+                [HarmonyLib.HarmonyPatch("Open")]
+                class XUiC_MainMenu_Open_Extension
+                {
+                    static bool mainMenuLoaded = false;
+
+                    static void Postfix(XUi _xuiInstance)
+                    {
+                        if (mainMenuLoaded)
+                            return;
+
+                        mainMenuLoaded = true;
+
+                        if (startupMessages.Count > 0)
+                        {
+                            ConstructNextMessageAction(_xuiInstance, 0).Invoke();
+                        }
+                    }
+
+                    private static Action ConstructNextMessageAction(XUi _xuiInstance, int currentReadCount)
+                    {
+                        return () =>
+                        {
+                            StartupMessage message = startupMessages[currentReadCount];
+
+                            XUiC_MessageBoxWindowGroup.ShowMessageBox(_xuiInstance, message.Title, message.Message, () =>
+                            {
+                                if (++currentReadCount < startupMessages.Count)
+                                {
+                                    ConstructNextMessageAction(_xuiInstance, currentReadCount);
+                                }
+                            }, ++currentReadCount >= startupMessages.Count);
+                        };
+                    }
+                }
+            }
+        }
+#endif
     }
 }
