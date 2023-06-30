@@ -1,13 +1,12 @@
-﻿using System;
+﻿using CustomModManager.Mod.Version;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
-using UnityEngine;
-
-namespace CustomModManager
+namespace CustomModManager.Mod.Manifest
 {
-    public class ModManifestFromXml
+    public sealed class ModManifestFromXml
     {
         public static ModManifest FromXml(string modName, string path)
         {
@@ -52,7 +51,7 @@ namespace CustomModManager
                     }
                     else if(element.Name.EqualsCaseInsensitive("Version"))
                     {
-                        manifest.Version = ModManifest.SemVer.Parse(element.InnerText);
+                        manifest.Version = SemVer.Parse(element.InnerText);
                     }
                     else if(element.Name.EqualsCaseInsensitive("GameVersion"))
                     {
@@ -107,16 +106,16 @@ namespace CustomModManager
 
         private static void ParsePatchNotes(string modName, ModManifest manifest, XmlElement patchNotesElement)
         {
-            manifest.PatchNotes = new SortedDictionary<ModManifest.SemVer, string>();
+            manifest.PatchNotes = new SortedDictionary<SemVer, string>();
 
             foreach(XmlNode child in patchNotesElement.ChildNodes)
             {
                 if (child.NodeType == XmlNodeType.Element)
                 {
                     XmlElement patchNoteElement = (XmlElement)child;
-                    ModManifest.SemVer version;
+                    SemVer version;
 
-                    if (!patchNoteElement.HasAttribute("Version") || (version = ModManifest.SemVer.Parse(patchNoteElement.GetAttribute("Version"))) == null)
+                    if (!patchNoteElement.HasAttribute("Version") || (version = SemVer.Parse(patchNoteElement.GetAttribute("Version"))) == null)
                     {
                         Log.Warning($"[{modName}] [Manifest] Failed to parse patch note version.");
                         continue;

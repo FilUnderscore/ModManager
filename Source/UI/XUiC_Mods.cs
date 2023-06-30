@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using CustomModManager.Mod;
 
 namespace CustomModManager.UI
 {
@@ -7,7 +6,7 @@ namespace CustomModManager.UI
     {
         public static string ID = "";
 
-        private ModEntry currentMod = null;
+        private Mod.Mod currentMod = null;
 
         public XUiC_ModsList modsList;
         private XUiC_TabSelector modTabs;
@@ -87,7 +86,7 @@ namespace CustomModManager.UI
         {
             base.OnClose();
             
-            if (CustomModManager.Save())
+            if (ModLoader.Instance.SaveModChanges())
             {
                 // Open dialog informing that changes will be applied on game restart.
                 XUiC_ModsErrorMessageBoxWindowGroup.ShowMessageBox(this.xui, Localization.Get("xuiModsListChanged"), Localization.Get("xuiModsListChangedText"), "", Localization.Get("xuiOk"), null, () => { }, true, false);

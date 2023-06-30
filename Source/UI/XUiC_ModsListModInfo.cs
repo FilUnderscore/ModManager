@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
-
-using HarmonyLib;
-using System.Reflection;
+using CustomModManager.Mod;
 
 namespace CustomModManager.UI
 {
     public class XUiC_ModsListModInfo : XUiController
     {
-        public ModEntry currentModEntry = null;
+        public Mod.Mod currentModEntry = null;
 
         internal XUiC_Mods mods;
 
@@ -34,7 +32,7 @@ namespace CustomModManager.UI
             if (currentModEntry == null)
                 return;
 
-            Application.OpenURL(currentModEntry.loadInfo.modPath);
+            Application.OpenURL(currentModEntry.Info.Path);
         }
 
         private void EnabledButton_OnValueChanged(XUiC_ToggleButton _sender, bool _newValue)
@@ -42,31 +40,31 @@ namespace CustomModManager.UI
             if (currentModEntry == null)
                 return;
 
-            if(currentModEntry.GetModDisableState() != ModEntry.EModDisableState.Allowed)
+            if(currentModEntry.GetModDisableState() != EModDisableState.Allowed)
             {
                 enabledButton.Value = true;
                 return;
             }
 
-            currentModEntry.Toggle();
+            currentModEntry.ToggleNextState();
             this.mods.ModEnabledToggle();
         }
 
         private void WebsiteButton_OnPressed(XUiController _sender, int _mouseButton)
         {
-            if (currentModEntry == null || currentModEntry.info.Website == null)
+            if (currentModEntry == null || currentModEntry.Info.Website == null)
                 return;
 
-            Application.OpenURL(currentModEntry.info.Website.Value);
+            Application.OpenURL(currentModEntry.Info.Website);
         }
 
         internal void UpdateView()
         {
-            enabledButton.Value = currentModEntry != null ? (currentModEntry.WillBeEnabled() != null ? currentModEntry.WillBeEnabled().Value : currentModEntry.IsLoaded()) : false;
-            enabledButton.Tooltip = currentModEntry != null ? (currentModEntry.GetModDisableState() != ModEntry.EModDisableState.Allowed ? currentModEntry.GetModDisableStateReason() : "") : "";
+            enabledButton.Value = currentModEntry != null ? currentModEntry.NextState : false;
+            enabledButton.Tooltip = currentModEntry != null ? (currentModEntry.GetModDisableState() != EModDisableState.Allowed ? currentModEntry.GetModDisableStateReason() : "") : "";
 
-            websiteButton.Enabled = currentModEntry != null ? (currentModEntry.info.Website != null) : false;
-            websiteButton.Tooltip = currentModEntry != null ? (currentModEntry.info.Website != null ? currentModEntry.info.Website.Value : "") : "";
+            websiteButton.Enabled = currentModEntry != null ? (!string.IsNullOrEmpty(currentModEntry.Info.Website)) : false;
+            websiteButton.Tooltip = currentModEntry != null ? (!string.IsNullOrEmpty(currentModEntry.Info.Website) ? currentModEntry.Info.Website : "") : "";
 
             folderButton.Enabled = currentModEntry != null;
         }
@@ -76,16 +74,16 @@ namespace CustomModManager.UI
             switch (_bindingName)
             {
                 case "modName":
-                    _value = currentModEntry != null ? currentModEntry.info.Name.Value : "";
+                    _value = currentModEntry != null ? currentModEntry.Info.Name : "";
                     return true;
                 case "modAuthor":
-                    _value = currentModEntry != null ? currentModEntry.info.Author.Value : "";
+                    _value = currentModEntry != null ? currentModEntry.Info.Author : "";
                     return true;
                 case "modVersion":
-                    _value = currentModEntry != null ? currentModEntry.info.Version.Value : "";
+                    _value = currentModEntry != null ? currentModEntry.Version.ToString() : "";
                     return true;
                 case "modDescription":
-                    _value = currentModEntry != null ? currentModEntry.info.Description.Value : "";
+                    _value = currentModEntry != null ? currentModEntry.Info.Description : "";
                     return true;
                 default:
                     _value = "";

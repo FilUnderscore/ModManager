@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Xml;
 using HarmonyLib;
 using CustomModManager.UI;
+using CustomModManager.Mod;
 
 namespace CustomModManager
 {
@@ -49,12 +50,9 @@ namespace CustomModManager
         private static EModListState GetCurrentModList(out List<string> list)
         {
             List<string> modList = new List<string>();
-            ModLoader.GetActiveMods().ForEach(mod =>
+            ModLoader.Instance.GetMods(false).ForEach(mod =>
             {
-                if (mod.instance.ApiInstance is ModManagerMod)
-                    return;
-
-                modList.Add(mod.info.Name.Value);
+                modList.Add(mod.Info.Name);
             });
 
             list = modList;
@@ -154,17 +152,14 @@ namespace CustomModManager
                     else
                         modLists.Add(gameWorld + "/" + gameName, new List<string>());
 
-                    foreach (var modEntry in ModLoader.GetActiveMods())
+                    foreach (var modEntry in ModLoader.Instance.GetMods(false))
                     {
-                        if (modEntry.instance.ApiInstance is ModManagerMod)
-                            continue;
-
                         XmlElement modElement = modListRoot.AddXmlElement("mod");
-                        modElement.SetAttribute("name", modEntry.info.Name.Value);
+                        modElement.SetAttribute("name", modEntry.Info.Name);
 
                         modListRoot.AppendChild(modElement);
 
-                        modLists[gameWorld + "/" + gameName].Add(modEntry.info.Name.Value);
+                        modLists[gameWorld + "/" + gameName].Add(modEntry.Info.Name);
                     }
 
                     xmlDoc.Save(path + "/" + modListFilename);

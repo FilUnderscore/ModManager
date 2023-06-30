@@ -1,15 +1,15 @@
 ﻿using CustomModManager.API;
+using CustomModManager.Mod;
 using CustomModManager.UI;
 using System;
 using System.Collections.Generic;
-using System.Xml;
 
 namespace CustomModManager
 {
     public class ModManagerModSettings : IModSettings
     {
-        internal static readonly Dictionary<ModEntry, ModManagerModSettings> modSettingsInstances = new Dictionary<ModEntry, ModManagerModSettings>();
-        private readonly ModEntry entry;
+        internal static readonly Dictionary<Mod.Mod, ModManagerModSettings> modSettingsInstances = new Dictionary<Mod.Mod, ModManagerModSettings>();
+        private readonly Mod.Mod entry;
 
         internal readonly Dictionary<string, BaseModSetting> settings = new Dictionary<string, BaseModSetting>();
         internal static readonly Dictionary<string, Dictionary<string, string>> loadedSettings = new Dictionary<string, Dictionary<string, string>>();
@@ -19,10 +19,10 @@ namespace CustomModManager
         internal static readonly List<BaseModSetting> changed = new List<BaseModSetting>();
         private readonly Dictionary<string, string> loadedSettingsInstance;
 
-        public ModManagerModSettings(Mod mod)
+        public ModManagerModSettings(global::Mod mod)
         {
-            this.entry = ModLoader.GetModEntryFromModInstance(mod);
-            loadedSettingsInstance = loadedSettings.ContainsKey(this.entry.info.Name.Value) ? loadedSettings[this.entry.info.Name.Value] : new Dictionary<string, string>();
+            this.entry = ModLoader.Instance.GetModFromInstance(mod);
+            loadedSettingsInstance = loadedSettings.ContainsKey(this.entry.Info.Name) ? loadedSettings[this.entry.Info.Name] : new Dictionary<string, string>();
 
             modSettingsInstances.Add(entry, this);
         }
@@ -31,7 +31,7 @@ namespace CustomModManager
         {
             if (settings.ContainsKey(key))
             {
-                Log.Error($"[Mod Manager] [{this.entry.info.Name.Value}] A setting with key {key} already exists.");
+                Log.Error($"[Mod Manager] [{this.entry.Info.Name}] A setting with key {key} already exists.");
                 return null;
             }
 
@@ -45,7 +45,7 @@ namespace CustomModManager
         {
             if(settings.ContainsKey(key))
             {
-                Log.Error($"[Mod Manager] [{this.entry.info.Name.Value}] A setting with key {key} already exists.");
+                Log.Error($"[Mod Manager] [{this.entry.Info.Name}] A setting with key {key} already exists.");
                 return null;
             }
 
@@ -59,7 +59,7 @@ namespace CustomModManager
         {
             if(settings.ContainsKey(key))
             {
-                Log.Error($"[Mod Manager] [{this.entry.info.Name.Value}] A setting with key {key} already exists.");
+                Log.Error($"[Mod Manager] [{this.entry.Info.Name}] A setting with key {key} already exists.");
                 return null;
             }
 
@@ -78,7 +78,7 @@ namespace CustomModManager
         {
             if(settingTabs.ContainsKey(key))
             {
-                Log.Error($"[Mod Manager] [{this.entry.info.Name.Value}] A tab with key {key} already exists.");
+                Log.Error($"[Mod Manager] [{this.entry.Info.Name}] A tab with key {key} already exists.");
                 return;
             }
 

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CustomModManager.UI
 {
     public class XUiC_ModsListModSettings : XUiController
     {
-        public ModEntry currentModEntry = null;
+        public Mod.Mod currentModEntry = null;
 
         internal XUiC_Mods mods;
 

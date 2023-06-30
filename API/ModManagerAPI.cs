@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -31,11 +33,11 @@ namespace CustomModManager.API
             return CORE_ASSEMBLY != null;
         }
 
-        public static ModSettings GetModSettings(Mod modInstance)
+        public static ModSettings GetModSettings(global::Mod modInstance)
         {
             if (!IsModManagerLoaded())
             {
-                Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Attempted to create mod settings while mod manager is not installed.");
+                Log.Warning($"[{modInstance.Name}] [Mod Manager API] Attempted to create mod settings while mod manager is not installed.");
                 return new ModSettings(modInstance, null);
             }
 
@@ -45,7 +47,7 @@ namespace CustomModManager.API
             }
             catch
             {
-                Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Failed to locate ModSettings instance in Mod Manager. Perhaps an out-of-date API version is being used?");
+                Log.Warning($"[{modInstance.Name}] [Mod Manager API] Failed to locate ModSettings instance in Mod Manager. Perhaps an out-of-date API version is being used?");
 
                 return new ModSettings(modInstance, null);
             }
@@ -53,10 +55,10 @@ namespace CustomModManager.API
 
         public class ModSettings
         {
-            private readonly Mod modInstance;
+            private readonly global::Mod modInstance;
             private readonly object instance;
 
-            public ModSettings(Mod modInstance, object instance)
+            public ModSettings(global::Mod modInstance, object instance)
             {
                 this.modInstance = modInstance;
                 this.instance = instance;
@@ -73,7 +75,7 @@ namespace CustomModManager.API
                 }
                 catch
                 {
-                    Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Failed to create Mod Setting instance. Perhaps an out-of-date API version is being used?");
+                    Log.Warning($"[{modInstance.Name}] [Mod Manager API] Failed to create Mod Setting instance. Perhaps an out-of-date API version is being used?");
                 }
 
                 return new ModSetting<T>(this, key, null);
@@ -90,7 +92,7 @@ namespace CustomModManager.API
                 }
                 catch
                 {
-                    Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Failed to create Mod Setting instance. Perhaps an out-of-date API version is being used?");
+                    Log.Warning($"[{modInstance.Name}] [Mod Manager API] Failed to create Mod Setting instance. Perhaps an out-of-date API version is being used?");
                 }
 
                 return new ModSetting<string>(this, key, null);
@@ -107,7 +109,7 @@ namespace CustomModManager.API
                 }
                 catch
                 {
-                    Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Failed to create Mod Setting instance. Perhaps an out-of-date API version is being used?");
+                    Log.Warning($"[{modInstance.Name}] [Mod Manager API] Failed to create Mod Setting instance. Perhaps an out-of-date API version is being used?");
                 }
 
                 return new ModSetting<string>(this, key, null);
@@ -131,7 +133,7 @@ namespace CustomModManager.API
                 }
                 catch
                 {
-                    Log.Warning($"[{modInstance.ModInfo.Name.Value}] [Mod Manager API] Failed to create Mod Setting tab. Perhaps an out-of-date API version is being used?");
+                    Log.Warning($"[{modInstance.Name}] [Mod Manager API] Failed to create Mod Setting tab. Perhaps an out-of-date API version is being used?");
                 }
             }
 
@@ -156,7 +158,7 @@ namespace CustomModManager.API
                     }
                     catch
                     {
-                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set allowed values for mod setting {this.key}");
+                        Log.Warning($"[{settingsInstance.modInstance.Name}] [Mod Manager API] [Mod Settings] Failed to set allowed values for mod setting {this.key}");
                     }
 
                     return this;
@@ -170,7 +172,7 @@ namespace CustomModManager.API
                     }
                     catch
                     {
-                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set tab key {tabKey} for mod setting {this.key}");
+                        Log.Warning($"[{settingsInstance.modInstance.Name}] [Mod Manager API] [Mod Settings] Failed to set tab key {tabKey} for mod setting {this.key}");
                     }
 
                     return this;
@@ -184,7 +186,7 @@ namespace CustomModManager.API
                     }
                     catch
                     {
-                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set minimum/maximum/increment values for mod setting {this.key}");
+                        Log.Warning($"[{settingsInstance.modInstance.Name}] [Mod Manager API] [Mod Settings] Failed to set minimum/maximum/increment values for mod setting {this.key}");
                     }
 
                     return this;
@@ -198,7 +200,7 @@ namespace CustomModManager.API
                     }
                     catch
                     {
-                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set wrap flag for mod setting {this.key}");
+                        Log.Warning($"[{settingsInstance.modInstance.Name}] [Mod Manager API] [Mod Settings] Failed to set wrap flag for mod setting {this.key}");
                     }
 
                     return this;
@@ -212,7 +214,7 @@ namespace CustomModManager.API
                     }
                     catch
                     {
-                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to update mod setting {this.key}");
+                        Log.Warning($"[{settingsInstance.modInstance.Name}] [Mod Manager API] [Mod Settings] Failed to update mod setting {this.key}");
                     }
                 }
 
@@ -224,7 +226,7 @@ namespace CustomModManager.API
                     }
                     catch
                     {
-                        Log.Warning($"[{settingsInstance.modInstance.ModInfo.Name.Value}] [Mod Manager API] [Mod Settings] Failed to set enabled selector for mod setting {this.key}");
+                        Log.Warning($"[{settingsInstance.modInstance.Name}] [Mod Manager API] [Mod Settings] Failed to set enabled selector for mod setting {this.key}");
                     }
 
                     return this;
@@ -298,6 +300,93 @@ namespace CustomModManager.API
                                 }
                             }, ++currentReadCount >= startupMessages.Count);
                         };
+                    }
+                }
+            }
+
+            public static void AddLoadingScreenTip(string title, string message)
+            {
+                LoadingScreenTips.tips.Add(new LoadingScreenTips.LoadingScreenTip(title, message));
+            }
+
+            private static class LoadingScreenTips
+            {
+                private static readonly FieldInfo tipsField = AccessTools.DeclaredField(typeof(XUiC_LoadingScreen), "tips");
+                private static readonly FieldInfo currentTipIndexField = AccessTools.DeclaredField(typeof(XUiC_LoadingScreen), "currentTipIndex");
+
+                public static readonly List<LoadingScreenTip> tips = new List<LoadingScreenTip>();
+
+                private static List<string> GetTips()
+                {
+                    return (List<string>)tipsField.GetValue(null);
+                }
+
+                public class LoadingScreenTip
+                {
+                    public readonly string Title;
+                    public readonly string Message;
+
+                    public LoadingScreenTip(string title, string message)
+                    {
+                        this.Title = title;
+                        this.Message = message;
+                    }
+                }
+
+                [HarmonyLib.HarmonyPatch(typeof(XUiC_LoadingScreen))]
+                [HarmonyLib.HarmonyPatch("OnOpen")]
+                class XUiC_LoadingScreen_OnOpen_Extension
+                {
+                    static void Prefix(XUiC_LoadingScreen __instance)
+                    {
+                        for(int i = 0; i < tips.Count; i++)
+                            GetTips().Add("mm-loadingscreen-tip" + i);
+                    }
+                }
+
+                [HarmonyLib.HarmonyPatch(typeof(XUiC_LoadingScreen))]
+                [HarmonyLib.HarmonyPatch("OnClose")]
+                class XUiC_LoadingScreen_OnClose_Extension
+                {
+                    static void Prefix(XUiC_LoadingScreen __instance)
+                    {
+                        for(int i = 0; i < tips.Count; i++)
+                            GetTips().RemoveAt(GetTips().Count - 1);
+                    }
+                }
+
+                [HarmonyLib.HarmonyPatch(typeof(XUiC_LoadingScreen))]
+                [HarmonyLib.HarmonyPatch("GetBindingValue")]
+                class XUiC_LoadingScreen_GetBindingValue_Extension
+                {
+                    static bool Prefix(XUiC_LoadingScreen __instance, ref string _value, string _bindingName, ref bool __result)
+                    {
+                        int currentTipIndex = (int)currentTipIndexField.GetValue(__instance);
+
+                        if (currentTipIndex >= 0)
+                        {
+                            string currentTip = GetTips()[currentTipIndex];
+
+                            if (currentTip.StartsWith("mm-loadingscreen-tip"))
+                            {
+                                if (int.TryParse(currentTip.Substring(20), out int index))
+                                {
+                                    switch (_bindingName)
+                                    {
+                                        case "title":
+                                            _value = tips[index].Title;
+                                            break;
+                                        case "text":
+                                            _value = tips[index].Message;
+                                            break;
+                                    }
+
+                                    return false;
+                                }
+                            }
+                        }
+
+                        return true;
                     }
                 }
             }

@@ -6,9 +6,16 @@ namespace CustomModManager
 {
     internal class ModSettingsFromXml
     {
+        private const string modSettingsFilename = "mod-settings.xml";
+
+        internal static string GetSettingsFileLocation()
+        {
+            return GameIO.GetApplicationPath() + "/" + modSettingsFilename;
+        }
+
         internal static void Load()
         {
-            var filePath = CustomModManager.GetSettingsFileLocation();
+            var filePath = GetSettingsFileLocation();
 
             if (!File.Exists(filePath))
                 return;
@@ -81,7 +88,7 @@ namespace CustomModManager
                 var loadedSettings = settingsEntry.Value;
 
                 XmlElement modElement = settingsRoot.AddXmlElement("mod");
-                modElement.SetAttribute("name", mod.info.Name.Value);
+                modElement.SetAttribute("name", mod.Info.Name);
                 
                 foreach(var settingEntry in loadedSettings.settings)
                 {
@@ -102,7 +109,7 @@ namespace CustomModManager
                 settingsRoot.AppendChild(modElement);
             }
 
-            xmlDoc.Save(CustomModManager.GetSettingsFileLocation());
+            xmlDoc.Save(GetSettingsFileLocation());
 
             ModManagerModSettings.changed.Clear();
         }

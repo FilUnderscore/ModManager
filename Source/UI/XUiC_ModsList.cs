@@ -1,8 +1,6 @@
-﻿using System;
+﻿using CustomModManager.Mod;
+using CustomModManager.Mod.Version;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CustomModManager.UI
 {
@@ -40,11 +38,9 @@ namespace CustomModManager.UI
             switch(sortingType)
             {
                 case SortingType.Alphanumerical:
-                    return a.modInfo.Name.Value.CompareTo(b.modInfo.Name.Value);
-                case SortingType.LoadOrder:
-                    return a.modEntry.loadInfo.CompareTo(b.modEntry.loadInfo);
+                    return a.modEntry.Info.Name.CompareTo(b.modEntry.Info.Name);
                 case SortingType.Author:
-                    return a.modInfo.Author.Value.CompareTo(b.modInfo.Author.Value);
+                    return a.modEntry.Info.Author.CompareTo(b.modEntry.Info.Author);
             }
 
             return 0;
@@ -56,8 +52,6 @@ namespace CustomModManager.UI
             {
                 case SortingType.Alphanumerical:
                     return Localization.Get("xuiModsSortAlphanumerical");
-                case SortingType.LoadOrder:
-                    return Localization.Get("xuiModsSortLoadOrder");
                 case SortingType.Author:
                     return Localization.Get("xuiModsSortAuthor");
             }
@@ -82,7 +76,7 @@ namespace CustomModManager.UI
 
         private void ScanMods()
         {
-            List<ModEntry> loadedMods = ModLoader.GetLoadedMods();
+            List<Mod.Mod> loadedMods = ModLoader.Instance.GetMods();
 
             foreach(var mod in loadedMods)
             {
@@ -105,13 +99,11 @@ namespace CustomModManager.UI
 
         public class ListEntry : XUiListEntry
         {
-            public readonly ModEntry modEntry;
-            public readonly ModInfo.ModInfo modInfo;
+            public readonly Mod.Mod modEntry;
 
-            public ListEntry(ModEntry modEntry)
+            public ListEntry(Mod.Mod modEntry)
             {
                 this.modEntry = modEntry;
-                this.modInfo = modEntry.info;
             }
 
             public override int CompareTo(object _otherEntry)
@@ -119,7 +111,7 @@ namespace CustomModManager.UI
                 if (!(_otherEntry is ListEntry))
                     return 1;
 
-                return 1 * modInfo.Name.Value.CompareTo(((ListEntry)_otherEntry).modInfo.Name.Value);
+                return 1 * modEntry.Info.Name.CompareTo(((ListEntry)_otherEntry).modEntry.Info.Name);
             }
 
             public override bool GetBindingValue(ref string _value, string _bindingName)
@@ -127,26 +119,26 @@ namespace CustomModManager.UI
                 switch(_bindingName)
                 {
                     case "modName":
-                        _value = modInfo.Name.Value;
+                        _value = modEntry.Info.Name;
                         return true;
                     case "modVersion":
-                        _value = modEntry.GetVersion() + (modEntry.manifest != null && modEntry.manifest.UpToDate() == ModManifest.EVersionStatus.Not_Up_To_Date ? "\u2191" : "");
+                        _value = modEntry.Version.ToString() + (modEntry.Manifest != null && modEntry.Manifest.UpToDate() == EVersionStatus.Not_Up_To_Date ? "\u2191" : "");
                         return true;
                     case "modVersionColor":
-                        if (modEntry.manifest != null)
+                        if (modEntry.Manifest != null)
                         {
-                            ModManifest.EVersionUpdateComparisonResult versionUpdateComparisonResult = modEntry.manifest.CurrentVersionCompatibleWithDifferentGameVersion();
-                            ModManifest.EVersionComparisonResult versionComparisonResult = modEntry.manifest.CurrentVersionCompatibleWithGameVersion();
+                            EVersionUpdateComparisonResult versionUpdateComparisonResult = modEntry.Manifest.CurrentVersionCompatibleWithDifferentGameVersion();
+                            EVersionComparisonResult versionComparisonResult = modEntry.Manifest.CurrentVersionCompatibleWithGameVersion();
 
-                            if (versionUpdateComparisonResult == ModManifest.EVersionUpdateComparisonResult.Compatible || versionComparisonResult == ModManifest.EVersionComparisonResult.Compatible)
+                            if (versionUpdateComparisonResult == EVersionUpdateComparisonResult.Compatible || versionComparisonResult == EVersionComparisonResult.Compatible)
                             {
                                 _value = ModVersionCompatibleColor;
                             }
-                            else if(versionUpdateComparisonResult == ModManifest.EVersionUpdateComparisonResult.May_Not_Be_Compatible)
+                            else if(versionUpdateComparisonResult == EVersionUpdateComparisonResult.May_Not_Be_Compatible)
                             {
                                 _value = ModVersionMayNotBeCompatibleColor;
                             }
-                            else if(versionUpdateComparisonResult == ModManifest.EVersionUpdateComparisonResult.Not_Compatible)
+                            else if(versionUpdateComparisonResult == EVersionUpdateComparisonResult.Not_Compatible)
                             {
                                 _value = ModVersionNotCompatibleColor;
                             }
@@ -158,67 +150,62 @@ namespace CustomModManager.UI
 
                         return true;
                     case "modVersionTooltip":
-                        _value = string.Format(Localization.Get("xuiModVersionTooltipCurrentVersion"), modEntry.GetVersion());
+                        _value = string.Format(Localization.Get("xuiModVersionTooltipCurrentVersion"), modEntry.Version.ToString());
 
-                        if (modEntry.manifest != null)
+                        if (modEntry.Manifest != null)
                         {
-                            if (modEntry.manifest.GameVersionInformation != null)
+                            if (modEntry.Manifest.GameVersionInformation != null)
                             {
-                                _value += "\n" + string.Format(Localization.Get("xuiModVersionTooltipForGameVersion"), modEntry.manifest.GameVersionInformation.LongString);
+                                _value += "\n" + string.Format(Localization.Get("xuiModVersionTooltipForGameVersion"), modEntry.Manifest.GameVersionInformation.LongString);
                             }
 
-                            if (modEntry.manifest.UpToDate() == ModManifest.EVersionStatus.Not_Up_To_Date)
+                            if (modEntry.Manifest.UpToDate() == EVersionStatus.Not_Up_To_Date)
                             {
-                                _value += "\n\n" + string.Format(Localization.Get("xuiModVersionTooltipAnUpdateIsAvailable"), modEntry.manifest.RemoteManifest.Version);
+                                _value += "\n\n" + string.Format(Localization.Get("xuiModVersionTooltipAnUpdateIsAvailable"), modEntry.Manifest.RemoteManifest.Version);
                                 
-                                if (modEntry.manifest.RemoteManifest.GameVersionInformation != null)
+                                if (modEntry.Manifest.RemoteManifest.GameVersionInformation != null)
                                 {
-                                    _value += "\n" + string.Format(Localization.Get("xuiModVersionTooltipForGameVersion"), modEntry.manifest.RemoteManifest.GameVersionInformation.LongString);
+                                    _value += "\n" + string.Format(Localization.Get("xuiModVersionTooltipForGameVersion"), modEntry.Manifest.RemoteManifest.GameVersionInformation.LongString);
                                 }
                             }
-                            else if(modEntry.manifest != null && modEntry.manifest.UpToDate() == ModManifest.EVersionStatus.Up_To_Date)
+                            else if(modEntry.Manifest != null && modEntry.Manifest.UpToDate() == EVersionStatus.Up_To_Date)
                             {
                                 _value += "\n\n" + Localization.Get("xuiModVersionTooltipUpToDate");
                             }
 
-                            ModManifest.EVersionUpdateComparisonResult versionUpdateComparisonResult = modEntry.manifest.CurrentVersionCompatibleWithDifferentGameVersion();
+                            EVersionUpdateComparisonResult versionUpdateComparisonResult = modEntry.Manifest.CurrentVersionCompatibleWithDifferentGameVersion();
 
-                            if (versionUpdateComparisonResult == ModManifest.EVersionUpdateComparisonResult.May_Not_Be_Compatible)
+                            if (versionUpdateComparisonResult == EVersionUpdateComparisonResult.May_Not_Be_Compatible)
                             {
                                 _value += "\n\n" + Localization.Get("xuiModVersionTooltipCurrentVersionMayNotBeCompatible");
                             }
-                            else if (versionUpdateComparisonResult == ModManifest.EVersionUpdateComparisonResult.Not_Compatible)
+                            else if (versionUpdateComparisonResult == EVersionUpdateComparisonResult.Not_Compatible)
                             {
                                 _value += "\n\n" + Localization.Get("xuiModVersionTooltipCurrentVersionNotCompatible");
                             }
 
-                            if (versionUpdateComparisonResult != ModManifest.EVersionUpdateComparisonResult.Compatible && modEntry.manifest.RemoteManifest == null)
+                            if (versionUpdateComparisonResult != EVersionUpdateComparisonResult.Compatible && modEntry.Manifest.RemoteManifest == null)
                             {
-                                ModManifest.EVersionComparisonResult versionComparisonResult = modEntry.manifest.CurrentVersionCompatibleWithGameVersion();
+                                EVersionComparisonResult versionComparisonResult = modEntry.Manifest.CurrentVersionCompatibleWithGameVersion();
 
-                                if(versionComparisonResult == ModManifest.EVersionComparisonResult.Not_Compatible)
-                                    _value += "\n\n" + (modEntry.manifest.RemoteManifest == null ? Localization.Get("xuiModVersionTooltipCurrentVersionNotSpecifiedNoManifestExists") : Localization.Get("xuiModVersionTooltipCurrentVersionNotSpecifiedManifest"));
+                                if(versionComparisonResult == EVersionComparisonResult.Not_Compatible)
+                                    _value += "\n\n" + (modEntry.Manifest.RemoteManifest == null ? Localization.Get("xuiModVersionTooltipCurrentVersionNotSpecifiedNoManifestExists") : Localization.Get("xuiModVersionTooltipCurrentVersionNotSpecifiedManifest"));
                             }
                         }
 
                         return true;
                     case "modEnabled":
-                        _value = GetModLoadedLocalization(modEntry.IsLoaded()) + (ModEnabledWillBeUpdated() ? "" + " \u2192 " + GetModLoadedLocalization(modEntry.WillBeEnabled().Value) : "");
+                        _value = GetModLoadedLocalization(modEntry.Loaded) + (modEntry.WillChangeState ? "" + " \u2192 " + GetModLoadedLocalization(modEntry.NextState) : "");
                         return true;
                     case "modEnabledColor":
-                        _value = ModEnabledWillBeUpdated() ? ModEnabledChangeColor : (!modEntry.IsLoaded() ? ModDisabledColor : ModEnabledColor);
+                        _value = modEntry.WillChangeState ? ModEnabledChangeColor : (!modEntry.Loaded ? ModDisabledColor : ModEnabledColor);
                         return true;
                     case "modAuthor":
-                        _value = modInfo.Author.Value;
+                        _value = modEntry.Info.Author;
                         return true;
                     default:
                         return false;
                 }
-            }
-
-            private bool ModEnabledWillBeUpdated()
-            {
-                return modEntry.WillBeEnabled() != null && modEntry.WillBeEnabled() != modEntry.IsLoaded();
             }
 
             private string GetModLoadedLocalization(bool value)
@@ -228,7 +215,7 @@ namespace CustomModManager.UI
 
             public override bool MatchesSearch(string _searchString)
             {
-                return modInfo.Name.Value.ToLowerInvariant().StartsWith(_searchString.ToLowerInvariant());
+                return modEntry.Info.Name.ToLowerInvariant().StartsWith(_searchString.ToLowerInvariant());
             }
 
             public static bool GetNullBindingValues(ref string _value, string _bindingName)
@@ -255,7 +242,6 @@ namespace CustomModManager.UI
         private enum SortingType
         {
             Alphanumerical,
-            LoadOrder,
             Author
         }
     }

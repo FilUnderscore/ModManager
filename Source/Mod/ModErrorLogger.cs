@@ -40,7 +40,7 @@ namespace CustomModManager
             {
                 static bool Prefix(string _logString)
                 {
-                    if (ModLoader.mainMenuLoaded && GameManager.Instance.World == null)
+                    if (GameManager.Instance?.World == null)
                         XUiC_ModsErrorMessageBoxWindowGroup.ShowMessageBox(((GUIWindowManager)UnityEngine.Object.FindObjectOfType(typeof(GUIWindowManager))).playerUI.xui, Localization.Get("xuiGameModError"), string.Format(Localization.Get("xuiGameModErrorGeneral"), _logString), Localization.Get("xuiGameModErrorIgnore"), Localization.Get("xuiOk"), () => { }, () => { }, false, false);
 
                     return false;
