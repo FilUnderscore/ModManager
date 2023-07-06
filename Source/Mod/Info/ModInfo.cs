@@ -1,4 +1,6 @@
 ﻿using CustomModManager.Mod.Version;
+using System;
+using static BlockPlacement;
 
 namespace CustomModManager.Mod.Info
 {
@@ -12,7 +14,7 @@ namespace CustomModManager.Mod.Info
         public IModVersion Version { get; private set; }
         public string Website { get; private set; }
 
-        public ModInfo(global::Mod mod) : this(mod.Path, mod.Name, mod.DisplayName, mod.Description, mod.Author, SemVer.Parse(mod.Version.ToString()), mod.Website)
+        public ModInfo(global::Mod mod) : this(mod.Path, mod.Name, mod.DisplayName, mod.Description, mod.Author, Parse(mod.Version), mod.Website)
         {
         }
 
@@ -25,6 +27,31 @@ namespace CustomModManager.Mod.Info
             this.Author = author;
             this.Version = version;
             this.Website = website;
+        }
+
+        private static IModVersion Parse(System.Version version)
+        {
+            if (version != null)
+            {
+                IModVersion modVersion = SemVer.Parse(version.ToString());
+
+                if (modVersion == null)
+                    modVersion = SemVer.Parse($"{version.Major}.{version.Minor}.{version.Build}-rev.{version.Revision}");
+
+                return modVersion;
+            }
+            else
+            {
+                return new UndefinedModVersion();
+            }
+        }
+
+        private sealed class UndefinedModVersion : IModVersion
+        {
+            public override string ToString()
+            {
+                return "Undefined";
+            }
         }
     }
 }
