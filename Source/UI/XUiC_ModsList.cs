@@ -1,6 +1,7 @@
 ﻿using CustomModManager.Mod;
 using CustomModManager.Mod.Version;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CustomModManager.UI
 {
@@ -21,10 +22,20 @@ namespace CustomModManager.UI
         {
             base.Init();
 
-            this.GetChildById("btnSort").ViewComponent.Controller.OnPress += new XUiEvent_OnPressEventHandler(SortButton_OnPressed);
+            this.GetChildById("btnSort").ViewComponent.Controller.OnPress += SortButton_OnPress;
+            this.GetChildById("btnRefresh").ViewComponent.Controller.OnPress += RefreshButton_OnPress;
         }
 
-        private void SortButton_OnPressed(XUiController _sender, int _mouseButton)
+        private void RefreshButton_OnPress(XUiController _sender, int _mouseButton)
+        {
+            ModLoader.Instance.Load(ModManagerMod.modPaths.ToArray());
+
+            this.RebuildList(true);
+            this.RefreshBindings(true);
+            this.RefreshView(true);
+        }
+
+        private void SortButton_OnPress(XUiController _sender, int _mouseButton)
         {
             this.sortingType = this.sortingType.CycleEnum();
             this.RefreshBindings(true);
@@ -38,7 +49,7 @@ namespace CustomModManager.UI
             switch(sortingType)
             {
                 case SortingType.Alphanumerical:
-                    return a.modEntry.Info.Name.CompareTo(b.modEntry.Info.Name);
+                    return a.modEntry.Info.DisplayName.CompareTo(b.modEntry.Info.DisplayName);
                 case SortingType.Author:
                     return a.modEntry.Info.Author.CompareTo(b.modEntry.Info.Author);
             }
@@ -70,7 +81,7 @@ namespace CustomModManager.UI
         {
             this.allEntries.Clear();
             this.ScanMods();
-            this.allEntries.Sort();
+            this.allEntries.Sort((x, y) => Sort(x, y));
             base.RebuildList(_resetFilter);
         }
 
@@ -92,6 +103,9 @@ namespace CustomModManager.UI
                 case "sortingTooltip":
                     _value = string.Format(Localization.Get("xuiModsSort"), GetSortingNameUnlocalized());
                     return true;
+                case "refreshTooltip":
+                    _value = Localization.Get("xuiModsRefresh");
+                    return true;
                 default:
                     return base.GetBindingValue(ref _value, _bindingName);
             }
@@ -111,7 +125,7 @@ namespace CustomModManager.UI
                 if (!(_otherEntry is ListEntry))
                     return 1;
 
-                return 1 * modEntry.Info.Name.CompareTo(((ListEntry)_otherEntry).modEntry.Info.Name);
+                return 1 * modEntry.Info.DisplayName.CompareTo(((ListEntry)_otherEntry).modEntry.Info.DisplayName);
             }
 
             public override bool GetBindingValue(ref string _value, string _bindingName)
@@ -119,7 +133,7 @@ namespace CustomModManager.UI
                 switch(_bindingName)
                 {
                     case "modName":
-                        _value = modEntry.Info.Name;
+                        _value = modEntry.Info.DisplayName;
                         return true;
                     case "modVersion":
                         _value = modEntry.Version.ToString() + (modEntry.Manifest != null && modEntry.Manifest.UpToDate() == EVersionStatus.Not_Up_To_Date ? "\u2191" : "");
@@ -215,7 +229,7 @@ namespace CustomModManager.UI
 
             public override bool MatchesSearch(string _searchString)
             {
-                return modEntry.Info.Name.ToLowerInvariant().StartsWith(_searchString.ToLowerInvariant());
+                return modEntry.Info.DisplayName.ToLowerInvariant().StartsWith(_searchString.ToLowerInvariant());
             }
 
             public static bool GetNullBindingValues(ref string _value, string _bindingName)

@@ -20,14 +20,6 @@ namespace CustomModManager.Mod
         private bool stateSwapFlag;
         private EModDisableState modDisableState;
 
-        public bool Enabled
-        {
-            get
-            {
-                return true;
-            }
-        }
-
         public bool Loaded
         {
             get
@@ -107,7 +99,10 @@ namespace CustomModManager.Mod
         public bool Load()
         {
             if (this.instance == null)
+            {
                 this.instance = global::Mod.LoadFromFolder(this.Info.Path);
+                ThreadManager.RunCoroutineSync(ModManager.LoadPatchStuff(false));
+            }
 
             if (this.stateSwapFlag)
                 this.stateSwapFlag = false;

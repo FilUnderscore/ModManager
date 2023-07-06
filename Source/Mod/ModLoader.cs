@@ -119,7 +119,9 @@ namespace CustomModManager.Mod
 
             foreach(var mod in this.GetMods(false))
             {
-                if(mod.WillChangeState)
+                flag |= (mod.WillChangeState && mod.Loaded);
+
+                if (mod.WillChangeState)
                 {
                     if (mod.NextState)
                     {
@@ -129,8 +131,11 @@ namespace CustomModManager.Mod
                     else if(!lines.Contains(mod.Info.Name))
                     {
                         lines.Add(Path.GetFileName(mod.Info.Name));
-                        flag |= true;
                     }
+                }
+                else
+                {
+                    lines.RemoveAll(modName => mod.Info.Name.EqualsCaseInsensitive(modName));
                 }
             }
 

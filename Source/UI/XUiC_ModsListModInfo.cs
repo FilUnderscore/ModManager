@@ -74,7 +74,7 @@ namespace CustomModManager.UI
             switch (_bindingName)
             {
                 case "modName":
-                    _value = currentModEntry != null ? currentModEntry.Info.Name : "";
+                    _value = currentModEntry != null ? currentModEntry.Info.DisplayName : "";
                     return true;
                 case "modAuthor":
                     _value = currentModEntry != null ? currentModEntry.Info.Author : "";

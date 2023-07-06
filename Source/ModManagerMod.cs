@@ -19,7 +19,7 @@ namespace CustomModManager
         private ModManagerAPI.ModSettings.ModSetting<int> currentModDirSetting;
         private ModManagerAPI.ModSettings.ModSetting<string> openModDirButton;
 
-        private readonly ISet<string> modPaths = new HashSet<string>();
+        internal static readonly ISet<string> modPaths = new HashSet<string>();
         private int selectedModDir;
 
         private bool showPatchNotesOnStartup = true, showUpdatesOnStartup = true;
@@ -38,10 +38,10 @@ namespace CustomModManager
         private void AddBasePaths()
         {
             if (MODS_BASE_PATH_LEGACY_FIELD != null)
-                this.modPaths.Add((string)MODS_BASE_PATH_LEGACY_FIELD.GetValue(null));
+                modPaths.Add((string)MODS_BASE_PATH_LEGACY_FIELD.GetValue(null));
 
             if (MODS_BASE_PATH_PROPERTY != null)
-                this.modPaths.Add((string)MODS_BASE_PATH_PROPERTY.GetValue(null));
+                modPaths.Add((string)MODS_BASE_PATH_PROPERTY.GetValue(null));
         }
 
         public void InitMod(global::Mod _modInstance)
@@ -61,14 +61,14 @@ namespace CustomModManager
             {
                 List<string> paths = value.Split(';').ToList();
 
-                this.modPaths.Clear();
+                modPaths.Clear();
 
                 this.AddBasePaths();
                 foreach (var path in paths)
                 {
-                    this.modPaths.Add(path);
+                    modPaths.Add(path);
                 }
-                this.loader.Load(this.modPaths.ToArray());
+                this.loader.Load(modPaths.ToArray());
 
                 if (currentModDirSetting != null)
                 {
@@ -78,7 +78,7 @@ namespace CustomModManager
                     if (openModDirButton != null)
                         openModDirButton.Update();
                 }
-            }, () => this.modPaths.ToList().StringFromList(";"), toStr =>
+            }, () => modPaths.ToList().StringFromList(";"), toStr =>
             {
                 int dirCount = toStr.Split(';').Length;
                 return (toStr, dirCount + " Director" + (dirCount > 1 ? "ies" : "y"));
@@ -96,18 +96,18 @@ namespace CustomModManager
 
                 if (openModDirButton != null)
                     openModDirButton.Update();
-            }, () => selectedModDir, toStr => (toStr.ToString(), toStr <= this.modPaths.Count && toStr > 0 ? this.modPaths.ToList()[toStr - 1] : "Choose a Mod Directory"), str =>
+            }, () => selectedModDir, toStr => (toStr.ToString(), toStr <= modPaths.Count && toStr > 0 ? modPaths.ToList()[toStr - 1] : "Choose a Mod Directory"), str =>
             {
                 bool success = int.TryParse(str, out int val);
                 return (val, success);
-            }).SetMinimumMaximumAndIncrementValues(0, this.modPaths.Count, 1);
+            }).SetMinimumMaximumAndIncrementValues(0, modPaths.Count, 1);
 
             this.openModDirButton = settings.Button("openModDirButton", "xuiModManagerOpenModDirButton", () =>
             {
-                if (selectedModDir > 0 && selectedModDir <= this.modPaths.Count)
-                    UnityEngine.Application.OpenURL(this.modPaths.ToList()[selectedModDir - 1]);
+                if (selectedModDir > 0 && selectedModDir <= modPaths.Count)
+                    UnityEngine.Application.OpenURL(modPaths.ToList()[selectedModDir - 1]);
             },
-            () => Localization.Get("xuiModManagerOpenModDirButtonText")).SetEnabled(() => this.modPaths.Count > 0 && selectedModDir > 0 && selectedModDir <= this.modPaths.Count);
+            () => Localization.Get("xuiModManagerOpenModDirButtonText")).SetEnabled(() => modPaths.Count > 0 && selectedModDir > 0 && selectedModDir <= modPaths.Count);
 
             /*
             settings.Category("startup", "Startup");

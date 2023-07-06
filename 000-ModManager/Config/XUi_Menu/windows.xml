@@ -29,6 +29,7 @@
 						<textfield name="searchInput" depth="5" pos="40,-22" width="250" height="30" pivot="Left" search_field="true" />
 						
 						<button name="btnSort" depth="3" pos="384,-22" sprite="ui_game_symbol_sort" style="icon32px, press, hover" pivot="center" tooltip="{sortingTooltip}"/>
+						<button name="btnRefresh" depth="3" pos="420,-22" sprite="server_refresh" style="icon32px, press, hover" pivot="center" tooltip="{refreshTooltip}"/>
 						
 						<panel pos="478,0" width="98" height="43" disableautobackground="true">
 							<pager name="pager" pos="1,-6" />
@@ -59,7 +60,7 @@
 					<rect name="modInfo" tab_key="xuiModInformation" controller="CustomModManager.UI.XUiC_ModsListModInfo, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
 						<label name="Name" depth="4" pos="6,-6" width="414" height="32" font_size="32" text="{modName}"/>
 						<label name="Author" depth="4" pos="6,-43" width="200" height="32" font_size="26" color="255,255,255,128" text="{modAuthor}"/>
-						<label name="Version" depth="4" pos="505,-6" width="80" height="32" font_size="26" justify="right" text="{modVersion}"/>
+						<label name="Version" depth="4" pos="383,-6" width="202" height="32" font_size="26" justify="right" text="{modVersion}"/>
 						<label name="Description" depth="4" pos="6,-80" width="584" height="300" font_size="26" text="{modDescription}"/>
 						
 						<togglebutton name="enableDisableButton" depth="4" pos="6,-570" width="120" height="36" font_size="32" caption_key="xuiModEnabled"/>
