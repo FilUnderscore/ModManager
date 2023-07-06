@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ModInfo>
 	<Name value="ModManager" />
-	<Version value="1.0.3" />
+	<Version value="1.0.4" />
 	<DisplayName value="Mod Manager"/>
 	<Description value="Smarter way to manage your mods." />
 	<Author value="FilUnderscore" />
