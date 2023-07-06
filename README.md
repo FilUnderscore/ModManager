@@ -39,3 +39,5 @@ The API is written as a wrapper that can be included in your project as a source
 ![Image showing Mod Settings for Improved Hordes shown in the Mod Menu.](https://i.imgur.com/gne9qWf.png)
 ![Image showing Sample error message showing the better error handling feature with Mod Manager.](https://i.imgur.com/RyOQCFj.png)
 ![Image showing Mods button on the 7 Days To Die Main Menu.](https://i.imgur.com/ldefUSU.png)
+
+## [Terms of Use](https://github.com/FilUnderscore/ModManager/blob/dev/LICENSE)
