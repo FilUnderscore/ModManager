@@ -1,6 +1,4 @@
 ﻿using CustomModManager.Mod.Version;
-using System;
-using static BlockPlacement;
 
 namespace CustomModManager.Mod.Info
 {
