@@ -12,7 +12,7 @@ namespace CustomModManager.Mod.Info
         public IModVersion Version { get; private set; }
         public string Website { get; private set; }
 
-        public ModInfo(global::Mod mod) : this(mod.Path, mod.Name, mod.DisplayName, mod.Description, mod.Author, Parse(mod.Version), mod.Website)
+        public ModInfo(global::Mod mod) : this(mod.Path, mod.Name, mod.DisplayName, mod.Description, mod.Author, new ModVersion(mod.Version), mod.Website)
         {
         }
 
@@ -20,35 +20,25 @@ namespace CustomModManager.Mod.Info
         {
             this.Path = path;
             this.Name = name;
-            this.DisplayName = displayName;
+            this.DisplayName = string.IsNullOrEmpty(displayName) ? name : displayName;
             this.Description = description;
             this.Author = author;
             this.Version = version;
             this.Website = website;
         }
 
-        private static IModVersion Parse(System.Version version)
+        private sealed class ModVersion : IModVersion
         {
-            if (version != null)
+            private readonly System.Version version;
+
+            public ModVersion(System.Version version)
             {
-                IModVersion modVersion = SemVer.Parse(version.ToString());
-
-                if (modVersion == null)
-                    modVersion = SemVer.Parse($"{version.Major}.{version.Minor}.{version.Build}-rev.{version.Revision}");
-
-                return modVersion;
+                this.version = version;
             }
-            else
-            {
-                return new UndefinedModVersion();
-            }
-        }
 
-        private sealed class UndefinedModVersion : IModVersion
-        {
             public override string ToString()
             {
-                return "Undefined";
+                return this.version != null ? this.version.ToString() : "Undefined";
             }
         }
     }
