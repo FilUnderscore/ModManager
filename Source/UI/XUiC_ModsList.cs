@@ -310,6 +310,9 @@ namespace CustomModManager.UI
 
             static void Prefix(XUiC_ListEntry<ListEntry> __instance, ListEntry _data)
             {
+                if (__instance.GetType() != typeof(XUiC_ListEntry<ListEntry>))
+                    return;
+
                 if(_data != __instance.GetEntry() && _data != null)
                 {
                     ListEntryControllerData data = Instance.defaults[__instance];
