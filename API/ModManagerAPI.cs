@@ -265,10 +265,10 @@ namespace CustomModManager.API
                     }
                 }
 
-                public static System.Collections.Generic.List<StartupMessage> startupMessages = new System.Collections.Generic.List<StartupMessage>();
+                public static List<StartupMessage> startupMessages = new System.Collections.Generic.List<StartupMessage>();
 
-                [HarmonyLib.HarmonyPatch(typeof(XUiC_MainMenu))]
-                [HarmonyLib.HarmonyPatch("Open")]
+                [HarmonyPatch(typeof(XUiC_MainMenu))]
+                [HarmonyPatch("Open")]
                 class XUiC_MainMenu_Open_Extension
                 {
                     static bool mainMenuLoaded = false;
@@ -333,8 +333,8 @@ namespace CustomModManager.API
                     }
                 }
 
-                [HarmonyLib.HarmonyPatch(typeof(XUiC_LoadingScreen))]
-                [HarmonyLib.HarmonyPatch("OnOpen")]
+                [HarmonyPatch(typeof(XUiC_LoadingScreen))]
+                [HarmonyPatch("OnOpen")]
                 class XUiC_LoadingScreen_OnOpen_Extension
                 {
                     static void Prefix(XUiC_LoadingScreen __instance)
@@ -344,8 +344,8 @@ namespace CustomModManager.API
                     }
                 }
 
-                [HarmonyLib.HarmonyPatch(typeof(XUiC_LoadingScreen))]
-                [HarmonyLib.HarmonyPatch("OnClose")]
+                [HarmonyPatch(typeof(XUiC_LoadingScreen))]
+                [HarmonyPatch("OnClose")]
                 class XUiC_LoadingScreen_OnClose_Extension
                 {
                     static void Prefix(XUiC_LoadingScreen __instance)
@@ -355,8 +355,8 @@ namespace CustomModManager.API
                     }
                 }
 
-                [HarmonyLib.HarmonyPatch(typeof(XUiC_LoadingScreen))]
-                [HarmonyLib.HarmonyPatch("GetBindingValue")]
+                [HarmonyPatch(typeof(XUiC_LoadingScreen))]
+                [HarmonyPatch("GetBindingValue")]
                 class XUiC_LoadingScreen_GetBindingValue_Extension
                 {
                     static bool Prefix(XUiC_LoadingScreen __instance, ref string _value, string _bindingName, ref bool __result)
