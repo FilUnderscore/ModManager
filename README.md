@@ -1,4 +1,5 @@
 ![Mod Manager Banner](https://i.imgur.com/bLquUKP.png)
+[![latest version](https://img.shields.io/github/v/release/FilUnderscore/ModManager?include_prereleases)](https://github.com/FilUnderscore/ModManager/releases)
 # Mod Manager
 Manage your mods smarter by having an in-game tool to help manage all your Mod Settings and Updates through one interface, the Mods menu.
 
@@ -21,6 +22,11 @@ Disable EAC so the game can load the Improved Hordes DLL.
 
 ## Mod Support
 [SMXmenu support](https://github.com/FilUnderscore/ModManager/releases/download/1.0.2/ModManagerSMXmenuSupport.zip)
+
+## Donations
+You are already showing a lot of support just by enjoying the mod, but if you really appreciate my work and want to show extra support in the form of a donation, feel free to buy me a coffee on Ko-fi.
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/R6R3N9KGV) 
 
 ## Mod Developers (API)
 Mod Manager includes its own APIs to integrate with mods (C# currently, XPath/XML support coming soon).
