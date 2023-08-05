@@ -48,27 +48,9 @@ namespace CustomModManager.UI
             BannerTexture = new XUiW_Texture(this, "bannerTexture");
         }
 
-        private string GetModFolderPath(string filename)
-        {
-            return $"@modfolder({this.currentModEntry.Info.Name}):{filename}";
-        }
-
-        private string GetFilePath(string filename)
-        {
-            if (this.currentModEntry == null)
-                return "";
-
-            return ModManager.PatchModPathString(GetModFolderPath(filename));
-        }
-
-        private bool DoesModFileExist(string filename)
-        {
-            return this.currentModEntry != null ? File.Exists(GetFilePath(filename)) : false;
-        }
-
         private bool HasBanner()
         {
-            return DoesModFileExist("banner.png");
+            return this.currentModEntry != null ? this.currentModEntry.DoesFileExist(this.currentModEntry.GetModFolderPath("banner.png")) : false;
         }
 
         private void FolderButton_OnPressed(XUiController _sender, int _mouseButton)
@@ -114,7 +96,7 @@ namespace CustomModManager.UI
 
             // Update banner texture
             if (this.HasBanner())
-                this.BannerTexture.SetTexture(GetModFolderPath("banner.png"));
+                this.BannerTexture.SetTexture(this.currentModEntry.GetModFolderPath("banner.png"));
 
             int banner_y_offset = this.HasBanner() ? this.BannerTexture.GetHeight() + 5 : 0;
             Vector2i banner_y_offset_v2i = new Vector2i(0, banner_y_offset);

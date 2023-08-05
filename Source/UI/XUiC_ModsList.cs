@@ -1,8 +1,11 @@
 ﻿using CustomModManager.Mod;
 using CustomModManager.Mod.Version;
 using CustomModManager.UI.Wrappers;
+using HarmonyLib;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using static XUiC_DropDown;
 
 namespace CustomModManager.UI
 {
@@ -18,6 +21,34 @@ namespace CustomModManager.UI
         private static string ModEnabledChangeColor = "255,165,0,255";
 
         private SortingType sortingType = SortingType.Alphanumerical;
+        private readonly Dictionary<XUiController, ListEntryControllerData> defaults = new Dictionary<XUiController, ListEntryControllerData>();
+
+        public XUiC_ModsList()
+        {
+            ListEntry_SetEntry_Patch.Instance = this;
+        }
+
+        private class ListEntryControllerData
+        {
+            public readonly XUiW_Texture IconTexture;
+
+            public readonly XUiV_Label NameLabel;
+            public readonly XUiV_Label EnabledLabel;
+
+            public readonly Vector2i OriginalNameLabelPosition;
+            public readonly Vector2i OriginalEnabledLabelPosition;
+
+            public ListEntryControllerData(XUiController controller)
+            { 
+                this.IconTexture = new XUiW_Texture(controller, "Icon");
+
+                this.NameLabel = (XUiV_Label)controller.GetChildById("Name").ViewComponent;
+                this.OriginalNameLabelPosition = this.NameLabel.Position;
+
+                this.EnabledLabel = (XUiV_Label)controller.GetChildById("Enabled").ViewComponent;
+                this.OriginalEnabledLabelPosition = this.EnabledLabel.Position;
+            }
+        }
 
         public override void Init()
         {
@@ -26,9 +57,9 @@ namespace CustomModManager.UI
             this.GetChildById("btnSort").ViewComponent.Controller.OnPress += SortButton_OnPress;
             this.GetChildById("btnRefresh").ViewComponent.Controller.OnPress += RefreshButton_OnPress;
 
-            foreach(var listEntryController in this.listEntryControllers)
+            foreach(var listController in this.listEntryControllers)
             {
-                XUiW_Texture texture = new XUiW_Texture(listEntryController, "Icon");
+                defaults.Add(listController, new ListEntryControllerData(listController));
             }
         }
 
@@ -223,6 +254,9 @@ namespace CustomModManager.UI
                     case "modAuthor":
                         _value = modEntry.Info.Author;
                         return true;
+                    case "hasModIcon":
+                        _value = modEntry.DoesFileExist(modEntry.GetModFolderPath("icon.png")).ToString();
+                        return true;
                     default:
                         return false;
                 }
@@ -253,6 +287,9 @@ namespace CustomModManager.UI
                     case "modEnabledColor":
                         _value = "0,0,0";
                         return true;
+                    case "hasModIcon":
+                        _value = false.ToString();
+                        return true;
                     default:
                         return false;
                 }
@@ -263,6 +300,32 @@ namespace CustomModManager.UI
         {
             Alphanumerical,
             Author
+        }
+
+        [HarmonyPatch(typeof(XUiC_ListEntry<ListEntry>))]
+        [HarmonyPatch("SetEntry")]
+        private class ListEntry_SetEntry_Patch
+        {
+            public static XUiC_ModsList Instance;
+
+            static void Prefix(XUiC_ListEntry<ListEntry> __instance, ListEntry _data)
+            {
+                if(_data != __instance.GetEntry() && _data != null)
+                {
+                    ListEntryControllerData data = Instance.defaults[__instance];
+                    int icon_x_offset = data.IconTexture.GetWidth() + 8;
+
+                    if (_data.modEntry.DoesFileExist(_data.modEntry.GetModFolderPath("icon.png")))
+                    {
+                        data.IconTexture.SetTexture(_data.modEntry.GetModFolderPath("icon.png"));
+                    }
+
+                    Vector2i icon_x_offset_v2i = new Vector2i(icon_x_offset, 0);
+
+                    data.NameLabel.Position = data.OriginalNameLabelPosition + icon_x_offset_v2i;
+                    data.EnabledLabel.Position = data.OriginalEnabledLabelPosition + icon_x_offset_v2i;
+                }
+            }
         }
     }
 }

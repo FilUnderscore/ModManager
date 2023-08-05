@@ -5,7 +5,7 @@
 				<sprite depth="3" name="backgroundMain" sprite="menu_empty2px" height="${1+height}" pos="2,0" width="${width-4}" color="[black]" type="sliced" fillcenter="false"/>
 				<sprite depth="2" name="background" color="[darkGrey]" pos="2,0" width="${width-4}" type="sliced"/>
 
-				<texture depth="4" name="Icon" pos="0,0" width="30" height="30" color="[white]" visible="{hasModIcon}"/>
+				<texture depth="4" name="Icon" pos="8,0" width="${height}" height="${height}" color="[white]" visible="{hasModIcon}"/>
 				<label depth="4" name="Name" pos="8,-2" width="${width-150}" height="32" text="{modName}" font_size="26" justify="left" pivot="topleft" />
 				<label depth="4" name="Version" pos="${width-10},-2" style="hover" color="{modVersionColor}" width="130" height="32" text="{modVersion}" tooltip="{modVersionTooltip}" font_size="26" justify="right" pivot="topright"/>
 				<label depth="4" name="Enabled" pos="8,${-height+2}" color="{modEnabledColor}" width="${width-200}" height="32" text="{modEnabled}" font_size="26" justify="left" pivot="bottomleft" />

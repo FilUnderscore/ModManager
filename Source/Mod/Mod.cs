@@ -1,4 +1,5 @@
 ﻿using CustomModManager.Mod.Version;
+using System.IO;
 
 namespace CustomModManager.Mod
 {
@@ -126,6 +127,21 @@ namespace CustomModManager.Mod
                 return false;
 
             return this.instance == mod;
+        }
+
+        public string GetModFolderPath(string subpath)
+        {
+            return $"@modfolder({this.Info.Name}):{subpath}";
+        }
+
+        public string ExpandModFolderPath(string pathRelativeToModFolder)
+        {
+            return ModManager.PatchModPathString(pathRelativeToModFolder);
+        }
+
+        public bool DoesFileExist(string pathRelativeToModFolder)
+        {
+            return File.Exists(ExpandModFolderPath(pathRelativeToModFolder));
         }
     }
 }
