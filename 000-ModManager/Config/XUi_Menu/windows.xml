@@ -60,7 +60,7 @@
 					<rect name="modInfo" tab_key="xuiModInformation" controller="CustomModManager.UI.XUiC_ModsListModInfo, ModManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
 						<!-- Mod Banner. Show if hasModBanner is true. -->
 						<!-- Aspect ratio: 3.5 -->
-						<texture name="bannerTexture" depth="4" pos="6,-6" width="575" height="164" color="[white]" visible="{hasModBanner}"/>
+						<texture name="bannerTexture" depth="4" pos="6,-6" width="579" height="165" color="[white]" visible="{hasModBanner}"/>
 
 						<label name="Name" depth="4" pos="6,-6" width="414" height="32" font_size="32" text="{modName}"/>
 						<label name="Author" depth="4" pos="6,-43" width="200" height="32" font_size="26" color="255,255,255,128" text="{modAuthor}"/>
