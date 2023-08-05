@@ -1,5 +1,6 @@
 ﻿using CustomModManager.Mod;
 using CustomModManager.Mod.Version;
+using CustomModManager.UI.Wrappers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,6 +25,11 @@ namespace CustomModManager.UI
 
             this.GetChildById("btnSort").ViewComponent.Controller.OnPress += SortButton_OnPress;
             this.GetChildById("btnRefresh").ViewComponent.Controller.OnPress += RefreshButton_OnPress;
+
+            foreach(var listEntryController in this.listEntryControllers)
+            {
+                XUiW_Texture texture = new XUiW_Texture(listEntryController, "Icon");
+            }
         }
 
         private void RefreshButton_OnPress(XUiController _sender, int _mouseButton)
@@ -229,7 +235,7 @@ namespace CustomModManager.UI
 
             public override bool MatchesSearch(string _searchString)
             {
-                return modEntry.Info.DisplayName.ToLowerInvariant().StartsWith(_searchString.ToLowerInvariant());
+                return modEntry.Info.DisplayName.ToLowerInvariant().Contains(_searchString.ToLowerInvariant());
             }
 
             public static bool GetNullBindingValues(ref string _value, string _bindingName)

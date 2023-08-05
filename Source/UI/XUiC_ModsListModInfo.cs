@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using CustomModManager.Mod;
+using System.IO;
+using CustomModManager.UI.Wrappers;
 
 namespace CustomModManager.UI
 {
@@ -13,6 +15,11 @@ namespace CustomModManager.UI
         private XUiC_SimpleButton websiteButton;
         private XUiC_SimpleButton folderButton;
 
+        private XUiV_Label NameLabel, AuthorLabel, VersionLabel, DescriptionLabel;
+        private Vector2i OriginalNameLabelPosition, OriginalAuthorLabelPosition, OriginalVersionLabelPosition, OriginalDescriptionLabelPosition;
+
+        private XUiW_Texture BannerTexture;
+
         public override void Init()
         {
             base.Init();
@@ -25,6 +32,43 @@ namespace CustomModManager.UI
 
             folderButton = (XUiC_SimpleButton) this.GetChildById("folderButton");
             folderButton.OnPressed += FolderButton_OnPressed;
+
+            NameLabel = (XUiV_Label)this.GetChildById("Name").ViewComponent;
+            OriginalNameLabelPosition = NameLabel.Position;
+
+            AuthorLabel = (XUiV_Label)this.GetChildById("Author").ViewComponent;
+            OriginalAuthorLabelPosition = AuthorLabel.Position;
+
+            VersionLabel = (XUiV_Label)this.GetChildById("Version").ViewComponent;
+            OriginalVersionLabelPosition = VersionLabel.Position;
+
+            DescriptionLabel = (XUiV_Label)this.GetChildById("Description").ViewComponent;
+            OriginalDescriptionLabelPosition = DescriptionLabel.Position;
+
+            BannerTexture = new XUiW_Texture(this, "bannerTexture");
+        }
+
+        private string GetModFolderPath(string filename)
+        {
+            return $"@modfolder({this.currentModEntry.Info.Name}):{filename}";
+        }
+
+        private string GetFilePath(string filename)
+        {
+            if (this.currentModEntry == null)
+                return "";
+
+            return ModManager.PatchModPathString(GetModFolderPath(filename));
+        }
+
+        private bool DoesModFileExist(string filename)
+        {
+            return this.currentModEntry != null ? File.Exists(GetFilePath(filename)) : false;
+        }
+
+        private bool HasBanner()
+        {
+            return DoesModFileExist("banner.png");
         }
 
         private void FolderButton_OnPressed(XUiController _sender, int _mouseButton)
@@ -67,6 +111,19 @@ namespace CustomModManager.UI
             websiteButton.Tooltip = currentModEntry != null ? (!string.IsNullOrEmpty(currentModEntry.Info.Website) ? currentModEntry.Info.Website : "") : "";
 
             folderButton.Enabled = currentModEntry != null;
+
+            // Update banner texture
+            if (this.HasBanner())
+                this.BannerTexture.SetTexture(GetModFolderPath("banner.png"));
+
+            int banner_y_offset = this.HasBanner() ? this.BannerTexture.GetHeight() + 5 : 0;
+            Vector2i banner_y_offset_v2i = new Vector2i(0, banner_y_offset);
+
+            // Update label positions
+            NameLabel.Position = OriginalNameLabelPosition - banner_y_offset_v2i;
+            AuthorLabel.Position = OriginalAuthorLabelPosition - banner_y_offset_v2i;
+            VersionLabel.Position = OriginalVersionLabelPosition - banner_y_offset_v2i;
+            DescriptionLabel.Position = OriginalDescriptionLabelPosition - banner_y_offset_v2i;
         }
 
         public override bool GetBindingValue(ref string _value, string _bindingName)
@@ -84,6 +141,9 @@ namespace CustomModManager.UI
                     return true;
                 case "modDescription":
                     _value = currentModEntry != null ? currentModEntry.Info.Description : "";
+                    return true;
+                case "hasModBanner":
+                    _value = HasBanner().ToString();
                     return true;
                 default:
                     _value = "";
