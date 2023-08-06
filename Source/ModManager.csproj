@@ -56,6 +56,10 @@
       <HintPath>..\..\..\..\SteamLibrary\steamapps\common\7 Days To Die\7DaysToDie_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>..\..\..\..\SteamLibrary\steamapps\common\7 Days To Die\7DaysToDie_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
       <HintPath>..\..\..\..\SteamLibrary\steamapps\common\7 Days To Die\7DaysToDie_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
       <Private>False</Private>
@@ -76,6 +80,7 @@
     <Compile Include="Mod\Manifest\ModManifest.cs" />
     <Compile Include="Mod\Manifest\ModManifestFromXml.cs" />
     <Compile Include="ModManagerMod.cs" />
+    <Compile Include="Mod\Version\GameVersion.cs" />
     <Compile Include="Settings\ModManagerModSettings.cs" />
     <Compile Include="Settings\ModSettingsFromXml.cs" />
     <Compile Include="Mod\Info\ModInfo.cs" />
@@ -97,6 +102,10 @@
     <Compile Include="XPath\XmlFileParser.cs" />
     <Compile Include="XPath\XPathPatch.cs" />
     <Compile Include="XPath\XPathPatchScanner.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mod\7dtd-banner.png" />
+    <EmbeddedResource Include="Mod\7dtd-icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -1,9 +1,10 @@
 ﻿using CustomModManager.Mod.Version;
 using System.IO;
+using static CustomModManager.UI.Wrappers.XUiW_Texture;
 
 namespace CustomModManager.Mod
 {
-    public sealed class Mod
+    public class Mod
     {
         public readonly Info.ModInfo Info;
         public readonly Manifest.ModManifest Manifest;
@@ -25,10 +26,11 @@ namespace CustomModManager.Mod
         {
             get
             {
-                return instance != null && initialized;
+                return instance != null && initialized || forceloaded;
             }
         }
 
+        protected bool forceloaded = false;
         private bool preloaded = true;
         internal bool initialized = false;
 
@@ -99,6 +101,9 @@ namespace CustomModManager.Mod
 
         public bool Load()
         {
+            if (this.forceloaded)
+                return true;
+
             if (this.instance == null)
             {
                 this.instance = global::Mod.LoadFromFolder(this.Info.Path);
@@ -129,19 +134,39 @@ namespace CustomModManager.Mod
             return this.instance == mod;
         }
 
-        public string GetModFolderPath(string subpath)
+        protected string GetModFolderPath(string subpath)
         {
             return $"@modfolder({this.Info.Name}):{subpath}";
         }
 
-        public string ExpandModFolderPath(string pathRelativeToModFolder)
+        protected bool TryGetModFolderPath(string subpath, out string path)
         {
-            return ModManager.PatchModPathString(pathRelativeToModFolder);
+            path = GetModFolderPath(subpath);
+            return File.Exists(ModManager.PatchModPathString(path));
         }
 
-        public bool DoesFileExist(string pathRelativeToModFolder)
+        public virtual bool TryGetIconImage(out IXUiTexture texture)
         {
-            return File.Exists(ExpandModFolderPath(pathRelativeToModFolder));
+            if(!TryGetModFolderPath("icon.png", out string iconImagePath))
+            {
+                texture = null;
+                return false;
+            }
+
+            texture = new XUiTexturePath(iconImagePath);
+            return true;
+        }
+
+        public virtual bool TryGetBannerImage(out IXUiTexture texture)
+        {
+            if (!TryGetModFolderPath("banner.png", out string iconImagePath))
+            {
+                texture = null;
+                return false;
+            }
+
+            texture = new XUiTexturePath(iconImagePath);
+            return true;
         }
     }
 }

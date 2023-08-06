@@ -5,6 +5,7 @@ using HarmonyLib;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static CustomModManager.UI.Wrappers.XUiW_Texture;
 using static XUiC_DropDown;
 
 namespace CustomModManager.UI
@@ -255,7 +256,7 @@ namespace CustomModManager.UI
                         _value = modEntry.Info.Author;
                         return true;
                     case "hasModIcon":
-                        _value = modEntry.DoesFileExist(modEntry.GetModFolderPath("icon.png")).ToString();
+                        _value = modEntry.TryGetIconImage(out _).ToString();
                         return true;
                     default:
                         return false;
@@ -318,10 +319,8 @@ namespace CustomModManager.UI
                     ListEntryControllerData data = Instance.defaults[__instance];
                     int icon_x_offset = data.IconTexture.GetWidth() + 8;
 
-                    if (_data.modEntry.DoesFileExist(_data.modEntry.GetModFolderPath("icon.png")))
-                    {
-                        data.IconTexture.SetTexture(_data.modEntry.GetModFolderPath("icon.png"));
-                    }
+                    if(_data.modEntry.TryGetIconImage(out IXUiTexture texture))
+                        data.IconTexture.SetTexture(texture);
 
                     Vector2i icon_x_offset_v2i = new Vector2i(icon_x_offset, 0);
 

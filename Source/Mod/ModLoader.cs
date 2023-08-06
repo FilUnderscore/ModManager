@@ -1,14 +1,23 @@
 ﻿using CustomModManager.Mod.Info.Parser;
 using CustomModManager.Mod.Manifest;
+using CustomModManager.Mod.Version;
+using HarmonyLib;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using UnityEngine;
+using static CustomModManager.UI.Wrappers.XUiW_Texture;
 
 namespace CustomModManager.Mod
 {
     public sealed class ModLoader
     {
-        private readonly List<Mod> mods = new List<Mod>();
+        private readonly List<Mod> mods = new List<Mod>()
+        {
+            new SDTDMod()
+        };
+
         private readonly ISet<string> disabledModNames = new HashSet<string>();
 
         public static ModLoader Instance;
@@ -150,6 +159,28 @@ namespace CustomModManager.Mod
         private static void SaveModSettings()
         {
             ModSettingsFromXml.Save();
+        }
+
+        private sealed class SDTDMod : Mod
+        {
+            private static readonly Info.ModInfo MODINFO = new Info.ModInfo(Application.dataPath + "/../", "7DaysToDie", "7 Days To Die", "The Survival Horde Crafting Game.", "The Fun Pimps", new GameVersion(Constants.cVersionInformation), "https://7daystodie.com/");
+
+            public SDTDMod() : base(MODINFO, null, null, EModDisableState.Disallowed)
+            {
+                this.forceloaded = true;
+            }
+
+            public override bool TryGetIconImage(out IXUiTexture iconImage)
+            {
+                iconImage = new XUiTextureAssemblyResource("CustomModManager.Mod.7dtd-icon.png");
+                return true;
+            }
+
+            public override bool TryGetBannerImage(out IXUiTexture bannerImage)
+            {
+                bannerImage = new XUiTextureAssemblyResource("CustomModManager.Mod.7dtd-banner.png");
+                return true;
+            }
         }
     }
 

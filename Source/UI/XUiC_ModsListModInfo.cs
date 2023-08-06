@@ -2,6 +2,7 @@
 using CustomModManager.Mod;
 using System.IO;
 using CustomModManager.UI.Wrappers;
+using static CustomModManager.UI.Wrappers.XUiW_Texture;
 
 namespace CustomModManager.UI
 {
@@ -48,11 +49,6 @@ namespace CustomModManager.UI
             BannerTexture = new XUiW_Texture(this, "bannerTexture");
         }
 
-        private bool HasBanner()
-        {
-            return this.currentModEntry != null ? this.currentModEntry.DoesFileExist(this.currentModEntry.GetModFolderPath("banner.png")) : false;
-        }
-
         private void FolderButton_OnPressed(XUiController _sender, int _mouseButton)
         {
             if (currentModEntry == null)
@@ -95,10 +91,16 @@ namespace CustomModManager.UI
             folderButton.Enabled = currentModEntry != null;
 
             // Update banner texture
-            if (this.HasBanner())
-                this.BannerTexture.SetTexture(this.currentModEntry.GetModFolderPath("banner.png"));
 
-            int banner_y_offset = this.HasBanner() ? this.BannerTexture.GetHeight() + 5 : 0;
+            bool banner = false;
+
+            if (this.currentModEntry != null)
+            {
+                if (banner = this.currentModEntry.TryGetBannerImage(out IXUiTexture bannerImage))
+                    this.BannerTexture.SetTexture(bannerImage);
+            }
+
+            int banner_y_offset = banner ? this.BannerTexture.GetHeight() + 5 : 0;
             Vector2i banner_y_offset_v2i = new Vector2i(0, banner_y_offset);
 
             // Update label positions
@@ -125,7 +127,7 @@ namespace CustomModManager.UI
                     _value = currentModEntry != null ? currentModEntry.Info.Description : "";
                     return true;
                 case "hasModBanner":
-                    _value = HasBanner().ToString();
+                    _value = currentModEntry != null ? this.currentModEntry.TryGetBannerImage(out _).ToString() : false.ToString();
                     return true;
                 default:
                     _value = "";
