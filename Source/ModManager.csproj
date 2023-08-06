@@ -94,6 +94,8 @@
     <Compile Include="UI\XUiC_ModsListModInfo.cs" />
     <Compile Include="UI\XUiC_ModsListModSettings.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="XPath\XmlFileParser.cs" />
+    <Compile Include="XPath\XPathPatch.cs" />
     <Compile Include="XPath\XPathPatchScanner.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
