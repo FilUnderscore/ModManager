@@ -46,7 +46,16 @@ namespace CustomModManager.UI
 
             modTabs.ViewComponent.IsVisible = currentMod != null;
             modSettings.ViewComponent.IsVisible = currentMod != null ? ModManagerModSettings.modSettingsInstances.ContainsKey(currentMod) : false; // TODO..
-            modTabs.GetTabButton(1).Enabled = modSettings.ViewComponent.IsVisible;
+            modTabs.GetTabButton(1).Enabled = modSettings.ViewComponent.IsVisible || (currentMod != null && currentMod.HasCustomSettings());
+
+            if(currentMod != null && currentMod.HasCustomSettings())
+            {
+                modTabs.GetTabButton(1).OnPressed += ModTabs_SettingsButton_OnPressed;
+            }
+            else
+            {
+                modTabs.GetTabButton(1).OnPressed -= ModTabs_SettingsButton_OnPressed;
+            }
 
             if(!modSettings.ViewComponent.IsVisible)
             {
@@ -58,6 +67,14 @@ namespace CustomModManager.UI
 
             modSettings.RefreshBindings(true);
             modSettings.UpdateView(modTabs.SelectedTabIndex == 1);
+        }
+
+        private void ModTabs_SettingsButton_OnPressed(XUiController _sender, int _mouseButton)
+        {
+            if (currentMod == null || !currentMod.HasCustomSettings())
+                return;
+
+            currentMod.OpenCustomSettings();
         }
 
         private void ModTabs_OnTabChanged(int tabIndex, string tabName)

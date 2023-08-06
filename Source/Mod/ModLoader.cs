@@ -1,6 +1,7 @@
 ﻿using CustomModManager.Mod.Info.Parser;
 using CustomModManager.Mod.Manifest;
 using CustomModManager.Mod.Version;
+using CustomModManager.UI;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.IO;
@@ -180,6 +181,19 @@ namespace CustomModManager.Mod
             {
                 bannerImage = new XUiTextureAssemblyResource("CustomModManager.Mod.7dtd-banner.png");
                 return true;
+            }
+
+            public override bool HasCustomSettings()
+            {
+                return true;
+            }
+
+            public override void OpenCustomSettings()
+            {
+                GUIWindowManager windowManager = (GUIWindowManager) Object.FindObjectOfType(typeof(GUIWindowManager));
+
+                windowManager.Close(XUiC_Mods.ID);
+                windowManager.Open(XUiC_OptionsMenu.ID, true);
             }
         }
     }

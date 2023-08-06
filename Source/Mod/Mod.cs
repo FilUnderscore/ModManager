@@ -168,5 +168,14 @@ namespace CustomModManager.Mod
             texture = new XUiTexturePath(iconImagePath);
             return true;
         }
+
+        public virtual bool HasCustomSettings()
+        {
+            return false;
+        }
+
+        public virtual void OpenCustomSettings()
+        {
+        }
     }
 }
