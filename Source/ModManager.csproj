@@ -91,6 +91,7 @@
     <Compile Include="Mod\Version\SemVer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\Wrappers\XUiW.cs" />
+    <Compile Include="UI\Wrappers\XUiW_Label.cs" />
     <Compile Include="UI\Wrappers\XUiW_Texture.cs" />
     <Compile Include="UI\XUiC_ModsErrorMessageBoxWindowGroup.cs" />
     <Compile Include="UI\XUiC_Mods.cs" />

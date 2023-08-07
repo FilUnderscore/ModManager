@@ -5,9 +5,10 @@ namespace CustomModManager.UI
 {
     public class XUiC_ModsListModSettings : XUiController
     {
-        public Mod.Mod currentModEntry = null;
+        private Mod.Mod mod;
 
         internal XUiC_Mods mods;
+        internal XUiC_SimpleButton settingsTabButton;
 
         private XUiV_Label noModSettingsDetectedLabel;
         private XUiV_Panel settingsPanel;
@@ -78,13 +79,13 @@ namespace CustomModManager.UI
 
         private void SettingsTabs_OnTabChanged(int tabIndex, string tabName)
         {
-            currentTabKey = ModManagerModSettings.modSettingsInstances[currentModEntry].settingTabs.ElementAt(tabIndex + this.startingTabIndex).Key;
+            currentTabKey = ModManagerModSettings.modSettingsInstances[this.mod].settingTabs.ElementAt(tabIndex + this.startingTabIndex).Key;
             this.UpdateSettings();
         }
 
         private void Pager_OnPageChanged()
         {
-            if (currentModEntry == null || !ModManagerModSettings.modSettingsInstances.ContainsKey(currentModEntry))
+            if (this.mod == null || !ModManagerModSettings.modSettingsInstances.ContainsKey(this.mod))
                 return;
 
             this.UpdateSettings();
@@ -92,10 +93,10 @@ namespace CustomModManager.UI
 
         private void ResetButton_OnPressed(XUiController _sender, int _mouseButton)
         {
-            if (currentModEntry == null || !ModManagerModSettings.modSettingsInstances.ContainsKey(currentModEntry))
+            if (this.mod == null || !ModManagerModSettings.modSettingsInstances.ContainsKey(this.mod))
                 return;
 
-            foreach(var settingEntry in ModManagerModSettings.modSettingsInstances[currentModEntry].settings)
+            foreach(var settingEntry in ModManagerModSettings.modSettingsInstances[this.mod].settings)
             {
                 var setting = settingEntry.Value;
 
@@ -107,7 +108,7 @@ namespace CustomModManager.UI
 
         private void UpdateTabs()
         {
-            Dictionary<string, ModManagerModSettings.ModSettingTab> tabs = ModManagerModSettings.modSettingsInstances[currentModEntry].settingTabs;
+            Dictionary<string, ModManagerModSettings.ModSettingTab> tabs = ModManagerModSettings.modSettingsInstances[this.mod].settingTabs;
             bool anyTabs = tabs.Count > 0;
 
             if (anyTabs)
@@ -119,7 +120,7 @@ namespace CustomModManager.UI
                     if (tabIndex == settingsTabs.TabCount)
                         break;
 
-                    var tabEntry = ModManagerModSettings.modSettingsInstances[currentModEntry].settingTabs.ElementAt(index);
+                    var tabEntry = ModManagerModSettings.modSettingsInstances[this.mod].settingTabs.ElementAt(index);
                     ModManagerModSettings.ModSettingTab tab = tabEntry.Value;
 
                     settingsTabs.GetTabButton(tabIndex).Label = Localization.Get(tab.nameUnlocalized);
@@ -142,7 +143,7 @@ namespace CustomModManager.UI
                     spacer.IsVisible = true;
                 }
 
-                int tabCount = ModManagerModSettings.modSettingsInstances[currentModEntry].settingTabs.Count;
+                int tabCount = ModManagerModSettings.modSettingsInstances[this.mod].settingTabs.Count;
 
                 this.backTabButton.Enabled = startingTabIndex > 0;
                 this.backTabButton.ViewComponent.IsVisible = true;
@@ -158,8 +159,8 @@ namespace CustomModManager.UI
                 selector.ViewComponent.IsVisible = false;
             }
 
-            bool anyTabs = ModManagerModSettings.modSettingsInstances[currentModEntry].settingTabs.Count > 0;
-            Dictionary<string, ModManagerModSettings.BaseModSetting> settings = ModManagerModSettings.modSettingsInstances[currentModEntry].settings.Where(entry => !anyTabs || (currentTabKey != null && entry.Value.GetTabKey() == currentTabKey)).ToDictionary(entry => entry.Key, entry => entry.Value);
+            bool anyTabs = ModManagerModSettings.modSettingsInstances[this.mod].settingTabs.Count > 0;
+            Dictionary<string, ModManagerModSettings.BaseModSetting> settings = ModManagerModSettings.modSettingsInstances[this.mod].settings.Where(entry => !anyTabs || (currentTabKey != null && entry.Value.GetTabKey() == currentTabKey)).ToDictionary(entry => entry.Key, entry => entry.Value);
 
             int entryIndex = 0;
             for (int index = this.pager.CurrentPageNumber * modSettingSelectorList.Count; index < settings.Count; index++)
@@ -182,12 +183,12 @@ namespace CustomModManager.UI
 
         internal void UpdateView(bool visible)
         {
-            if (currentModEntry == null || !ModManagerModSettings.modSettingsInstances.ContainsKey(currentModEntry))
+            if (this.mod == null || !ModManagerModSettings.modSettingsInstances.ContainsKey(this.mod))
                 return;
 
-            int settingsCount = ModManagerModSettings.modSettingsInstances[currentModEntry].settings.Count;
+            int settingsCount = ModManagerModSettings.modSettingsInstances[this.mod].settings.Count;
             bool anySettings = settingsCount > 0;
-            bool anyTabs = ModManagerModSettings.modSettingsInstances[currentModEntry].settingTabs.Count > 0;
+            bool anyTabs = ModManagerModSettings.modSettingsInstances[this.mod].settingTabs.Count > 0;
 
             this.noModSettingsDetectedLabel.IsVisible = visible && !anySettings;
             this.settingsPanel.IsVisible = visible && anySettings;
@@ -196,7 +197,7 @@ namespace CustomModManager.UI
             if (anyTabs)
             {
                 settingsTabs.SelectedTabIndex = 0;
-                currentTabKey = ModManagerModSettings.modSettingsInstances[currentModEntry].settingTabs.ElementAt(0).Key;
+                currentTabKey = ModManagerModSettings.modSettingsInstances[this.mod].settingTabs.ElementAt(0).Key;
                 startingTabIndex = 0;
             }
             else
@@ -218,10 +219,40 @@ namespace CustomModManager.UI
             this.borderSprite.IsVisible = anyTabs;
 
             this.pager.CurrentPageNumber = 0;
-            this.pager.LastPageNumber = ModManagerModSettings.modSettingsInstances[currentModEntry].settings.Where(entry => !anyTabs || (currentTabKey != null && entry.Value.GetTabKey() == currentTabKey)).ToDictionary(entry => entry.Key, entry => entry.Value).Count / modSettingSelectorList.Count;
+            this.pager.LastPageNumber = ModManagerModSettings.modSettingsInstances[this.mod].settings.Where(entry => !anyTabs || (currentTabKey != null && entry.Value.GetTabKey() == currentTabKey)).ToDictionary(entry => entry.Key, entry => entry.Value).Count / modSettingSelectorList.Count;
 
             this.UpdateTabs();
             this.UpdateSettings();
+        }
+
+        public bool SetCurrentMod(Mod.Mod mod, int currentTabIndex)
+        {
+            this.mod = mod;
+
+            this.ViewComponent.IsVisible = mod != null ? ModManagerModSettings.modSettingsInstances.ContainsKey(mod) : false;
+            this.settingsTabButton.Enabled = this.ViewComponent.IsVisible || (mod != null && mod.HasCustomSettings());
+            
+            if(mod != null && mod.HasCustomSettings())
+            {
+                this.settingsTabButton.OnPressed += SettingsTabButton_OnPressed;
+            }
+            else
+            {
+                this.settingsTabButton.OnPressed -= SettingsTabButton_OnPressed;
+            }
+
+            this.RefreshBindings(true);
+            this.UpdateView(this.ViewComponent.IsVisible && currentTabIndex == 1);
+
+            return this.ViewComponent.IsVisible;
+        }
+
+        private void SettingsTabButton_OnPressed(XUiController _sender, int _mouseButton)
+        {
+            if (this.mod == null || !this.mod.HasCustomSettings())
+                return;
+
+            this.mod.OpenCustomSettings(this.xui);
         }
     }
 }

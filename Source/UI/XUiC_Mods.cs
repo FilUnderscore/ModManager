@@ -6,8 +6,6 @@ namespace CustomModManager.UI
     {
         public static string ID = "";
 
-        private Mod.Mod currentMod = null;
-
         public XUiC_ModsList modsList;
         private XUiC_TabSelector modTabs;
         private XUiC_ModsListModInfo modInfo;
@@ -29,47 +27,22 @@ namespace CustomModManager.UI
 
             modSettings = (XUiC_ModsListModSettings)this.GetChildById("modSettings");
             modSettings.mods = this;
+            modSettings.settingsTabButton = modTabs.GetTabButton(1);
             
             ((XUiC_SimpleButton)this.GetChildById("btnBack")).OnPressed += BtnBack_OnPressed;
         }
 
         private void ModsList_SelectionChanged(XUiC_ListEntry<XUiC_ModsList.ListEntry> _previousEntry, XUiC_ListEntry<XUiC_ModsList.ListEntry> _newEntry)
         {
-            currentMod = _newEntry == null ? null : _newEntry.GetEntry().modEntry;
-            modInfo.currentModEntry = currentMod;
-            modSettings.currentModEntry = currentMod;
+            Mod.Mod mod = _newEntry?.GetEntry().modEntry;
 
-            modTabs.ViewComponent.IsVisible = currentMod != null;
-            modSettings.ViewComponent.IsVisible = currentMod != null ? ModManagerModSettings.modSettingsInstances.ContainsKey(currentMod) : false; // TODO..
-            modTabs.GetTabButton(1).Enabled = modSettings.ViewComponent.IsVisible || (currentMod != null && currentMod.HasCustomSettings());
-
-            if(currentMod != null && currentMod.HasCustomSettings())
-            {
-                modTabs.GetTabButton(1).OnPressed += ModTabs_SettingsButton_OnPressed;
-            }
-            else
-            {
-                modTabs.GetTabButton(1).OnPressed -= ModTabs_SettingsButton_OnPressed;
-            }
-
-            if(!modSettings.ViewComponent.IsVisible)
+            modTabs.ViewComponent.IsVisible = mod != null;
+            modInfo.SetCurrentMod(mod);
+            
+            if(!modSettings.SetCurrentMod(mod, modTabs.SelectedTabIndex))
             {
                 modTabs.SelectedTabIndex = 0;
             }
-
-            modInfo.RefreshBindings(true);
-            modInfo.UpdateView();
-
-            modSettings.RefreshBindings(true);
-            modSettings.UpdateView(modTabs.SelectedTabIndex == 1);
-        }
-
-        private void ModTabs_SettingsButton_OnPressed(XUiController _sender, int _mouseButton)
-        {
-            if (currentMod == null || !currentMod.HasCustomSettings())
-                return;
-
-            currentMod.OpenCustomSettings();
         }
 
         private void ModTabs_OnTabChanged(int tabIndex, string tabName)

@@ -194,7 +194,7 @@ namespace CustomModManager.UI
             this.controlCombo.TextColor = flag ? Color.white : Color.yellow;
         }
 
-        public struct ModOptionValue
+        public readonly struct ModOptionValue
         {
             public readonly string Display;
             public readonly string Value;

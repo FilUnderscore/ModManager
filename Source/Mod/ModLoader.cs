@@ -188,12 +188,10 @@ namespace CustomModManager.Mod
                 return true;
             }
 
-            public override void OpenCustomSettings()
+            public override void OpenCustomSettings(XUi xui)
             {
-                GUIWindowManager windowManager = (GUIWindowManager) Object.FindObjectOfType(typeof(GUIWindowManager));
-
-                windowManager.Close(XUiC_Mods.ID);
-                windowManager.Open(XUiC_OptionsMenu.ID, true);
+                xui.playerUI.windowManager.Close(XUiC_Mods.ID);
+                xui.playerUI.windowManager.Open(XUiC_OptionsMenu.ID, true);
             }
         }
     }

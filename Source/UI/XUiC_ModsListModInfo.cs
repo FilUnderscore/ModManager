@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using CustomModManager.Mod;
-using System.IO;
 using CustomModManager.UI.Wrappers;
 using static CustomModManager.UI.Wrappers.XUiW_Texture;
 
@@ -8,7 +7,7 @@ namespace CustomModManager.UI
 {
     public class XUiC_ModsListModInfo : XUiController
     {
-        public Mod.Mod currentModEntry = null;
+        private Mod.Mod mod;
 
         internal XUiC_Mods mods;
 
@@ -16,98 +15,89 @@ namespace CustomModManager.UI
         private XUiC_SimpleButton websiteButton;
         private XUiC_SimpleButton folderButton;
 
-        private XUiV_Label NameLabel, AuthorLabel, VersionLabel, DescriptionLabel;
-        private Vector2i OriginalNameLabelPosition, OriginalAuthorLabelPosition, OriginalVersionLabelPosition, OriginalDescriptionLabelPosition;
-
-        private XUiW_Texture BannerTexture;
+        private XUiW_Label nameLabel, authorLabel, versionLabel, descriptionLabel;
+        
+        private XUiW_Texture bannerTexture;
 
         public override void Init()
         {
             base.Init();
 
-            enabledButton = (XUiC_ToggleButton)this.GetChildById("enableDisableButton");
-            enabledButton.OnValueChanged += EnabledButton_OnValueChanged;
+            this.enabledButton = (XUiC_ToggleButton)this.GetChildById("enableDisableButton");
+            this.enabledButton.OnValueChanged += EnabledButton_OnValueChanged;
 
-            websiteButton = (XUiC_SimpleButton) this.GetChildById("websiteButton");
-            websiteButton.OnPressed += WebsiteButton_OnPressed;
+            this.websiteButton = (XUiC_SimpleButton) this.GetChildById("websiteButton");
+            this.websiteButton.OnPressed += WebsiteButton_OnPressed;
 
-            folderButton = (XUiC_SimpleButton) this.GetChildById("folderButton");
-            folderButton.OnPressed += FolderButton_OnPressed;
+            this.folderButton = (XUiC_SimpleButton) this.GetChildById("folderButton");
+            this.folderButton.OnPressed += FolderButton_OnPressed;
 
-            NameLabel = (XUiV_Label)this.GetChildById("Name").ViewComponent;
-            OriginalNameLabelPosition = NameLabel.Position;
+            this.nameLabel = new XUiW_Label(this, "Name");
+            this.authorLabel = new XUiW_Label(this, "Author");
+            this.versionLabel = new XUiW_Label(this, "Version");
+            this.descriptionLabel = new XUiW_Label(this, "Description");
 
-            AuthorLabel = (XUiV_Label)this.GetChildById("Author").ViewComponent;
-            OriginalAuthorLabelPosition = AuthorLabel.Position;
-
-            VersionLabel = (XUiV_Label)this.GetChildById("Version").ViewComponent;
-            OriginalVersionLabelPosition = VersionLabel.Position;
-
-            DescriptionLabel = (XUiV_Label)this.GetChildById("Description").ViewComponent;
-            OriginalDescriptionLabelPosition = DescriptionLabel.Position;
-
-            BannerTexture = new XUiW_Texture(this, "bannerTexture");
+            this.bannerTexture = new XUiW_Texture(this, "bannerTexture");
         }
 
         private void FolderButton_OnPressed(XUiController _sender, int _mouseButton)
         {
-            if (currentModEntry == null)
+            if (mod == null)
                 return;
 
-            Application.OpenURL(currentModEntry.Info.Path);
+            Application.OpenURL(mod.Info.Path);
         }
 
         private void EnabledButton_OnValueChanged(XUiC_ToggleButton _sender, bool _newValue)
         {
-            if (currentModEntry == null)
+            if (mod == null)
                 return;
 
-            if(currentModEntry.GetModDisableState() != EModDisableState.Allowed)
+            if(mod.GetModDisableState() != EModDisableState.Allowed)
             {
                 enabledButton.Value = true;
                 return;
             }
 
-            currentModEntry.ToggleNextState();
+            mod.ToggleNextState();
             this.mods.modsList.IsDirty = true;
         }
 
         private void WebsiteButton_OnPressed(XUiController _sender, int _mouseButton)
         {
-            if (currentModEntry == null || currentModEntry.Info.Website == null)
+            if (mod == null || mod.Info.Website == null)
                 return;
 
-            Application.OpenURL(currentModEntry.Info.Website);
+            Application.OpenURL(mod.Info.Website);
         }
 
         internal void UpdateView()
         {
-            enabledButton.Value = currentModEntry != null ? currentModEntry.NextState : false;
-            enabledButton.Tooltip = currentModEntry != null ? (currentModEntry.GetModDisableState() != EModDisableState.Allowed ? currentModEntry.GetModDisableStateReason() : "") : "";
+            enabledButton.Value = mod != null ? mod.NextState : false;
+            enabledButton.Tooltip = mod != null ? (mod.GetModDisableState() != EModDisableState.Allowed ? mod.GetModDisableStateReason() : "") : "";
 
-            websiteButton.Enabled = currentModEntry != null ? (!string.IsNullOrEmpty(currentModEntry.Info.Website)) : false;
-            websiteButton.Tooltip = currentModEntry != null ? (!string.IsNullOrEmpty(currentModEntry.Info.Website) ? currentModEntry.Info.Website : "") : "";
+            websiteButton.Enabled = mod != null ? (!string.IsNullOrEmpty(mod.Info.Website)) : false;
+            websiteButton.Tooltip = mod != null ? (!string.IsNullOrEmpty(mod.Info.Website) ? mod.Info.Website : "") : "";
 
-            folderButton.Enabled = currentModEntry != null;
+            folderButton.Enabled = mod != null;
 
             // Update banner texture
 
             bool banner = false;
 
-            if (this.currentModEntry != null)
+            if (this.mod != null)
             {
-                if (banner = this.currentModEntry.TryGetBannerImage(out IXUiTexture bannerImage))
-                    this.BannerTexture.SetTexture(bannerImage);
+                if (banner = this.mod.TryGetBannerImage(out IXUiTexture bannerImage))
+                    this.bannerTexture.SetTexture(bannerImage);
             }
 
-            int banner_y_offset = banner ? this.BannerTexture.GetHeight() + 5 : 0;
-            Vector2i banner_y_offset_v2i = new Vector2i(0, banner_y_offset);
-
+            int banner_y_offset = banner ? this.bannerTexture.GetHeight() + 5 : 0;
+            
             // Update label positions
-            NameLabel.Position = OriginalNameLabelPosition - banner_y_offset_v2i;
-            AuthorLabel.Position = OriginalAuthorLabelPosition - banner_y_offset_v2i;
-            VersionLabel.Position = OriginalVersionLabelPosition - banner_y_offset_v2i;
-            DescriptionLabel.Position = OriginalDescriptionLabelPosition - banner_y_offset_v2i;
+            this.nameLabel.Offset(0, -banner_y_offset);
+            this.authorLabel.Offset(0, -banner_y_offset);
+            this.versionLabel.Offset(0, -banner_y_offset);
+            this.descriptionLabel.Offset(0, -banner_y_offset);
         }
 
         public override bool GetBindingValue(ref string _value, string _bindingName)
@@ -115,24 +105,32 @@ namespace CustomModManager.UI
             switch (_bindingName)
             {
                 case "modName":
-                    _value = currentModEntry != null ? currentModEntry.Info.DisplayName : "";
+                    _value = mod != null ? mod.Info.DisplayName : "";
                     return true;
                 case "modAuthor":
-                    _value = currentModEntry != null ? currentModEntry.Info.Author : "";
+                    _value = mod != null ? mod.Info.Author : "";
                     return true;
                 case "modVersion":
-                    _value = currentModEntry != null ? currentModEntry.Version.ToString() : "";
+                    _value = mod != null ? mod.Version.ToString() : "";
                     return true;
                 case "modDescription":
-                    _value = currentModEntry != null ? currentModEntry.Info.Description : "";
+                    _value = mod != null ? mod.Info.Description : "";
                     return true;
                 case "hasModBanner":
-                    _value = currentModEntry != null ? this.currentModEntry.TryGetBannerImage(out _).ToString() : false.ToString();
+                    _value = mod != null ? this.mod.TryGetBannerImage(out _).ToString() : false.ToString();
                     return true;
                 default:
                     _value = "";
                     return false;
             }
+        }
+
+        public void SetCurrentMod(Mod.Mod mod)
+        {
+            this.mod = mod;
+
+            this.RefreshBindings(true);
+            this.UpdateView();
         }
     }
 }

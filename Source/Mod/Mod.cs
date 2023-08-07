@@ -174,7 +174,7 @@ namespace CustomModManager.Mod
             return false;
         }
 
-        public virtual void OpenCustomSettings()
+        public virtual void OpenCustomSettings(XUi xui)
         {
         }
     }
