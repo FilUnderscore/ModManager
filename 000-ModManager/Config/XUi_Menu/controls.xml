@@ -6,8 +6,8 @@
 				<sprite depth="2" name="background" color="[darkGrey]" pos="2,0" width="${width-4}" type="sliced"/>
 
 				<texture depth="4" name="Icon" pos="8,0" width="${height}" height="${height}" color="[white]" visible="{hasModIcon}"/>
-				<label depth="4" name="Name" pos="8,-2" width="${width-150}" height="32" text="{modName}" font_size="26" justify="left" pivot="topleft" />
-				<label depth="4" name="Version" pos="${width-10},-2" style="hover" color="{modVersionColor}" width="130" height="32" text="{modVersion}" tooltip="{modVersionTooltip}" font_size="26" justify="right" pivot="topright"/>
+				<label depth="4" name="Name" pos="8,-2" width="${width-200}" height="32" text="{modName}" font_size="26" justify="left" pivot="topleft" />
+				<label depth="4" name="Version" pos="${width-10},-2" style="hover" color="{modVersionColor}" width="180" height="32" text="{modVersion}" tooltip="{modVersionTooltip}" font_size="26" justify="right" pivot="topright"/>
 				<label depth="4" name="Enabled" pos="8,${-height+2}" color="{modEnabledColor}" width="${width-200}" height="32" text="{modEnabled}" font_size="26" justify="left" pivot="bottomleft" />
 				<label depth="4" name="Author" pos="${width-10},${-height+2}" color="255,255,255,128" width="180" height="32" text="{modAuthor}" font_size="26" justify="right" pivot="bottomright" />
 			</rect>
