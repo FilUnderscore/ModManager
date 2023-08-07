@@ -69,7 +69,7 @@ namespace CustomModManager.UI
             }
 
             currentModEntry.ToggleNextState();
-            this.mods.ModEnabledToggle();
+            this.mods.modsList.IsDirty = true;
         }
 
         private void WebsiteButton_OnPressed(XUiController _sender, int _mouseButton)

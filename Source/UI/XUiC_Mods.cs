@@ -33,11 +33,6 @@ namespace CustomModManager.UI
             ((XUiC_SimpleButton)this.GetChildById("btnBack")).OnPressed += BtnBack_OnPressed;
         }
 
-        internal void ModEnabledToggle()
-        {
-            modsList.IsDirty = true;
-        }
-
         private void ModsList_SelectionChanged(XUiC_ListEntry<XUiC_ModsList.ListEntry> _previousEntry, XUiC_ListEntry<XUiC_ModsList.ListEntry> _newEntry)
         {
             currentMod = _newEntry == null ? null : _newEntry.GetEntry().modEntry;

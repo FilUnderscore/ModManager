@@ -18,7 +18,7 @@ namespace CustomModManager.Mod.Info.Parser.Parsers
         {
             if(!TryGetElementAttributeValue(this.root, "Name", out var name))
             {
-                modInfo = null;
+                modInfo = default(ModInfo);
                 return false;
             }
 

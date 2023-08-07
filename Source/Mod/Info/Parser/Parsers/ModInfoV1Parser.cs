@@ -26,13 +26,13 @@ namespace CustomModManager.Mod.Info.Parser.Parsers
             }
             catch(Exception e)
             {
-                modInfo = null;
+                modInfo = default(ModInfo);
                 return false;
             }
 
             if(modInfoEntries.Count != 1) 
             {
-                modInfo = null;
+                modInfo = default(ModInfo);
                 return false;
             }
 
@@ -40,14 +40,14 @@ namespace CustomModManager.Mod.Info.Parser.Parsers
 
             if(modInfoEntry == null)
             {
-                modInfo = null;
+                modInfo = default(ModInfo);
                 return false;
             }
 
             string name = modInfoEntry.Name.Value;
             if(string.IsNullOrEmpty(name))
             {
-                modInfo = null;
+                modInfo = default(ModInfo);
                 return false;
             }
 
