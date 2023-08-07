@@ -108,6 +108,9 @@
     <EmbeddedResource Include="Mod\7dtd-banner.png" />
     <EmbeddedResource Include="Mod\7dtd-icon.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Mod\unknown-icon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>robocopy "$(TargetDir) " "Z:\\SteamLibrary\\steamapps\\common\\7 Days To Die\\Mods\\000-$(ProjectName) " /s /e
