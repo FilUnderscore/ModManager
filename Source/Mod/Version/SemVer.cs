@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CustomModManager.Mod.Manifest;
+using System;
 using System.Text.RegularExpressions;
 
 namespace CustomModManager.Mod.Version
@@ -6,11 +7,14 @@ namespace CustomModManager.Mod.Version
     public sealed class SemVer : IComparable, IModVersion
     {
         private const string SEM_VER_REGEX = @"^(?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)\.(?<patch>0|[1-9]\d*)(?:-(?<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$";
+
+        private readonly ModManifest manifest;
         public readonly int Major, Minor, Patch;
         public readonly string Prerelease, BuildMetadata;
 
-        private SemVer(int major, int minor, int patch, string prerelease, string buildMetadata)
+        private SemVer(ModManifest manifest, int major, int minor, int patch, string prerelease, string buildMetadata)
         {
+            this.manifest = manifest;
             this.Major = major;
             this.Minor = minor;
             this.Patch = patch;
@@ -18,7 +22,7 @@ namespace CustomModManager.Mod.Version
             this.BuildMetadata = buildMetadata;
         }
 
-        public static SemVer Parse(string version)
+        public static SemVer Parse(string version, ModManifest manifest = null)
         {
             Regex regex = new Regex(SEM_VER_REGEX);
             Match match = regex.Match(version);
@@ -43,7 +47,7 @@ namespace CustomModManager.Mod.Version
                 !int.TryParse(patch, out int patchVer))
                 return null;
 
-            return new SemVer(majorVer, minorVer, patchVer, prerelease, buildMetadata);
+            return new SemVer(manifest, majorVer, minorVer, patchVer, prerelease, buildMetadata);
         }
 
         public int CompareTo(object obj)
@@ -86,6 +90,16 @@ namespace CustomModManager.Mod.Version
             }
 
             return 0;
+        }
+
+        public EVersionComparisonResult GetVersionComparisonResult()
+        {
+            return this.manifest != null ? this.manifest.CurrentVersionCompatibleWithGameVersion() : EVersionComparisonResult.Not_Specified;
+        }
+
+        public EVersionUpdateComparisonResult GetVersionUpdateComparisonResult()
+        {
+            return this.manifest != null ? this.manifest.CurrentVersionCompatibleWithDifferentGameVersion() : EVersionUpdateComparisonResult.Not_Specified;
         }
 
         public override string ToString()

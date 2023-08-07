@@ -9,6 +9,16 @@
             this.versionInformation = versionInformation;
         }
 
+        public EVersionComparisonResult GetVersionComparisonResult()
+        {
+            return EVersionComparisonResult.Compatible;
+        }
+
+        public EVersionUpdateComparisonResult GetVersionUpdateComparisonResult()
+        {
+            return EVersionUpdateComparisonResult.Compatible;
+        }
+
         public override string ToString()
         {
             return this.versionInformation.LongString;

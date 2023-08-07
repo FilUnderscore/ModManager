@@ -36,6 +36,16 @@ namespace CustomModManager.Mod.Info
                 this.version = version;
             }
 
+            public EVersionComparisonResult GetVersionComparisonResult()
+            {
+                return EVersionComparisonResult.Not_Specified;
+            }
+
+            public EVersionUpdateComparisonResult GetVersionUpdateComparisonResult()
+            {
+                return EVersionUpdateComparisonResult.Not_Specified;
+            }
+
             public override string ToString()
             {
                 return this.version != null ? this.version.ToString() : "Undefined";

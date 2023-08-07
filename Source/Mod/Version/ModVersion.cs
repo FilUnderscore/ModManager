@@ -25,5 +25,8 @@
     public interface IModVersion 
     {
         string ToString();
+
+        EVersionUpdateComparisonResult GetVersionUpdateComparisonResult();
+        EVersionComparisonResult GetVersionComparisonResult();
     }
 }
