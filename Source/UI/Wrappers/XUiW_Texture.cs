@@ -8,6 +8,7 @@ namespace CustomModManager.UI.Wrappers
     public sealed class XUiW_Texture : XUiW<XUiV_Texture>
     {
         private static readonly FieldInfo wwwAssignedField = AccessTools.DeclaredField(typeof(XUiV_Texture), "wwwAssigned");
+        private IXUiTexture texture;
 
         public XUiW_Texture(XUiController controller, string childName) : base(controller, childName)
         {
@@ -16,10 +17,15 @@ namespace CustomModManager.UI.Wrappers
         public void SetTexture(IXUiTexture texture)
         {
             this.ViewComponent.IsVisible = false;
-            texture.Unload(this.ViewComponent);
+            
+            if(this.texture != null)
+                this.texture.Unload(this.ViewComponent);
+    
             texture.Load(this.ViewComponent);
             this.ViewComponent.UpdateData();
             this.ViewComponent.IsVisible = true;
+
+            this.texture = texture;
         }
 
         public int GetHeight()
