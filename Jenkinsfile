@@ -42,7 +42,7 @@ pipeline
                     returnStdout: true
                 ).trim()
 
-                withCredentials([usernamePassword(credentialsId: ${env.CREDENTIALS}, usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {                
+                withCredentials([usernamePassword(credentialsId: "${env.CREDENTIALS}", usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {                
                     sh "git config --global user.email '${env.CREDENTIALS_EMAIL}'"
                     sh "git config --global user.name '$USER'"
 
