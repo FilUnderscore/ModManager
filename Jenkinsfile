@@ -50,12 +50,12 @@ pipeline
                         sh "git checkout -b ${env.BRANCH_NAME}"
                         sh "git pull"
                         sh "git add 000-ModManager/Manifest.xml"
-                        sh "git commit -m '[ci] ${UPDATED_GAME_VERSION}'"
+                        sh "git commit -m '${UPDATED_GAME_VERSION}'"
                         sh "git show-ref"
                         sh "git push https://\$USER:\$PASSWORD@github.com/FilUnderscore/ModManager.git ${env.BRANCH_NAME}"
                     }
                 } catch (err) {
-                    
+
                 }
 
                 sh "sudo xmlstarlet edit --inplace --update '/ModInfo/Version/@value' --value '${MODINFO_VERSION}.${GIT_COMMIT_COUNT}' 000-ModManager/ModInfo.xml"
