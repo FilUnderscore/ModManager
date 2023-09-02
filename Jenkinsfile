@@ -41,6 +41,7 @@ pipeline
                 sh "sudo xmlstarlet edit --inplace --update '/ModManifest/Version' --value '${MANIFEST_VERSION}+${env.BRANCH_NAME}.${GIT_COMMIT_COUNT}.${GIT_COMMIT_HASH}' 000-ModManager/Manifest.xml"
             }
 
+            sh "mono ../../VersionRelease.exe Dependencies/7DaysToDieServer_Data/Managed/Assembly-CSharp.dll 000-ModManager/Manifest.xml"
             sh "mv 000-ModManager 000-ModManager-temp"
             sh "mkdir 000-ModManager"
             sh "mv 000-ModManager-temp 000-ModManager/000-ModManager"
