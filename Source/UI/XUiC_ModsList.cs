@@ -199,7 +199,7 @@ namespace CustomModManager.UI
 
                         return true;
                     case "modVersionTooltip":
-                        _value = string.Format(Localization.Get("xuiModVersionTooltipCurrentVersion"), modEntry.Version.ToString());
+                        _value = string.Format(Localization.Get("xuiModVersionTooltipCurrentVersion"), $"{modEntry.Version.ToString()} {(modEntry.Version.TryGetBuildMetadata(out string buildMetadata) ? $"({buildMetadata})" : "")}");
 
                         if (modEntry.Manifest != null)
                         {
