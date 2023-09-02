@@ -44,6 +44,9 @@ pipeline
                 
                 CREDS = credentials(env.CREDENTIALS)
                 
+                sh "git config --global user.email '${env.CREDENTIALS_EMAIL}'"
+                sh "git config --global user.name '${env.CREDENTIALS_NAME}'"
+
                 sh "git add 000-ModManager/Manifest.xml"
                 sh "git commit -m 'Update Manifest Game Version to ${UPDATED_GAME_VERSION}'"
                 sh "git push https://${CREDS_USR}:${CREDS_PSW}@github.com/FilUnderscore/ImprovedHordes.git ${env.BRANCH_NAME}"
