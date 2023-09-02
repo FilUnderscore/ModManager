@@ -3,7 +3,7 @@ pipeline
     agent any
     
     environment {
-        GIT_CREDS = credentials(${env.CREDENTIALS})
+        GIT_CREDS = credentials("${env.CREDENTIALS}")
     }
     stages {
         stage ('Setup Build Environment') {
