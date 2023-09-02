@@ -2,9 +2,6 @@ pipeline
 {
     agent any
     
-    environment {
-        GIT_CREDS = credentials("${env.CREDENTIALS}")
-    }
     stages {
         stage ('Setup Build Environment') {
             steps {
@@ -44,13 +41,16 @@ pipeline
                     script: "mono ../../VersionRelease.exe Dependencies/7DaysToDieServer_Data/Managed/Assembly-CSharp.dll 000-ModManager/Manifest.xml",
                     returnStdout: true
                 ).trim()
-                
-                sh "git config --global user.email '${env.CREDENTIALS_EMAIL}'"
-                sh "git config --global user.name '${env.CREDENTIALS_NAME}'"
 
-                sh "git add 000-ModManager/Manifest.xml"
-                sh "git commit -m '${UPDATED_GAME_VERSION}'"
-                sh "git push https://${GIT_CREDS}@github.com/FilUnderscore/ImprovedHordes.git ${env.BRANCH_NAME}"
+                withCredentials([usernamePassword(credentialsId: ${env.CREDENTIALS}, usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {                
+                    sh "git config --global user.email '${env.CREDENTIALS_EMAIL}'"
+                    sh "git config --global user.name '$USER'"
+
+                    sh "git add 000-ModManager/Manifest.xml"
+                    sh "git commit -m '${UPDATED_GAME_VERSION}'"
+                    sh "git show-ref"
+                    sh "git push https://$USER:$PASSWORD@github.com/FilUnderscore/ImprovedHordes.git ${env.BRANCH_NAME}"
+                }
 
                 sh "sudo xmlstarlet edit --inplace --update '/ModInfo/Version/@value' --value '${MODINFO_VERSION}.${GIT_COMMIT_COUNT}' 000-ModManager/ModInfo.xml"
                 sh "sudo xmlstarlet edit --inplace --update '/ModManifest/Version' --value '${MANIFEST_VERSION}+${env.BRANCH_NAME}.${GIT_COMMIT_COUNT}.${GIT_COMMIT_HASH}' 000-ModManager/Manifest.xml"
