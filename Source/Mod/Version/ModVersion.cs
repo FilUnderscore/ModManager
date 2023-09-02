@@ -26,6 +26,8 @@
     {
         string ToString();
 
+        bool TryGetBuildMetadata(out string buildMetadata);
+
         EVersionUpdateComparisonResult GetVersionUpdateComparisonResult();
         EVersionComparisonResult GetVersionComparisonResult();
     }

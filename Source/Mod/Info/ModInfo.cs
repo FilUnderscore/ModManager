@@ -50,6 +50,12 @@ namespace CustomModManager.Mod.Info
             {
                 return this.version != null ? this.version.ToString() : "Undefined";
             }
+
+            public bool TryGetBuildMetadata(out string buildMetadata)
+            {
+                buildMetadata = null;
+                return false;
+            }
         }
     }
 }

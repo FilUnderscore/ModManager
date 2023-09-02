@@ -23,5 +23,11 @@
         {
             return this.versionInformation.LongString;
         }
+
+        public bool TryGetBuildMetadata(out string buildMetadata)
+        {
+            buildMetadata = null;
+            return false;
+        }
     }
 }

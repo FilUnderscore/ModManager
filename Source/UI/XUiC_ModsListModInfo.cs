@@ -111,7 +111,7 @@ namespace CustomModManager.UI
                     _value = mod != null ? mod.Info.Author : "";
                     return true;
                 case "modVersion":
-                    _value = mod != null ? mod.Version.ToString() : "";
+                    _value = mod != null ? $"{mod.Version.ToString()} {(mod.Version.TryGetBuildMetadata(out string buildMetadata) ? $"({buildMetadata})" : "")}" : "";
                     return true;
                 case "modDescription":
                     _value = mod != null ? mod.Info.Description : "";

@@ -75,12 +75,12 @@ namespace CustomModManager.Mod.Version
             string[] prereleaseSplit = Prerelease.Split('.');
             string[] otherPrereleaseSplit = other.Prerelease.Split('.');
 
-            for (int index = 0; index < prereleaseSplit.Length; index++)
+            for (int index = 0; index < Math.Min(prereleaseSplit.Length, otherPrereleaseSplit.Length); index++)
             {
                 string prereleaseCut = prereleaseSplit[index];
                 string otherPrereleaseCut = otherPrereleaseSplit[index];
 
-                for (int cutIndex = 0; cutIndex < prereleaseCut.Length; cutIndex++)
+                for (int cutIndex = 0; cutIndex < Math.Min(prereleaseCut.Length, otherPrereleaseCut.Length); cutIndex++)
                 {
                     comparison = prereleaseCut[cutIndex].CompareTo(otherPrereleaseCut[cutIndex]);
 
@@ -104,7 +104,13 @@ namespace CustomModManager.Mod.Version
 
         public override string ToString()
         {
-            return $"{Major}.{Minor}.{Patch}" + (Prerelease.Length > 0 ? $"-{Prerelease}" : "") + (BuildMetadata.Length > 0 ? $"+{BuildMetadata}" : "");
+            return $"{Major}.{Minor}.{Patch}" + (Prerelease.Length > 0 ? $"-{Prerelease}" : "");
+        }
+
+        public bool TryGetBuildMetadata(out string buildMetadata)
+        {
+            buildMetadata = BuildMetadata;
+            return buildMetadata.Length > 0;
         }
     }
 }
