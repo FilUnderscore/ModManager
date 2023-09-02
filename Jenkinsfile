@@ -45,7 +45,7 @@ pipeline
             sh "mkdir 000-ModManager"
             sh "mv 000-ModManager-temp 000-ModManager/000-ModManager"
             zip zipFile: 'ModManager.zip', archive: false, dir: '000-ModManager'
-            archiveArtifacts artifacts: 'ModManager.zip', onlyIfSuccessful: true
+            archiveArtifacts artifacts: 'ModManager.zip', onlyIfSuccessful: true, fingerprint: true
 
             buildName "${MANIFEST_VERSION}+${GIT_COMMIT_COUNT}.${GIT_COMMIT_HASH}"
         }
