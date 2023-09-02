@@ -37,11 +37,21 @@ pipeline
                     returnStdout: true
                 ).trim()
 
+                UPDATED_GAME_VERSION = sh (
+                    script: "mono ../../VersionRelease.exe Dependencies/7DaysToDieServer_Data/Managed/Assembly-CSharp.dll 000-ModManager/Manifest.xml",
+                    returnStdout: true
+                ).trim()
+                
+                CREDS = credentials(env.CREDENTIALS)
+                
+                sh "git add 000-ModManager/Manifest.xml"
+                sh "git commit -m 'Update Manifest Game Version to ${UPDATED_GAME_VERSION}'"
+                sh "git push https://${CREDS_USR}:${CREDS_PSW}@github.com/FilUnderscore/ImprovedHordes.git ${env.BRANCH_NAME}"
+
                 sh "sudo xmlstarlet edit --inplace --update '/ModInfo/Version/@value' --value '${MODINFO_VERSION}.${GIT_COMMIT_COUNT}' 000-ModManager/ModInfo.xml"
                 sh "sudo xmlstarlet edit --inplace --update '/ModManifest/Version' --value '${MANIFEST_VERSION}+${env.BRANCH_NAME}.${GIT_COMMIT_COUNT}.${GIT_COMMIT_HASH}' 000-ModManager/Manifest.xml"
             }
 
-            sh "mono ../../VersionRelease.exe Dependencies/7DaysToDieServer_Data/Managed/Assembly-CSharp.dll 000-ModManager/Manifest.xml"
             sh "mv 000-ModManager 000-ModManager-temp"
             sh "mkdir 000-ModManager"
             sh "mv 000-ModManager-temp 000-ModManager/000-ModManager"
