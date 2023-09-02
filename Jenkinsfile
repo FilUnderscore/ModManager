@@ -37,6 +37,27 @@ pipeline
                     returnStdout: true
                 ).trim()
 
+                UPDATED_GAME_VERSION = sh (
+                    script: "mono ../../VersionRelease.exe Dependencies/7DaysToDieServer_Data/Managed/Assembly-CSharp.dll 000-ModManager/Manifest.xml",
+                    returnStdout: true
+                ).trim()
+
+                try {
+                    withCredentials([usernamePassword(credentialsId: "${env.CREDENTIALS}", usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {                
+                        sh "git config --global user.email '${env.CREDENTIALS_EMAIL}'"
+                        sh "git config --global user.name \$USER"
+
+                        sh "git checkout -b ${env.BRANCH_NAME}"
+                        sh "git pull"
+                        sh "git add 000-ModManager/Manifest.xml"
+                        sh "git commit -m '${UPDATED_GAME_VERSION}'"
+                        sh "git show-ref"
+                        sh "git push https://\$USER:\$PASSWORD@github.com/FilUnderscore/ModManager.git ${env.BRANCH_NAME}"
+                    }
+                } catch (err) {
+
+                }
+
                 sh "sudo xmlstarlet edit --inplace --update '/ModInfo/Version/@value' --value '${MODINFO_VERSION}.${GIT_COMMIT_COUNT}' 000-ModManager/ModInfo.xml"
                 sh "sudo xmlstarlet edit --inplace --update '/ModManifest/Version' --value '${MANIFEST_VERSION}+${env.BRANCH_NAME}.${GIT_COMMIT_COUNT}.${GIT_COMMIT_HASH}' 000-ModManager/Manifest.xml"
             }
