@@ -2,6 +2,9 @@ pipeline
 {
     agent any
     
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '100', artifactNumToKeepStr: '100'))
+    }
     stages {
         stage ('Setup Build Environment') {
             steps {
