@@ -37,6 +37,13 @@ namespace CustomModManager.UI
             Mod.Mod mod = _newEntry?.GetEntry().modEntry;
 
             modTabs.ViewComponent.IsVisible = mod != null;
+
+            if (mod != null) // Update Tab Tooltips for current mod if not null.
+            {
+                modTabs.SetTabTooltip(0, string.Format(Localization.Get("xuiModInformationTabTooltip"), mod.Info.DisplayName));
+                modTabs.SetTabTooltip(1, string.Format(Localization.Get("xuiModSettingsTabTooltip"), mod.Info.DisplayName));
+            }
+
             modInfo.SetCurrentMod(mod);
             
             if(!modSettings.SetCurrentMod(mod, modTabs.SelectedTabIndex))

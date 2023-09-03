@@ -5,7 +5,9 @@ xuiModEnabled,UI,XUI,x,,Enabled
 xuiModVersionTooltip,UI,XUI,x,,Installed mod version
 xuiOpenModsFolder,UI,XUI,x,,Open Mods Folder
 xuiModInformation,UI,XUI,x,,Info
+xuiModInformationTabTooltip,UI,XUI,x,,"About {0}"
 xuiModSettings,UI,XUI,x,,Settings
+xuiModSettingsTabTooltip,UI,XUI,x,,"Customize {0}"
 xuiModWebsite,UI,XUI,x,,Visit Website
 xuiModEnabled,UI,XUI,x,,Enabled
 xuiModFolder,UI,XUI,x,,View Mod Folder
