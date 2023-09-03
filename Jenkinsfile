@@ -37,12 +37,12 @@ pipeline
                     returnStdout: true
                 ).trim()
 
-                UPDATED_GAME_VERSION = sh (
-                    script: "mono ../../VersionRelease.exe Dependencies/7DaysToDieServer_Data/Managed/Assembly-CSharp.dll 000-ModManager/Manifest.xml",
-                    returnStdout: true
-                ).trim()
+                try {                    
+                    UPDATED_GAME_VERSION = sh (
+                        script: "mono ../../VersionRelease.exe Dependencies/7DaysToDieServer_Data/Managed/Assembly-CSharp.dll 000-ModManager/Manifest.xml",
+                        returnStdout: true
+                    ).trim()
 
-                try {
                     withCredentials([usernamePassword(credentialsId: "${env.CREDENTIALS}", usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {                
                         sh "git config --global user.email '${env.CREDENTIALS_EMAIL}'"
                         sh "git config --global user.name \$USER"
