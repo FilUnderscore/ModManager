@@ -11,7 +11,7 @@ namespace CustomModManager.Mod
         [HarmonyPatch(nameof(global::Mod.InitModCode))]
         private sealed class Mod_InitModCode_Patch
         {
-            private static int PRE_INIT_COUNT = 1;
+            private static int PRE_INIT_COUNT = 1; // 1 includes 7 Days To Die itself.
 
             private static bool Prefix()
             {
@@ -41,8 +41,6 @@ namespace CustomModManager.Mod
                 {
                     foreach(var mod in ModLoader.Instance.GetMods(false))
                     {
-                        Log.Out("Mod " + mod.Info.Name + " enabled " + ModLoader.Instance.IsModEnabled(mod));
-
                         if(ModLoader.Instance.IsModEnabled(mod))
                             mod.Load();
                     }
