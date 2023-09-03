@@ -21,13 +21,13 @@
 
         public override string ToString()
         {
-            return this.versionInformation.LongString;
+            return this.versionInformation.LongStringNoBuild;
         }
 
         public bool TryGetBuildMetadata(out string buildMetadata)
         {
-            buildMetadata = null;
-            return false;
+            buildMetadata = $"b{this.versionInformation.Build}";
+            return true;
         }
     }
 }
