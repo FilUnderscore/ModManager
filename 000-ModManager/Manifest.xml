@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ModManifest>
-  <ManifestUrl>https://raw.githubusercontent.com/FilUnderscore/ModManager/dev/000-ModManager/Manifest.xml</ManifestUrl>
+  <ManifestUrl>https://raw.githubusercontent.com/FilUnderscore/ModManager/stable/000-ModManager/Manifest.xml</ManifestUrl>
   <Version>1.1.0</Version>
   <GameVersion ReleaseType="Alpha" Major="21" Minor="1" Build="16" />
 </ModManifest>
