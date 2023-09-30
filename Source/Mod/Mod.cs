@@ -126,14 +126,6 @@ namespace CustomModManager.Mod
             return this.instance.InitModCode();
         }
 
-        public bool DoesModInstanceMatch(global::Mod mod)
-        {
-            if (!this.Loaded)
-                return false;
-
-            return this.instance == mod;
-        }
-
         protected string GetModFolderPath(string subpath)
         {
             return $"@modfolder({this.Info.Name}):{subpath}";

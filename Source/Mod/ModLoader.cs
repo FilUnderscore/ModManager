@@ -115,7 +115,7 @@ namespace CustomModManager.Mod
 
         public Mod GetModFromInstance(global::Mod instance)
         {
-            return this.GetMods(true).Find(mod => mod.DoesModInstanceMatch(instance));
+            return this.GetMods(true).Find(mod => mod.Info.Name.Equals(instance.Name));
         }
 
         public bool SaveModChanges()
