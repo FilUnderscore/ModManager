@@ -30,6 +30,7 @@ namespace CustomModManager
             var harmony = new Harmony("filunderscore.modmanager");
             harmony.PatchAll();
 
+            ModSettingsFromXml.Load();
             this.AddBasePaths();
 
             loader = new ModLoader();
