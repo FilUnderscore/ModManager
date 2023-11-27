@@ -1,4 +1,4 @@
-![Mod Manager Banner](https://i.imgur.com/bLquUKP.png)
+![Mod Manager Banner](https://i.imgur.com/ZGDBwN1.png)
 [![latest version](https://img.shields.io/github/v/release/FilUnderscore/ModManager?include_prereleases)](https://github.com/FilUnderscore/ModManager/releases)
 # Mod Manager
 Manage your mods smarter by having an in-game tool to help manage all your Mod Settings and Updates through one interface, the Mods menu.
@@ -40,7 +40,7 @@ The API is written as a wrapper that can be included in your project as a source
 [More information about the API can be found here](https://github.com/FilUnderscore/ModManager/wiki/Mod-Integration)
 
 ## Screenshots
-![Image showing Mod Menu showing Improved Hordes and Mod Manager loaded. Currently showing information about Mod Manager.](https://i.imgur.com/Xo4LabI.png)
+![Image showing Mod Menu showing Improved Hordes and Mod Manager loaded. Currently showing information about Mod Manager.](https://i.imgur.com/hf9dQ2Q.png)
 ![Image showing Mod Settings for Mod Manager shown in the Mod Menu.](https://i.imgur.com/KRLa8sf.png)
 ![Image showing Mod Settings for Improved Hordes shown in the Mod Menu.](https://i.imgur.com/gne9qWf.png)
 ![Image showing Sample error message showing the better error handling feature with Mod Manager.](https://i.imgur.com/RyOQCFj.png)
