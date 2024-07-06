@@ -123,7 +123,7 @@ namespace CustomModManager.UI
                     var tabEntry = ModManagerModSettings.modSettingsInstances[this.mod].settingTabs.ElementAt(index);
                     ModManagerModSettings.ModSettingTab tab = tabEntry.Value;
 
-                    settingsTabs.GetTabButton(tabIndex).Label = Localization.Get(tab.nameUnlocalized);
+                    settingsTabs.GetTabButton(tabIndex).Text = Localization.Get(tab.nameUnlocalized);
                     settingsTabs.GetTabButton(tabIndex).ViewComponent.IsVisible = true;
                     
                     tabIndex++;
@@ -131,7 +131,7 @@ namespace CustomModManager.UI
 
                 while(tabIndex < settingsTabs.TabCount)
                 {
-                    settingsTabs.GetTabButton(tabIndex).Label = "";
+                    settingsTabs.GetTabButton(tabIndex).Text = "";
                     settingsTabs.GetTabButton(tabIndex).ViewComponent.IsVisible = true;
                     settingsTabs.GetTabButton(tabIndex).Enabled = false;
 
