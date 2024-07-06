@@ -106,7 +106,7 @@ namespace CustomModManager.Mod
 
             if (this.instance == null)
             {
-                this.instance = global::Mod.LoadFromFolder(this.Info.Path);
+                this.instance = global::Mod.LoadDefinitionFromFolder(this.Info.Path);
                 ThreadManager.RunCoroutineSync(ModManager.LoadPatchStuff(false));
             }
 

@@ -1,4 +1,5 @@
 @ECHO off
+IF "%~1"=="" (SET branch=Public) ELSE (SET branch=%1)
 ECHO Setting up dependencies
 ECHO Downloading DepotDownloader
 mkdir "temp"
@@ -7,7 +8,7 @@ curl -JL "https://github.com/SteamRE/DepotDownloader/releases/latest/download/De
 ECHO Extracting DepotDownloader
 tar -xf "DepotDownloader-windows-x64.zip"
 ECHO Downloading Latest Binaries
-DepotDownloader.exe -app 294420 -filelist ../setup-filelist.txt -dir ../Dependencies
+DepotDownloader.exe -app 294420 -beta %branch% -filelist ../setup-filelist.txt -dir ../Dependencies
 ECHO Dependencies successfully downloaded
 ECHO Cleaning up
 cd ../

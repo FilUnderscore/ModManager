@@ -155,7 +155,7 @@
 		</window>
 	</append>
 	
-	<setattribute xpath="/windows/window[@name='loadingScreen']/label[@name='lblText']" name="anchor_bottom">#cam,0,40</setattribute>
+	<setattribute xpath="/windows/window[@name='loadingScreen']/rect[@name='tips_enabled']/label[@name='lblText']" name="anchor_bottom">#cam,0,40</setattribute>
 	
 	<append xpath="/windows/window[@name='loadingScreen']">
 		<label name="lblTextMods" depth="6" anchor_left="#cam,0,20"   anchor_right="#cam,1,-20"   anchor_bottom="#cam,0,10"  anchor_top="#cam,0,40" font_size="24" justify="left" spacing_y="5" text="{modlisttext}" />
