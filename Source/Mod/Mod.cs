@@ -31,7 +31,7 @@ namespace CustomModManager.Mod
         }
 
         protected bool forceloaded = false;
-        private bool preloaded = true;
+        internal bool preloaded = true;
         internal bool initialized = false;
 
         public bool NextState
@@ -64,6 +64,7 @@ namespace CustomModManager.Mod
             this.Manifest = manifest;
             this.instance = instance;
             this.modDisableState = modDisableState;
+            this.initialized = true;
         }
 
         public EModDisableState GetModDisableState()
@@ -81,7 +82,7 @@ namespace CustomModManager.Mod
 
         public string GetModDisableStateReason()
         {
-            switch (this.modDisableState)
+            switch (this.GetModDisableState())
             {
                 case EModDisableState.Allowed:
                     return "";
