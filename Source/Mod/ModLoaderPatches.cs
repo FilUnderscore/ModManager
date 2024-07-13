@@ -4,47 +4,34 @@ namespace CustomModManager.Mod
 {
     internal sealed class ModLoaderPatches
     {
-        // Flag to prevent mod DLLs loading after Mod Manager does to prevent disabled mods from loading automatically.
-        public static bool CAN_INIT_MOD_CODE = false;
-
         [HarmonyPatch(typeof(global::Mod))]
         [HarmonyPatch(nameof(global::Mod.InitModCode))]
         private sealed class Mod_InitModCode_Patch
         {
-            private static int PRE_INIT_COUNT = 1; // 1 includes 7 Days To Die itself.
-
-            private static bool Prefix()
+            private static bool Prefix(global::Mod __instance)
             {
-                if (!CAN_INIT_MOD_CODE)
-                    PRE_INIT_COUNT++;
+                Mod modInstance = ModLoader.Instance.GetModFromInstance(__instance);
+                modInstance.preloaded = false;
 
-                return CAN_INIT_MOD_CODE;
+                bool enabled = ModLoader.Instance.IsModEnabled(__instance);
+                modInstance.initialized = enabled;
+
+                return enabled;
             }
+        }
 
-            private static int MOD_COUNT
+        [HarmonyPatch(typeof(global::ModManager))]
+        [HarmonyPatch(nameof(global::ModManager.ModLoaded))]
+        private sealed class ModManager_ModLoaded_Patch
+        {
+            private static void Postfix(string _modName, ref bool __result)
             {
-                get
+                if(__result == false)
                 {
-                    return ModLoader.Instance.GetMods(false).Count;
-                }
-            }
-
-            private static void Postfix()
-            {
-                if (CAN_INIT_MOD_CODE)
                     return;
-
-                int modCount = MOD_COUNT;
-                CAN_INIT_MOD_CODE = PRE_INIT_COUNT == modCount;
-                
-                if(CAN_INIT_MOD_CODE)
-                {
-                    foreach(var mod in ModLoader.Instance.GetMods(false))
-                    {
-                        if(ModLoader.Instance.IsModEnabled(mod))
-                            mod.Load();
-                    }
                 }
+
+                __result = ModLoader.Instance.IsModEnabled(ModManager.loadedMods.dict[_modName]);
             }
         }
     }
