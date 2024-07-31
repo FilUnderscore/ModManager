@@ -129,13 +129,13 @@ namespace CustomModManager.Mod
 
         protected string GetModFolderPath(string subpath)
         {
-            return $"@modfolder({this.Info.Name}):{subpath}";
+            return $"{this.Info.Path}/{subpath}";
         }
 
         protected bool TryGetModFolderPath(string subpath, out string path)
         {
             path = GetModFolderPath(subpath);
-            return File.Exists(ModManager.PatchModPathString(path));
+            return File.Exists(path);
         }
 
         public virtual bool TryGetIconImage(out IXUiTexture texture)
