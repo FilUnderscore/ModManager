@@ -47,21 +47,29 @@ namespace CustomModManager.UI.Wrappers
 
         public sealed class XUiTexturePath : IXUiTexture
         {
-            private readonly string modFolderRelativePath;
+            private readonly string modFolderPath;
 
-            public XUiTexturePath(string modFolderRelativePath)
+            public XUiTexturePath(string modFolderPath)
             {
-                this.modFolderRelativePath = modFolderRelativePath;
+                this.modFolderPath = modFolderPath;
+                Debug.Log(this.modFolderPath);
             }
 
             public void Load(XUiV_Texture texture)
             {
-                texture.ParseAttribute("texture", this.modFolderRelativePath, null);
+                byte[] data = File.ReadAllBytes(this.modFolderPath);
+
+                Texture2D texture2d = new Texture2D(0, 0);
+                texture2d.LoadImage(data);
+
+                texture.Texture = texture2d;
+                wwwAssignedField.SetValue(texture, true);
             }
 
             public void Unload(XUiV_Texture texture)
             {
-                texture.UnloadTexture();
+                texture.Texture = null;
+                texture.UITexture.mainTexture = null;
             }
         }
 

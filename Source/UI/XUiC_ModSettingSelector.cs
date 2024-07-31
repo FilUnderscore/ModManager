@@ -74,7 +74,7 @@ namespace CustomModManager.UI
                     this.textLabel.IsVisible = true;
                     this.label.IsVisible = false;
                     this.button.ViewComponent.IsVisible = true;
-                    this.button.Label = (this.modSetting as ModManagerModSettings.ButtonModSetting).GetButtonText();
+                    this.button.Text = (this.modSetting as ModManagerModSettings.ButtonModSetting).GetButtonText();
                     this.button.Enabled = IsEnabled();
 
                     return;

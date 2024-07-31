@@ -1,9 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <ModInfo>
-	<Name value="ModManager" />
-	<Version value="1.1.0" />
-	<DisplayName value="Mod Manager"/>
-	<Description value="Smarter way to manage your mods." />
-	<Author value="FilUnderscore" />
-	<Website value="https://github.com/FilUnderscore/ModManager" />
+  <Name value="ModManager"/>
+  <Version value="1.1.1"/>
+  <DisplayName value="Mod Manager"/>
+  <Description value="Smarter way to manage your mods."/>
+  <Author value="FilUnderscore"/>
+  <Website value="https://github.com/FilUnderscore/ModManager"/>
 </ModInfo>

@@ -31,7 +31,7 @@ namespace CustomModManager.Mod
         }
 
         protected bool forceloaded = false;
-        private bool preloaded = true;
+        internal bool preloaded = true;
         internal bool initialized = false;
 
         public bool NextState
@@ -64,6 +64,7 @@ namespace CustomModManager.Mod
             this.Manifest = manifest;
             this.instance = instance;
             this.modDisableState = modDisableState;
+            this.initialized = true;
         }
 
         public EModDisableState GetModDisableState()
@@ -81,7 +82,7 @@ namespace CustomModManager.Mod
 
         public string GetModDisableStateReason()
         {
-            switch (this.modDisableState)
+            switch (this.GetModDisableState())
             {
                 case EModDisableState.Allowed:
                     return "";
@@ -106,7 +107,7 @@ namespace CustomModManager.Mod
 
             if (this.instance == null)
             {
-                this.instance = global::Mod.LoadFromFolder(this.Info.Path);
+                this.instance = global::Mod.LoadDefinitionFromFolder(this.Info.Path);
                 ThreadManager.RunCoroutineSync(ModManager.LoadPatchStuff(false));
             }
 
@@ -128,13 +129,13 @@ namespace CustomModManager.Mod
 
         protected string GetModFolderPath(string subpath)
         {
-            return $"@modfolder({this.Info.Name}):{subpath}";
+            return $"{this.Info.Path}/{subpath}";
         }
 
         protected bool TryGetModFolderPath(string subpath, out string path)
         {
             path = GetModFolderPath(subpath);
-            return File.Exists(ModManager.PatchModPathString(path));
+            return File.Exists(path);
         }
 
         public virtual bool TryGetIconImage(out IXUiTexture texture)

@@ -168,7 +168,7 @@ namespace CustomModManager
 
             [HarmonyPatch(typeof(XUiC_SavegamesList.ListEntry))]
             [HarmonyPatch(MethodType.Constructor)]
-            [HarmonyPatch(new Type[] { typeof(string), typeof(string), typeof(DateTime), typeof(WorldState) })]
+            [HarmonyPatch(new Type[] { typeof(string), typeof(string), typeof(DateTime), typeof(WorldState), typeof(string), typeof(string), typeof(string) })]
             class XUiC_SavegamesListListEntryHook
             {
                 static void Postfix(XUiC_SavegamesList.ListEntry __instance)

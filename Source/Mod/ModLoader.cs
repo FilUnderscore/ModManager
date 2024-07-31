@@ -108,9 +108,9 @@ namespace CustomModManager.Mod
             }
         }
 
-        public bool IsModEnabled(Mod mod)
+        public bool IsModEnabled(global::Mod mod)
         {
-            return !disabledModNames.Contains(mod.Info.Name);
+            return !disabledModNames.Contains(mod.Name);
         }
 
         public Mod GetModFromInstance(global::Mod instance)
@@ -136,6 +136,7 @@ namespace CustomModManager.Mod
                     if (mod.NextState)
                     {
                         lines.RemoveAll(modName => mod.Info.Name.EqualsCaseInsensitive(modName));
+                        disabledModNames.Remove(mod.Info.Name);
                         mod.Load();
                     }
                     else if(!lines.Contains(mod.Info.Name))
